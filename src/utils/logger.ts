@@ -540,7 +540,6 @@ if (import.meta.env.DEV) {
 }
 
 // Export utilities
-export { LogLevel };
 export default logger;
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.
