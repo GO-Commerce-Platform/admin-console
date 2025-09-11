@@ -23,6 +23,25 @@ export default defineConfig({
     }
   },
   
+  // Dependency optimization configuration
+  optimizeDeps: {
+    // Exclude problematic dependencies from pre-bundling
+    exclude: [
+      '@chakra-ui/vue-utils',
+      '@chakra-ui/vue-system',
+      '@vueuse/motion'
+    ],
+    // Include dependencies that should be pre-bundled
+    include: [
+      '@chakra-ui/vue-next',
+      '@chakra-ui/styled-system',
+      '@vueuse/core',
+      '@vueuse/shared'
+    ],
+    // Force re-optimization on startup
+    force: true
+  },
+  
   // Development server configuration
   server: {
     port: 5173,
