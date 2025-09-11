@@ -36,7 +36,7 @@ Before starting, ensure you have:
 - **Node.js**: >= 18.0.0
 - **npm**: >= 9.0.0
 - **GO Commerce Server**: Running on localhost:8080
-- **Keycloak**: Running on localhost:9000
+- **Keycloak**: Running on localhost:9000 with configured realm
 
 ## 🚀 Quick Start
 
@@ -57,7 +57,9 @@ Before starting, ensure you have:
    npm run dev
    ```
 
-4. **Open browser**: Navigate to http://localhost:5173
+4. **Setup Keycloak** (see [Keycloak Setup](#🔐-keycloak-setup) below)
+
+5. **Open browser**: Navigate to http://localhost:5173
 
 ## 🔧 Development
 
@@ -100,9 +102,12 @@ Create `.env.development` from `.env.example`:
 VITE_API_BASE_URL=http://localhost:8080/api/v1
 
 # Keycloak Authentication
-VITE_KEYCLOAK_URL=http://localhost:9000
+VITE_KEYCLOAK_BASE_URL=http://localhost:9000
 VITE_KEYCLOAK_REALM=gocommerce
 VITE_KEYCLOAK_CLIENT_ID=gocommerce-admin-console
+
+# Application URLs
+VITE_APP_BASE_URL=http://localhost:5173
 
 # Feature Flags
 VITE_ENABLE_ANALYTICS=true
@@ -112,6 +117,38 @@ VITE_ENABLE_DEBUG_MODE=true
 ## 🔐 Authentication & Authorization
 
 The application integrates with Keycloak for authentication and implements role-based access control:
+
+### Keycloak Setup
+
+The admin console uses the existing Keycloak instance from the platform's Docker stack:
+
+1. **Start the platform stack** (from project root):
+
+```bash
+cd docker
+docker compose up -d
+```
+
+2. **Verify Keycloak is running**:
+- URL: http://localhost:9000
+- Admin: `admin` / `admin`
+- Realm: `gocommerce` (auto-imported)
+
+3. **Test credentials**:
+- Platform Admin: `platform-admin` / `platform-admin`
+- Store Admin: `store-admin` / `store-admin`
+
+4. **Environment configuration** is already set in `.env.example`:
+
+```env
+VITE_KEYCLOAK_BASE_URL=http://localhost:9000
+VITE_KEYCLOAK_REALM=gocommerce
+VITE_KEYCLOAK_CLIENT_ID=gocommerce-admin-console
+```
+
+> **Note**: The `gocommerce-admin-console` client is pre-configured in the realm with PKCE support for the frontend.
+
+Refer to `docs/authentication.md` for complete details.
 
 ### Roles
 
