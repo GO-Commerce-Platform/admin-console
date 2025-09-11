@@ -9,6 +9,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse,
 import { tokenManager } from './auth/tokenManager';
 import { ApiErrorFactory, type BaseApiError } from './errors/apiError';
 import type { PaginationParams, ApiResponse } from '@/types/api';
+import type { StoreManager } from '@/stores';
 
 /**
  * API client configuration
@@ -108,6 +109,19 @@ export class ApiClient {
     // Add store context header for multi-tenant support
     if (config.storeId) {
       config.headers['X-Store-ID'] = config.storeId;
+    } else {
+      // Try to get selected store from auth store if available
+      try {
+        const authStore = this.getAuthStore();
+        if (authStore?.selectedStoreId) {
+          config.headers['X-Store-ID'] = authStore.selectedStoreId;
+        }
+      } catch (error) {
+        // Auth store not available or not initialized, continue without store context
+        if (import.meta.env.DEV) {
+          console.debug('[API Client] Auth store not available for store context');
+        }
+      }
     }
 
     // Log request in development
@@ -273,6 +287,20 @@ export class ApiClient {
    */
   private generateRequestId(): string {
     return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * Get auth store dynamically (avoid circular dependency)
+   */
+  private getAuthStore(): any {
+    try {
+      // Dynamically import to avoid circular dependency
+      // This will be resolved at runtime when stores are available
+      const storeManager = (globalThis as any).__STORE_MANAGER__ || StoreManager;
+      return storeManager?.getStore?.('auth');
+    } catch {
+      return null;
+    }
   }
 
   /**

@@ -346,7 +346,23 @@ export function setupStores(app: App): Pinia {
     app.config.globalProperties.__VUE_PROD_DEVTOOLS__ = true;
   }
 
+  // Register stores with StoreManager after pinia is set up
+  registerStores(pinia);
+
   return pinia;
+}
+
+/**
+ * Register all stores with the StoreManager
+ */
+function registerStores(pinia: Pinia): void {
+  // Import auth store and register it
+  import('./auth').then(({ useAuthStore }) => {
+    const authStore = useAuthStore(pinia);
+    StoreManager.registerStore('auth', authStore);
+  }).catch(error => {
+    console.error('Failed to register auth store:', error);
+  });
 }
 
 /**

@@ -15,9 +15,13 @@ import theme from '@/theme'
 // Pinia store configuration
 import { setupStores, StoreManager } from '@/stores'
 
+// Router configuration
+import router from '@/router'
+
 // HTTP client and services
 import { apiClient } from '@/services/apiClient'
 import { tokenManager } from '@/services/auth/tokenManager'
+import { keycloakService } from '@/services/keycloakService'
 
 // Utilities and logging
 import { logger, DevTools, Environment, FeatureFlags } from '@/utils/logger'
@@ -40,8 +44,8 @@ async function bootstrap(): Promise<void> {
     await FeatureFlags.loadFlags();
     logger.info('Feature flags loaded', FeatureFlags.getAllFlags());
     
-    // Initialize services
-    logger.info('Services initialized successfully');
+    // Initialize authentication services (but don't block on it)
+    logger.info('Services will be initialized after Vue app setup');
     
   } catch (error) {
     logger.error('Failed to bootstrap application:', error);
@@ -63,6 +67,9 @@ async function initializeApp(): Promise<void> {
     // Setup Pinia stores
     const pinia = setupStores(app);
     StoreManager.setPinia(pinia);
+    
+    // Setup Vue Router
+    app.use(router);
     
     // Setup Chakra UI with custom theme
     app.use(ChakraProvider, { theme });
