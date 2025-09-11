@@ -1,12 +1,203 @@
 # TASKS.md - GO Commerce Administration Console Implementation Tasks
 
 **🚨 CRITICAL: Git/GitHub Workflow Reminders**
+- **Use feature branches**: `feature/ADMIN-{issue#}-{name}`: before implementing any feature/issue start a branch
 - **NEVER close GitHub issues manually** - let PR merges auto-close them
 - **Always check** `git status` before any `gh issue close` command  
-- **Use feature branches**: `feature/ADMIN-{issue#}-{name}`
 - **Link PRs properly**: Include "Closes #issue-number" in PR descriptions
 - **Emergency recovery**: If issue closed prematurely, commit changes → create PR → reference closed issue
 - **See WARP.md** for complete Git/GitHub workflow documentation
+
+## 📋 Task Execution Workflow
+
+### Pre-Task Checklist ✅
+Before starting any task, complete this checklist:
+
+- [ ] **Issue Verification**
+  - [ ] GitHub issue exists and is assigned to me
+  - [ ] Issue has proper labels (type, priority, size)
+  - [ ] Acceptance criteria are clearly defined
+  - [ ] Issue is linked to parent epic/milestone (if applicable)
+  - [ ] Dependencies are identified and resolved
+
+- [ ] **Environment Preparation**
+  - [ ] Local repository is up to date (`git pull origin main`)
+  - [ ] Working directory is clean (`git status` shows no uncommitted changes)
+  - [ ] All tests pass locally (`npm run test && npm run lint`)
+  - [ ] Development server runs without errors (`npm run dev`)
+
+- [ ] **Branch Management**
+  - [ ] Create feature branch from main: `git checkout -b feature/ADMIN-{issue#}-{description}`
+  - [ ] Verify branch name follows convention
+  - [ ] Push initial empty branch: `git push -u origin branch-name`
+  - [ ] Verify branch is created on GitHub
+
+- [ ] **Task Understanding**
+  - [ ] Read and understand issue requirements
+  - [ ] Review linked documentation (WARP.md, PLAN.md)
+  - [ ] Identify affected files and components
+  - [ ] Plan implementation approach
+
+### During Task Development Checklist 🔄
+While working on the task, follow these practices:
+
+- [ ] **Regular Commits**
+  - [ ] Make small, logical commits frequently
+  - [ ] Use conventional commit format: `type(scope): description`
+  - [ ] Include issue references in commit footers
+  - [ ] Ensure each commit has a clear purpose
+  - [ ] Test code before each commit
+
+- [ ] **Code Quality**
+  - [ ] Follow TypeScript and Vue 3 coding standards
+  - [ ] Add JSDoc comments for complex logic
+  - [ ] Reference GitHub issue numbers in complex implementations
+  - [ ] Ensure accessibility compliance for UI changes
+  - [ ] Follow atomic design principles for components
+
+- [ ] **Branch Maintenance**
+  - [ ] Keep branch updated with main regularly: `git fetch origin main && git rebase origin/main`
+  - [ ] Resolve conflicts promptly
+  - [ ] Push changes regularly: `git push origin branch-name`
+  - [ ] Monitor CI/CD status on GitHub
+
+- [ ] **Testing & Validation**
+  - [ ] Run tests after each significant change: `npm run test`
+  - [ ] Check linting: `npm run lint`
+  - [ ] Verify no console errors/warnings
+  - [ ] Test functionality in development server
+  - [ ] Validate responsive design (if UI changes)
+
+### Post-Task Completion Checklist ✅
+Before creating a pull request:
+
+- [ ] **Final Testing**
+  - [ ] All tests pass: `npm run test`
+  - [ ] Linting passes: `npm run lint`
+  - [ ] Type checking passes: `npm run type-check`
+  - [ ] Build succeeds: `npm run build`
+  - [ ] Manual testing completed
+  - [ ] Cross-browser testing (if UI changes)
+
+- [ ] **Code Review Preparation**
+  - [ ] Self-review all changes
+  - [ ] Remove debugging code and console.logs
+  - [ ] Ensure no commented-out code remains
+  - [ ] Verify no sensitive information in commits
+  - [ ] Check file naming conventions
+
+- [ ] **Documentation Updates**
+  - [ ] Update component documentation (if applicable)
+  - [ ] Update README.md (if new features)
+  - [ ] Update API documentation (if backend changes)
+  - [ ] Add/update unit tests
+  - [ ] Update CHANGELOG.md (if significant changes)
+
+- [ ] **Pull Request Creation**
+  - [ ] Use PR template (`.github/pull_request_template.md`)
+  - [ ] Follow PR title convention: `type(scope): description - Closes #issue`
+  - [ ] Link to GitHub issue using "Closes #123"
+  - [ ] Add screenshots/demo for UI changes
+  - [ ] Fill out all template sections
+  - [ ] Assign reviewers (if not solo development)
+
+### Emergency Workflow Recovery 🚨
+If workflow mistakes occur, follow these procedures:
+
+- [ ] **Prematurely Closed Issue**
+  ```bash
+  # 1. Check for uncommitted work
+  git status
+  
+  # 2. Commit any pending work
+  git add .
+  git commit -m "feat(scope): implement feature for issue #X
+  
+  Completes work for accidentally closed issue.
+  
+  Closes #X"
+  
+  # 3. Reopen the GitHub issue
+  gh issue reopen X
+  
+  # 4. Create PR with proper linking
+  gh pr create --title "feat(scope): implement feature - Closes #X" --body "Closes #X"
+  ```
+
+- [ ] **Failed CI/CD Checks**
+  ```bash
+  # 1. Fix issues locally
+  npm run test
+  npm run lint
+  npm run build
+  
+  # 2. Commit fixes
+  git add .
+  git commit -m "fix(ci): resolve failing checks"
+  
+  # 3. Force push with lease (safer than force push)
+  git push --force-with-lease origin branch-name
+  ```
+
+- [ ] **Merge Conflicts**
+  ```bash
+  # 1. Fetch latest changes
+  git fetch origin main
+  
+  # 2. Rebase to resolve conflicts
+  git rebase origin/main
+  
+  # 3. Resolve conflicts in files, then
+  git add .
+  git rebase --continue
+  
+  # 4. Force push with lease
+  git push --force-with-lease origin branch-name
+  ```
+
+### Task Completion Verification ✅
+After PR is merged:
+
+- [ ] **Automatic Validations**
+  - [ ] GitHub issue is automatically closed
+  - [ ] Feature branch is deleted (automatic or manual)
+  - [ ] CI/CD pipeline completes successfully
+  - [ ] Changes are deployed to development/staging
+
+- [ ] **Manual Validations**
+  - [ ] Feature works as expected in deployed environment
+  - [ ] No regression issues introduced
+  - [ ] Related documentation is updated
+  - [ ] Team/stakeholders notified (if required)
+  - [ ] Mark task as completed: `- [x]` in TASKS.md
+
+### Workflow Troubleshooting 🔧
+
+**Common Issues and Solutions:**
+
+1. **"Branch protection rules require PR reviews"**
+   - Solution: Create PR and perform self-review following checklist
+   - For solo development: Enable self-review in repository settings
+
+2. **"No linked issues found in PR"**
+   - Solution: Add "Closes #issue-number" to PR description
+   - Update PR description, don't close and recreate
+
+3. **"Tests failing on CI but passing locally"**
+   - Solution: Check Node.js version consistency
+   - Clear cache: `npm ci` instead of `npm install`
+   - Check environment-specific configurations
+
+4. **"Merge conflicts with main branch"**
+   - Solution: Regular rebasing prevents large conflicts
+   - Use `git rebase origin/main` instead of merging
+   - Resolve conflicts incrementally
+
+5. **"Accidental commit to main branch"**
+   - Solution: Create feature branch from current state
+   - Cherry-pick commits to feature branch
+   - Reset main branch to origin/main
+   - Create PR from feature branch
 
 ---
 

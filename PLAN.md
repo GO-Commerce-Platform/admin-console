@@ -1910,4 +1910,601 @@ export const useAuthStore = defineStore('auth', () => {
    - Optimize build process
    - Prepare deployment scripts
 
+## Git Workflow Automation Implementation
+
+### 1. Git Hooks Configuration
+
+#### Pre-commit Hook Setup with Husky
+```json
+// package.json
+{
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
+    "@commitlint/cli": "^17.6.0",
+    "@commitlint/config-conventional": "^17.6.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,json}": [
+      "prettier --write"
+    ]
+  }
+}
+```
+
+#### Husky Git Hooks Implementation
+```bash
+# .husky/pre-commit
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged to check and fix code
+lint-staged
+
+# Ensure all tests pass before commit
+npm run test:unit
+
+# Check TypeScript compilation
+npm run type-check
+```
+
+```bash
+# .husky/commit-msg
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Validate commit message format
+npx --no-install commitlint --edit "$1"
+```
+
+```bash
+# .husky/pre-push
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run full test suite before push
+npm run test
+
+# Build to ensure no build errors
+npm run build
+
+# Check for branch naming convention
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ ! $branch =~ ^(main|develop|feature\/ADMIN-[0-9]+-.*|bugfix\/ADMIN-[0-9]+-.*|hotfix\/ADMIN-[0-9]+-.*|docs\/.*|release\/v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+  echo "Branch name '$branch' does not follow naming convention"
+  echo "Expected: feature/ADMIN-{issue#}-{description}, bugfix/ADMIN-{issue#}-{description}, etc."
+  exit 1
+fi
+```
+
+#### Commit Message Validation
+```javascript
+// .commitlintrc.js
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-enum': [
+      2,
+      'always',
+      ['feat', 'fix', 'docs', 'style', 'refactor', 'test', 'chore', 'perf', 'ci', 'build', 'revert']
+    ],
+    'scope-enum': [
+      2,
+      'always',
+      ['auth', 'ui', 'api', 'store', 'router', 'types', 'config', 'deps']
+    ],
+    'subject-max-length': [2, 'always', 72],
+    'subject-case': [2, 'always', 'lower-case'],
+    'footer-max-line-length': [2, 'always', 100],
+    'body-max-line-length': [2, 'always', 100]
+  },
+  // Custom parser to check for issue references
+  parserPreset: {
+    parserOpts: {
+      noteKeywords: ['BREAKING CHANGE', 'Closes', 'Fixes', 'Resolves'],
+      referenceActions: ['close', 'closes', 'closed', 'fix', 'fixes', 'fixed', 'resolve', 'resolves', 'resolved']
+    }
+  }
+}
+```
+
+### 2. GitHub Actions Workflows
+
+#### Main CI/CD Pipeline
+```yaml
+# .github/workflows/ci.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Type checking
+        run: npm run type-check
+        
+      - name: Linting
+        run: npm run lint
+        
+      - name: Unit tests
+        run: npm run test:unit
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Upload build artifacts
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+  branch-validation:
+    name: Branch Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Validate branch name
+        run: |
+          branch="${{ github.head_ref }}"
+          if [[ ! $branch =~ ^(feature\/ADMIN-[0-9]+-.*|bugfix\/ADMIN-[0-9]+-.*|hotfix\/ADMIN-[0-9]+-.*|docs\/.*|release\/v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Branch name '$branch' does not follow naming convention"
+            echo "Expected: feature/ADMIN-{issue#}-{description}, bugfix/ADMIN-{issue#}-{description}, etc."
+            exit 1
+          fi
+
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Check PR links to issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prBody = context.payload.pull_request.body || '';
+            const prTitle = context.payload.pull_request.title || '';
+            
+            const linkingKeywords = ['closes', 'fixes', 'resolves'];
+            const issuePattern = /#\d+/g;
+            
+            const hasIssueInTitle = issuePattern.test(prTitle);
+            const hasLinkingKeyword = linkingKeywords.some(keyword => 
+              prBody.toLowerCase().includes(keyword)
+            );
+            
+            if (!hasIssueInTitle && !hasLinkingKeyword) {
+              core.setFailed('PR must reference an issue using "Closes #123", "Fixes #123", or "Resolves #123" in the description, or include issue number in title.');
+            }
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run security audit
+        run: npm audit --audit-level=high
+        
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript
+          
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+```
+
+#### Auto-labeling Workflow
+```yaml
+# .github/workflows/auto-label.yml
+name: Auto Label PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-label based on files
+        uses: actions/labeler@v4
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+```
+
+```yaml
+# .github/labeler.yml
+'type: feature':
+  - 'src/**/*.vue'
+  - 'src/components/**/*'
+  - 'src/pages/**/*'
+
+'type: fix':
+  - any: ['**/*.ts', '**/*.vue']
+    all: ['!src/types/**/*']
+
+'type: docs':
+  - '*.md'
+  - 'docs/**/*'
+  - '.github/**/*'
+
+'area: auth':
+  - 'src/stores/auth.ts'
+  - 'src/services/auth*'
+  - 'src/composables/useAuth.ts'
+
+'area: ui':
+  - 'src/components/**/*'
+  - 'src/assets/**/*'
+
+'area: api':
+  - 'src/services/**/*'
+  - 'src/types/api.ts'
+
+'area: config':
+  - 'vite.config.ts'
+  - 'tsconfig.json'
+  - '.eslintrc.*'
+  - 'package.json'
+```
+
+### 3. Issue and PR Automation
+
+#### Issue Auto-assignment
+```yaml
+# .github/workflows/issue-assignment.yml
+name: Issue Auto-assignment
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-assign based on labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(label => label.name);
+            
+            // Auto-assign based on expertise areas
+            let assignee = null;
+            
+            if (labels.includes('area: auth')) {
+              assignee = 'auth-expert-username';
+            } else if (labels.includes('area: ui')) {
+              assignee = 'ui-expert-username';
+            } else if (labels.includes('type: docs')) {
+              assignee = 'docs-maintainer-username';
+            }
+            
+            if (assignee && !issue.assignee) {
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                assignees: [assignee]
+              });
+            }
+```
+
+#### Stale Issue Management
+```yaml
+# .github/workflows/stale.yml
+name: Stale Issue Management
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity. 
+            It will be closed if no further activity occurs within 7 days. 
+            If this issue is still relevant, please add a comment to keep it active.
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity. 
+            It will be closed if no further activity occurs within 7 days.
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: 'status: stale'
+          stale-pr-label: 'status: stale'
+          exempt-issue-labels: 'status: blocked,priority: critical,priority: high'
+          exempt-pr-labels: 'status: blocked,status: needs-review'
+```
+
+### 4. Development Environment Setup
+
+#### VS Code Configuration
+```json
+// .vscode/settings.json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "vue.codeActions.enabled": true,
+  "git.enableCommitSigning": true,
+  "git.inputValidation": "always",
+  "git.inputValidationLength": 72,
+  "git.inputValidationSubjectLength": 50
+}
+```
+
+```json
+// .vscode/extensions.json
+{
+  "recommendations": [
+    "Vue.volar",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-next",
+    "github.vscode-github-actions",
+    "github.vscode-pull-request-github",
+    "ms-vscode.vscode-json"
+  ]
+}
+```
+
+#### npm Scripts for Workflow Integration
+```json
+// package.json scripts section
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "release": "npm run build && npm run test && git push --follow-tags origin main",
+    "validate": "npm run type-check && npm run lint && npm run test:unit && npm run build"
+  }
+}
+```
+
+### 5. Quality Gates and Validation
+
+#### Branch Protection Configuration
+```javascript
+// Script to configure branch protection via GitHub API
+const { Octokit } = require('@octokit/rest');
+
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN
+});
+
+async function configureBranchProtection() {
+  await octokit.rest.repos.updateBranchProtection({
+    owner: 'GO-Commerce-Platform',
+    repo: 'admin-console',
+    branch: 'main',
+    required_status_checks: {
+      strict: true,
+      contexts: [
+        'validate',
+        'branch-validation',
+        'pr-validation',
+        'security-scan'
+      ]
+    },
+    enforce_admins: false,
+    required_pull_request_reviews: {
+      required_approving_review_count: 1,
+      dismiss_stale_reviews: true,
+      require_code_owner_reviews: false
+    },
+    restrictions: null,
+    allow_force_pushes: false,
+    allow_deletions: false
+  });
+}
+```
+
+### 6. Monitoring and Analytics
+
+#### GitHub Actions Monitoring
+```yaml
+# .github/workflows/workflow-monitoring.yml
+name: Workflow Monitoring
+
+on:
+  workflow_run:
+    workflows: ['CI/CD Pipeline']
+    types: [completed]
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+    
+    steps:
+      - name: Notify on failure
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const workflowRun = context.payload.workflow_run;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `CI/CD Pipeline Failed - ${workflowRun.head_branch}`,
+              body: `
+                Workflow run failed: ${workflowRun.html_url}
+                Branch: ${workflowRun.head_branch}
+                Commit: ${workflowRun.head_sha}
+                
+                Please investigate and fix the issues.
+              `,
+              labels: ['type: bug', 'priority: high', 'area: ci']
+            });
+```
+
+### 7. Integration Testing for Workflow
+
+#### Workflow Validation Script
+```javascript
+// scripts/validate-workflow.js
+const { execSync } = require('child_process');
+const fs = require('fs');
+
+class WorkflowValidator {
+  constructor() {
+    this.errors = [];
+    this.warnings = [];
+  }
+
+  validateBranchNaming(branchName) {
+    const pattern = /^(feature\/ADMIN-\d+-.*|bugfix\/ADMIN-\d+-.*|hotfix\/ADMIN-\d+-.*|docs\/.*|release\/v\d+\.\d+\.\d+)$/;
+    
+    if (!pattern.test(branchName)) {
+      this.errors.push(`Branch name '${branchName}' does not follow naming convention`);
+      return false;
+    }
+    return true;
+  }
+
+  validateCommitMessage(message) {
+    try {
+      execSync(`echo "${message}" | npx commitlint`, { stdio: 'pipe' });
+      return true;
+    } catch (error) {
+      this.errors.push(`Invalid commit message: ${error.message}`);
+      return false;
+    }
+  }
+
+  validatePRTemplate() {
+    const templatePath = '.github/pull_request_template.md';
+    
+    if (!fs.existsSync(templatePath)) {
+      this.errors.push('PR template is missing');
+      return false;
+    }
+    
+    const template = fs.readFileSync(templatePath, 'utf8');
+    const requiredSections = [
+      '🎯 Purpose',
+      '🔗 Related Issues', 
+      '🧪 Testing',
+      '📋 Type of Change'
+    ];
+    
+    for (const section of requiredSections) {
+      if (!template.includes(section)) {
+        this.errors.push(`PR template missing section: ${section}`);
+      }
+    }
+    
+    return this.errors.length === 0;
+  }
+
+  async validateWorkflow() {
+    console.log('🔍 Validating Git workflow configuration...');
+    
+    // Check if Husky is configured
+    if (!fs.existsSync('.husky')) {
+      this.errors.push('Husky git hooks are not configured');
+    }
+    
+    // Check GitHub Actions
+    if (!fs.existsSync('.github/workflows')) {
+      this.errors.push('GitHub Actions workflows are missing');
+    }
+    
+    // Validate PR template
+    this.validatePRTemplate();
+    
+    // Check issue templates
+    if (!fs.existsSync('.github/ISSUE_TEMPLATE')) {
+      this.errors.push('GitHub issue templates are missing');
+    }
+    
+    // Report results
+    if (this.errors.length > 0) {
+      console.error('❌ Workflow validation failed:');
+      this.errors.forEach(error => console.error(`  - ${error}`));
+      process.exit(1);
+    } else {
+      console.log('✅ Workflow validation passed!');
+    }
+  }
+}
+
+// Run validation
+const validator = new WorkflowValidator();
+validator.validateWorkflow();
+```
+
+This comprehensive Git workflow automation implementation provides:
+
+1. **Automated Quality Control**: Pre-commit hooks, linting, testing
+2. **Enforced Standards**: Commit message validation, branch naming
+3. **Issue Tracking**: Automated PR-issue linking validation
+4. **CI/CD Integration**: Comprehensive GitHub Actions workflows
+5. **Security**: Automated security scans and vulnerability checks
+6. **Monitoring**: Workflow failure notifications and stale issue management
+7. **Developer Experience**: VS Code configuration and helpful npm scripts
+
+This ensures that the git/GitHub workflow documented in WARP.md is technically implemented and automatically enforced, preventing the common workflow mistakes that were occurring.
+
 This technical implementation plan provides the detailed roadmap for building the GO Commerce Administration Console according to the specifications in `WARP.md`. Each phase builds upon the previous one, ensuring a systematic and maintainable development process.
