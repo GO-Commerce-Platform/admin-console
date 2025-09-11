@@ -39,8 +39,8 @@ export default [
       prettier
     },
     rules: {
-      ...ts.configs.recommended.rules,
-      ...ts.configs['recommended-requiring-type-checking'].rules,
+      ...(ts.configs?.recommended?.rules || {}),
+      ...(ts.configs?.['recommended-requiring-type-checking']?.rules || {}),
 
       // TypeScript specific rules
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -88,8 +88,8 @@ export default [
       prettier
     },
     rules: {
-      ...vue.configs['vue3-recommended'].rules,
-      ...ts.configs.recommended.rules,
+      ...(vue.configs?.['vue3-recommended']?.rules || {}),
+      ...(ts.configs?.recommended?.rules || {}),
 
       // Vue specific rules
       'vue/multi-word-component-names': 'off',
