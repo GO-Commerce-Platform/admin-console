@@ -1,12 +1,24 @@
 # TASKS.md - GO Commerce Administration Console Implementation Tasks
 
+**🚨 CRITICAL: Git/GitHub Workflow Reminders**
+- **NEVER close GitHub issues manually** - let PR merges auto-close them
+- **Always check** `git status` before any `gh issue close` command  
+- **Use feature branches**: `feature/ADMIN-{issue#}-{name}`
+- **Link PRs properly**: Include "Closes #issue-number" in PR descriptions
+- **Emergency recovery**: If issue closed prematurely, commit changes → create PR → reference closed issue
+- **See WARP.md** for complete Git/GitHub workflow documentation
+
+---
+
 This file contains a detailed task checklist for implementing the GO Commerce Administration Console based on the technical plan in `PLAN.md`. Each task is minimal, independently implementable, and trackable.
+
+**GitHub Issue Mapping:** Each major task group corresponds to GitHub issues. Issue numbers are referenced where available.
 
 ## Phase 1: Foundation & Setup (Weeks 1-2)
 
-### 1.1 Project Initialization & Setup
+### 1.1 Project Initialization & Setup **→ GitHub Issue: #1 🔄 OPEN**
 
-- [ ] **Initialize project repository with git**
+- [x] **Initialize project repository with git**
   - Initialize git repository in `/frontend/admin-console`
   - Create initial `.gitignore` for Node.js/Vue project
   - Create initial commit with project structure
@@ -40,7 +52,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Document development workflows and commands
   - Create CONTRIBUTING.md for development standards
 
-### 1.2 TypeScript Type Definitions
+### 1.2 TypeScript Type Definitions **→ GitHub Issue: #1 🔄 OPEN**
 
 - [ ] **Create authentication type definitions**
   - Create `src/types/auth.ts` with UserProfile, Role interfaces
@@ -72,7 +84,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Create `src/types/api.ts` with PaginationParams, ApiError interfaces
   - Define shared utility types and response wrappers
 
-### 1.3 Core Infrastructure
+### 1.3 Core Infrastructure **→ GitHub Issue: #1 🔄 OPEN**
 
 - [ ] **Set up Vite configuration**
   - Configure path aliases (@/ for src/)
@@ -100,7 +112,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 
 ## Phase 1: Authentication System
 
-### 1.4 Keycloak Integration
+### 1.4 Keycloak Integration **→ GitHub Issue: #2 🔄 OPEN**
 
 - [ ] **Create Keycloak service layer**
   - Create `src/services/keycloakService.ts`
@@ -126,7 +138,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Add role-based route protection
   - Create store access validation guards
 
-### 1.5 Basic Layout & Navigation
+### 1.5 Basic Layout & Navigation **→ GitHub Issue: #3 🔄 OPEN**
 
 - [ ] **Create main application layout**
   - Create `src/layouts/AppLayout.vue`
@@ -154,7 +166,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 
 ## Phase 1: Routing Setup
 
-### 1.6 Vue Router Configuration
+### 1.6 Vue Router Configuration **→ GitHub Issue: #3 🔄 OPEN**
 
 - [ ] **Set up basic router configuration**
   - Create `src/router/index.ts`
@@ -182,7 +194,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 
 ## Phase 2: Core Features (Weeks 3-6)
 
-### 2.1 Authentication Pages
+### 2.1 Authentication Pages **→ GitHub Issue: #2 🔄 OPEN**
 
 - [ ] **Create login page component**
   - Create `src/pages/auth/Login.vue`
@@ -202,7 +214,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Add navigation back to authorized areas
   - Implement role-specific messaging
 
-### 2.2 Platform Dashboard (Week 3)
+### 2.2 Platform Dashboard (Week 3) **→ GitHub Issue: #4 🔄 OPEN**
 
 - [ ] **Create platform dashboard layout**
   - Create `src/pages/platform/Dashboard.vue`
@@ -234,7 +246,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Implement real-time updates placeholder
   - Add activity filtering and search
 
-### 2.3 Store Management (Week 4)
+### 2.3 Store Management (Week 4) **→ GitHub Issue: #5 🔄 OPEN**
 
 - [ ] **Create stores listing page**
   - Create `src/pages/platform/Stores.vue`
@@ -266,7 +278,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Add store creation/editing state
   - Create store selection and context management
 
-### 2.4 Product Catalog (Week 5)
+### 2.4 Product Catalog (Week 5) **→ GitHub Issue: #6 🔄 OPEN**
 
 - [ ] **Create products listing page**
   - Create `src/pages/store/Products.vue`
@@ -304,7 +316,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Add category management state
   - Create product filtering and search state
 
-### 2.5 User Management (Week 6)
+### 2.5 User Management (Week 6) **→ GitHub Issue: #7 🔄 OPEN**
 
 - [ ] **Create users listing page**
   - Create `src/pages/platform/Users.vue`
@@ -338,7 +350,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 
 ## Phase 3: Advanced Features (Weeks 7-10)
 
-### 3.1 Customer Management (Week 7)
+### 3.1 Customer Management (Week 7) **→ GitHub Issue: #8 🔄 OPEN**
 
 - [ ] **Create customers listing page**
   - Create `src/pages/store/Customers.vue`
@@ -376,7 +388,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Add customer filtering and search state
   - Create customer segmentation state
 
-### 3.2 Order Management (Weeks 8-9)
+### 3.2 Order Management (Weeks 8-9) **→ GitHub Issue: #9 🔄 OPEN**
 
 - [ ] **Create orders listing page**
   - Create `src/pages/store/Orders.vue`
@@ -420,7 +432,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Add order filtering and search state
   - Create order workflow state management
 
-### 3.3 Analytics & Reporting (Week 10)
+### 3.3 Analytics & Reporting (Week 10) **→ GitHub Issue: #10 🔄 OPEN**
 
 - [ ] **Create dashboard widgets**
   - Create reusable dashboard widget components
@@ -466,7 +478,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 
 ## Phase 4: Polish & Optimization (Weeks 11-12)
 
-### 4.1 Component Library & Design System
+### 4.1 Component Library & Design System **→ GitHub Issue: #11 🔄 OPEN**
 
 - [ ] **Create atomic design components**
   - Create `src/components/atoms/` (Button, Input, Badge, Icon, Loading)
@@ -492,7 +504,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Implement drawer/sidebar components
   - Add toast notification system
 
-### 4.2 Performance Optimization
+### 4.2 Performance Optimization **→ GitHub Issue: #12 🔄 OPEN**
 
 - [ ] **Implement code splitting**
   - Configure route-based code splitting
@@ -518,7 +530,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Create performance budgets
   - Add real user monitoring
 
-### 4.3 Testing Infrastructure
+### 4.3 Testing Infrastructure **→ GitHub Issue: #12 🔄 OPEN**
 
 - [ ] **Set up unit testing framework**
   - Configure Vitest for Vue component testing
@@ -544,7 +556,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Test authentication and authorization flows
   - Add visual regression testing
 
-### 4.4 Production Deployment
+### 4.4 Production Deployment **→ GitHub Issue: #12 🔄 OPEN**
 
 - [ ] **Configure build optimization**
   - Optimize production build configuration
@@ -570,7 +582,7 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
   - Configure reverse proxy settings
   - Create health check endpoints
 
-### 4.5 Documentation & Maintenance
+### 4.5 Documentation & Maintenance **→ GitHub Issue: #12 🔄 OPEN**
 
 - [ ] **Create comprehensive documentation**
   - Write user guide for administrators
@@ -593,9 +605,9 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 ## Git Workflow Integration
 
 ### Git Branch Strategy
-- Use feature branches for each major task: `feature/task-description`
+- Use feature branches for each major task: `feature/ADMIN-{issue#}-{description}`
 - Commit frequently with descriptive messages
-- Link commits to specific tasks using task numbers
+- Link commits to specific GitHub issues using issue numbers
 - Merge to main branch after task completion
 
 ### Commit Message Convention
@@ -607,13 +619,13 @@ test: add unit tests for product service
 ```
 
 ### Task Completion Workflow
-1. Create feature branch: `git checkout -b feature/auth-store`
+1. Create feature branch: `git checkout -b feature/ADMIN-2-authentication-system`
 2. Implement the task
 3. Test the implementation
 4. Commit changes: `git commit -m "feat: implement authentication store"`
-5. Push branch: `git push origin feature/auth-store`
-6. Create pull request for review
-7. Merge to main after approval
+5. Push branch: `git push origin feature/ADMIN-2-authentication-system`
+6. Create pull request with "Closes #2" in description
+7. Merge to main after approval (GitHub auto-closes issue)
 8. Mark task as completed: `- [x]`
 
 ## Notes
