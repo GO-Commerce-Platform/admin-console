@@ -3,7 +3,7 @@
  * This file configures the testing environment for the GO Commerce Admin Console
  */
 
-import { expect, afterEach } from 'vitest'
+import { expect, afterEach, beforeEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/vue'
 import '@testing-library/jest-dom'
 
