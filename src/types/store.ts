@@ -49,7 +49,7 @@ export enum StoreStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
-  PENDING = 'pending'
+  PENDING = 'pending',
 }
 
 export interface StoreSettings {
@@ -81,7 +81,7 @@ export enum PaymentGatewayType {
   PAYPAL = 'paypal',
   SQUARE = 'square',
   BRAINTREE = 'braintree',
-  AUTHORIZE_NET = 'authorize_net'
+  AUTHORIZE_NET = 'authorize_net',
 }
 
 export interface CheckoutSettings {
@@ -149,7 +149,7 @@ export enum SubscriptionPlan {
   FREE = 'free',
   STARTER = 'starter',
   PROFESSIONAL = 'professional',
-  ENTERPRISE = 'enterprise'
+  ENTERPRISE = 'enterprise',
 }
 
 export enum SubscriptionStatus {
@@ -158,7 +158,7 @@ export enum SubscriptionStatus {
   PAST_DUE = 'past_due',
   CANCELED = 'canceled',
   UNPAID = 'unpaid',
-  PAUSED = 'paused'
+  PAUSED = 'paused',
 }
 
 export interface SubscriptionFeature {
@@ -269,7 +269,7 @@ export enum StoreTemplateCategory {
   HOME_GARDEN = 'home_garden',
   SPORTS = 'sports',
   BOOKS = 'books',
-  GENERIC = 'generic'
+  GENERIC = 'generic',
 }
 
 // Store backup and export
@@ -302,7 +302,7 @@ export enum StoreDataType {
   ORDERS = 'orders',
   CATEGORIES = 'categories',
   INVENTORY = 'inventory',
-  SETTINGS = 'settings'
+  SETTINGS = 'settings',
 }
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

@@ -30,7 +30,7 @@ vi.mock('~/env', () => ({
   VITE_API_BASE_URL: 'http://localhost:8080/api/v1',
   VITE_KEYCLOAK_URL: 'http://localhost:9000',
   VITE_KEYCLOAK_REALM: 'gocommerce',
-  VITE_KEYCLOAK_CLIENT_ID: 'gocommerce-admin-console'
+  VITE_KEYCLOAK_CLIENT_ID: 'gocommerce-admin-console',
 }))
 
 // Mock Keycloak for tests to avoid authentication in test environment
@@ -48,15 +48,15 @@ vi.mock('keycloak-js', () => {
         sub: 'test-user-id',
         preferred_username: 'testuser',
         email: 'test@example.com',
-        name: 'Test User'
+        name: 'Test User',
       },
       hasRealmRole: vi.fn().mockReturnValue(true),
       hasResourceRole: vi.fn().mockReturnValue(true),
       realmAccess: { roles: ['platform-admin'] },
       resourceAccess: {
-        'gocommerce-admin-console': { roles: ['admin'] }
-      }
-    }))
+        'gocommerce-admin-console': { roles: ['admin'] },
+      },
+    })),
   }
 })
 

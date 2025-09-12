@@ -101,13 +101,13 @@ export enum TimePeriod {
   WEEK = 'week',
   MONTH = 'month',
   QUARTER = 'quarter',
-  YEAR = 'year'
+  YEAR = 'year',
 }
 
 export enum ComparisonType {
   PREVIOUS_PERIOD = 'previous_period',
   PREVIOUS_YEAR = 'previous_year',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 // Search and filtering
@@ -185,7 +185,7 @@ export enum BulkActionType {
   EXPORT = 'export',
   IMPORT = 'import',
   ARCHIVE = 'archive',
-  RESTORE = 'restore'
+  RESTORE = 'restore',
 }
 
 export interface BulkOperationResult {
@@ -219,7 +219,7 @@ export enum ImportFormat {
   CSV = 'csv',
   XLSX = 'xlsx',
   JSON = 'json',
-  XML = 'xml'
+  XML = 'xml',
 }
 
 export interface ImportOptions {
@@ -248,7 +248,7 @@ export enum ImportStatus {
   PROCESSING = 'processing',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export interface ImportError {
@@ -269,7 +269,7 @@ export enum ExportFormat {
   CSV = 'csv',
   XLSX = 'xlsx',
   PDF = 'pdf',
-  JSON = 'json'
+  JSON = 'json',
 }
 
 // WebSocket and real-time updates

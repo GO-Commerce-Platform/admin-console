@@ -11,7 +11,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import theme from '@/theme';
 import { ApiClient } from '@/services/apiClient';
 import { TokenManager, TokenValidator } from '@/services/auth/tokenManager';
-import { ApiErrorFactory, ValidationError, AuthenticationError } from '@/services/errors/apiError';
+import { ApiErrorFactory, ValidationError, AuthenticationError, ServerError } from '@/services/errors/apiError';
 import { Logger, LogLevel, DevTools, FeatureFlags, Environment } from '@/utils/logger';
 import { 
   createBaseState, 
@@ -83,7 +83,7 @@ describe('API Client', () => {
     expect(id1).toBeDefined();
     expect(id2).toBeDefined();
     expect(id1).not.toBe(id2);
-    expect(id1).toMatch(/^req_\\d+_[a-z0-9]+$/);
+    expect(id1).toMatch(/^req_\d+_[a-z0-9]+$/);
   });
 
   it('should create store-specific client', () => {
@@ -222,11 +222,11 @@ describe('API Error Factory', () => {
   it('should determine if errors are retryable', () => {
     const validationError = new ValidationError();
     const authError = new AuthenticationError();
-    const serverError = new (ApiErrorFactory as any).ServerError();
+    const serverError = new ServerError();
 
     expect(ApiErrorFactory.isRetryable(validationError)).toBe(false);
     expect(ApiErrorFactory.isRetryable(authError)).toBe(false);
-    // Note: ServerError test would need proper implementation
+    expect(ApiErrorFactory.isRetryable(serverError)).toBe(true);
   });
 });
 
