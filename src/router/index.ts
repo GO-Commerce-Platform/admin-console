@@ -1,13 +1,13 @@
 /**
  * Vue Router Configuration
  * Main router setup with authentication, guards, and route definitions
- * 
+ *
  * Related GitHub Issue: #2 - Authentication System & Security
  */
 
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import { setupRouterGuards } from './guards';
-import { logger } from '@/utils/logger';
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { setupRouterGuards } from './guards'
+import { logger } from '@/utils/logger'
 
 /**
  * Route definitions with authentication and authorization metadata
@@ -26,7 +26,26 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/auth/Login.vue'),
     meta: {
       public: true,
+      guestOnly: true, // Authenticated users should be redirected away
       title: 'Sign In - GO Commerce Admin',
+    },
+  },
+  {
+    path: '/auth/callback',
+    name: 'AuthCallback',
+    component: () => import('@/pages/auth/Callback.vue'),
+    meta: {
+      public: true,
+      title: 'Processing Authentication - GO Commerce Admin',
+    },
+  },
+  {
+    path: '/auth/iframe-callback',
+    name: 'IframeAuthCallback',
+    component: () => import('@/pages/auth/IframeCallback.vue'),
+    meta: {
+      public: true,
+      title: 'Processing Authentication - GO Commerce Admin',
     },
   },
   {
@@ -106,7 +125,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/store/:storeId',
     name: 'Store',
-    redirect: (to) => `/store/${to.params.storeId}/dashboard`,
+    redirect: to => `/store/${to.params.storeId}/dashboard`,
     meta: {
       requiresAuth: true,
       storeScoped: true,
@@ -179,7 +198,7 @@ const routes: RouteRecordRaw[] = [
       title: 'Page Not Found - GO Commerce Admin',
     },
   },
-];
+]
 
 /**
  * Create and configure router instance
@@ -190,12 +209,12 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     // Scroll to top on route change, unless user navigated back
     if (savedPosition) {
-      return savedPosition;
+      return savedPosition
     } else {
-      return { top: 0 };
+      return { top: 0 }
     }
   },
-});
+})
 
 /**
  * Set up meta guard for page titles
@@ -203,25 +222,25 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // Set page title if provided
   if (to.meta.title) {
-    document.title = to.meta.title as string;
+    document.title = to.meta.title as string
   } else {
-    document.title = 'GO Commerce Administration Console';
+    document.title = 'GO Commerce Administration Console'
   }
 
-  next();
-});
+  next()
+})
 
 /**
  * Set up authentication and authorization guards
  */
-setupRouterGuards(router);
+setupRouterGuards(router)
 
 /**
  * Global navigation error handler
  */
-router.onError((error) => {
-  logger.error('Router navigation error:', error);
-});
+router.onError(error => {
+  logger.error('Router navigation error:', error)
+})
 
 /**
  * Log navigation in development
@@ -232,14 +251,14 @@ if (import.meta.env.DEV) {
       from: from.path,
       to: to.path,
       meta: to.meta,
-    });
-    next();
-  });
+    })
+    next()
+  })
 }
 
-export default router;
+export default router
 
 // Export route utilities
-export { routes };
+export { routes }
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

@@ -1,42 +1,47 @@
 /**
  * HTTP API Client
  * Configured Axios instance with interceptors for authentication, multi-tenancy, and error handling
- * 
+ *
  * Related GitHub Issue: #1 - Core Infrastructure
  */
 
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
-import { tokenManager } from './auth/tokenManager';
-import { ApiErrorFactory, type BaseApiError } from './errors/apiError';
-import type { PaginationParams, ApiResponse } from '@/types/api';
-import type { StoreManager } from '@/stores';
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosError,
+} from 'axios'
+import { tokenManager } from './auth/tokenManager'
+import { ApiErrorFactory, type BaseApiError } from './errors/apiError'
+import type { PaginationParams, ApiResponse } from '@/types/api'
+import type { StoreManager } from '@/stores'
 
 /**
  * API client configuration
  */
 interface ApiClientConfig {
-  baseURL: string;
-  timeout: number;
-  retryAttempts: number;
-  retryDelay: number;
+  baseURL: string
+  timeout: number
+  retryAttempts: number
+  retryDelay: number
 }
 
 /**
  * Request configuration with additional options
  */
 interface RequestConfig extends AxiosRequestConfig {
-  storeId?: string;
-  skipAuth?: boolean;
-  skipRetry?: boolean;
-  requestId?: string;
+  storeId?: string
+  skipAuth?: boolean
+  skipRetry?: boolean
+  requestId?: string
 }
 
 /**
  * Request queue item for handling concurrent requests during token refresh
  */
 interface QueuedRequest {
-  resolve: (token: string) => void;
-  reject: (error: Error) => void;
+  resolve: (token: string) => void
+  reject: (error: Error) => void
 }
 
 /**
@@ -44,10 +49,10 @@ interface QueuedRequest {
  * Provides a configured Axios instance with authentication, error handling, and retry logic
  */
 export class ApiClient {
-  private client: AxiosInstance;
-  private config: ApiClientConfig;
-  private isRefreshing = false;
-  private requestQueue: QueuedRequest[] = [];
+  private client: AxiosInstance
+  private config: ApiClientConfig
+  private isRefreshing = false
+  private requestQueue: QueuedRequest[] = []
 
   constructor(config: Partial<ApiClientConfig> = {}) {
     this.config = {
@@ -56,18 +61,18 @@ export class ApiClient {
       retryAttempts: 3,
       retryDelay: 1000, // 1 second
       ...config,
-    };
+    }
 
     this.client = axios.create({
       baseURL: this.config.baseURL,
       timeout: this.config.timeout,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
-    });
+    })
 
-    this.setupInterceptors();
+    this.setupInterceptors()
   }
 
   /**
@@ -76,15 +81,15 @@ export class ApiClient {
   private setupInterceptors(): void {
     // Request interceptor
     this.client.interceptors.request.use(
-      (config) => this.handleRequest(config as RequestConfig),
-      (error) => Promise.reject(error)
-    );
+      config => this.handleRequest(config as RequestConfig),
+      error => Promise.reject(error)
+    )
 
     // Response interceptor
     this.client.interceptors.response.use(
-      (response) => this.handleResponse(response),
-      (error) => this.handleResponseError(error)
-    );
+      response => this.handleResponse(response),
+      error => this.handleResponseError(error)
+    )
   }
 
   /**
@@ -92,34 +97,34 @@ export class ApiClient {
    */
   private async handleRequest(config: RequestConfig): Promise<RequestConfig> {
     // Generate unique request ID for tracing
-    const requestId = config.requestId || this.generateRequestId();
+    const requestId = config.requestId || this.generateRequestId()
     config.headers = {
       ...config.headers,
       'X-Request-ID': requestId,
-    };
+    }
 
     // Add authentication header if not skipped
     if (!config.skipAuth) {
-      const authHeader = await this.getAuthHeader();
+      const authHeader = await this.getAuthHeader()
       if (authHeader) {
-        config.headers.Authorization = authHeader;
+        config.headers.Authorization = authHeader
       }
     }
 
     // Add store context header for multi-tenant support
     if (config.storeId) {
-      config.headers['X-Store-ID'] = config.storeId;
+      config.headers['X-Store-ID'] = config.storeId
     } else {
       // Try to get selected store from auth store if available
       try {
-        const authStore = this.getAuthStore();
+        const authStore = this.getAuthStore()
         if (authStore?.selectedStoreId) {
-          config.headers['X-Store-ID'] = authStore.selectedStoreId;
+          config.headers['X-Store-ID'] = authStore.selectedStoreId
         }
       } catch (error) {
         // Auth store not available or not initialized, continue without store context
         if (import.meta.env.DEV) {
-          console.debug('[API Client] Auth store not available for store context');
+          console.debug('[API Client] Auth store not available for store context')
         }
       }
     }
@@ -130,10 +135,10 @@ export class ApiClient {
         headers: config.headers,
         data: config.data,
         params: config.params,
-      });
+      })
     }
 
-    return config;
+    return config
   }
 
   /**
@@ -142,89 +147,95 @@ export class ApiClient {
   private handleResponse(response: AxiosResponse): AxiosResponse {
     // Log response in development
     if (import.meta.env.DEV) {
-      console.log(`[API Response] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`, {
-        status: response.status,
-        data: response.data,
-        headers: response.headers,
-      });
+      console.log(
+        `[API Response] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`,
+        {
+          status: response.status,
+          data: response.data,
+          headers: response.headers,
+        }
+      )
     }
 
-    return response;
+    return response
   }
 
   /**
    * Handle response errors
    */
   private async handleResponseError(error: AxiosError): Promise<never> {
-    const config = error.config as RequestConfig;
-    
+    const config = error.config as RequestConfig
+
     // Log error in development
     if (import.meta.env.DEV) {
-      console.error(`[API Error] ${error.response?.status} ${config?.method?.toUpperCase()} ${config?.url}`, {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-      });
+      console.error(
+        `[API Error] ${error.response?.status} ${config?.method?.toUpperCase()} ${config?.url}`,
+        {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        }
+      )
     }
 
     // Handle 401 errors with token refresh
     if (error.response?.status === 401 && !config?.skipAuth) {
-      return this.handleAuthError(error);
+      return this.handleAuthError(error)
     }
 
     // Handle retryable errors
     if (this.shouldRetry(error) && !config?.skipRetry) {
-      return this.retryRequest(error);
+      return this.retryRequest(error)
     }
 
     // Convert to custom API error
-    const apiError = ApiErrorFactory.fromAxiosError(error);
-    throw apiError;
+    const apiError = ApiErrorFactory.fromAxiosError(error)
+    throw apiError
   }
 
   /**
    * Handle 401 authentication errors with token refresh
    */
   private async handleAuthError(error: AxiosError): Promise<never> {
-    const config = error.config as RequestConfig;
+    const config = error.config as RequestConfig
 
     // If already refreshing, queue the request
     if (this.isRefreshing) {
       return new Promise((resolve, reject) => {
-        this.requestQueue.push({ resolve, reject });
-      }).then((token) => {
+        this.requestQueue.push({ resolve, reject })
+      }).then(token => {
         if (config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers.Authorization = `Bearer ${token}`
         }
-        return this.client(config);
-      });
+        return this.client(config)
+      })
     }
 
-    this.isRefreshing = true;
+    this.isRefreshing = true
 
     try {
       // Attempt to refresh the token
-      const newToken = await tokenManager.getValidAccessToken();
-      
+      const newToken = await tokenManager.getValidAccessToken()
+
       if (newToken) {
         // Process the queued requests
-        this.processRequestQueue(newToken);
-        
+        this.processRequestQueue(newToken)
+
         // Retry the original request
         if (config.headers) {
-          config.headers.Authorization = `Bearer ${newToken}`;
+          config.headers.Authorization = `Bearer ${newToken}`
         }
-        return this.client(config);
+        return this.client(config)
       } else {
         // Token refresh failed, reject all queued requests
-        this.processRequestQueue(null);
-        throw ApiErrorFactory.fromAxiosError(error);
+        this.processRequestQueue(null)
+        throw ApiErrorFactory.fromAxiosError(error)
       }
     } catch (refreshError) {
-      this.processRequestQueue(null);
-      throw ApiErrorFactory.fromAxiosError(error);
+      this.processRequestQueue(null)
+      throw ApiErrorFactory.fromAxiosError(error)
     } finally {
-      this.isRefreshing = false;
+      this.isRefreshing = false
     }
   }
 
@@ -234,39 +245,39 @@ export class ApiClient {
   private processRequestQueue(token: string | null): void {
     this.requestQueue.forEach(({ resolve, reject }) => {
       if (token) {
-        resolve(token);
+        resolve(token)
       } else {
-        reject(new Error('Token refresh failed'));
+        reject(new Error('Token refresh failed'))
       }
-    });
-    this.requestQueue = [];
+    })
+    this.requestQueue = []
   }
 
   /**
    * Determine if request should be retried
    */
   private shouldRetry(error: AxiosError): boolean {
-    const config = error.config as RequestConfig & { _retryCount?: number };
-    
+    const config = error.config as RequestConfig & { _retryCount?: number }
+
     if (!config || config._retryCount >= this.config.retryAttempts) {
-      return false;
+      return false
     }
 
     // Retry on network errors or 5xx server errors
-    return !error.response || (error.response.status >= 500);
+    return !error.response || error.response.status >= 500
   }
 
   /**
    * Retry failed request with exponential backoff
    */
   private async retryRequest(error: AxiosError): Promise<AxiosResponse> {
-    const config = error.config as RequestConfig & { _retryCount?: number };
-    config._retryCount = (config._retryCount || 0) + 1;
+    const config = error.config as RequestConfig & { _retryCount?: number }
+    config._retryCount = (config._retryCount || 0) + 1
 
-    const delay = this.config.retryDelay * Math.pow(2, config._retryCount - 1);
-    await new Promise(resolve => setTimeout(resolve, delay));
+    const delay = this.config.retryDelay * Math.pow(2, config._retryCount - 1)
+    await new Promise(resolve => setTimeout(resolve, delay))
 
-    return this.client(config);
+    return this.client(config)
   }
 
   /**
@@ -274,11 +285,11 @@ export class ApiClient {
    */
   private async getAuthHeader(): Promise<string | null> {
     try {
-      const token = await tokenManager.getValidAccessToken();
-      return token ? `Bearer ${token}` : null;
+      const token = await tokenManager.getValidAccessToken()
+      return token ? `Bearer ${token}` : null
     } catch (error) {
-      console.warn('Failed to get auth token:', error);
-      return null;
+      console.warn('Failed to get auth token:', error)
+      return null
     }
   }
 
@@ -286,7 +297,7 @@ export class ApiClient {
    * Generate unique request ID for tracing
    */
   private generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   /**
@@ -296,22 +307,19 @@ export class ApiClient {
     try {
       // Dynamically import to avoid circular dependency
       // This will be resolved at runtime when stores are available
-      const storeManager = (globalThis as any).__STORE_MANAGER__ || StoreManager;
-      return storeManager?.getStore?.('auth');
+      const storeManager = (globalThis as any).__STORE_MANAGER__ || StoreManager
+      return storeManager?.getStore?.('auth')
     } catch {
-      return null;
+      return null
     }
   }
 
   /**
    * GET request with type safety
    */
-  public async get<T = any>(
-    url: string,
-    config: RequestConfig = {}
-  ): Promise<ApiResponse<T>> {
-    const response = await this.client.get<ApiResponse<T>>(url, config);
-    return response.data;
+  public async get<T = any>(url: string, config: RequestConfig = {}): Promise<ApiResponse<T>> {
+    const response = await this.client.get<ApiResponse<T>>(url, config)
+    return response.data
   }
 
   /**
@@ -322,8 +330,8 @@ export class ApiClient {
     data?: D,
     config: RequestConfig = {}
   ): Promise<ApiResponse<T>> {
-    const response = await this.client.post<ApiResponse<T>>(url, data, config);
-    return response.data;
+    const response = await this.client.post<ApiResponse<T>>(url, data, config)
+    return response.data
   }
 
   /**
@@ -334,8 +342,8 @@ export class ApiClient {
     data?: D,
     config: RequestConfig = {}
   ): Promise<ApiResponse<T>> {
-    const response = await this.client.put<ApiResponse<T>>(url, data, config);
-    return response.data;
+    const response = await this.client.put<ApiResponse<T>>(url, data, config)
+    return response.data
   }
 
   /**
@@ -346,19 +354,16 @@ export class ApiClient {
     data?: D,
     config: RequestConfig = {}
   ): Promise<ApiResponse<T>> {
-    const response = await this.client.patch<ApiResponse<T>>(url, data, config);
-    return response.data;
+    const response = await this.client.patch<ApiResponse<T>>(url, data, config)
+    return response.data
   }
 
   /**
    * DELETE request with type safety
    */
-  public async delete<T = any>(
-    url: string,
-    config: RequestConfig = {}
-  ): Promise<ApiResponse<T>> {
-    const response = await this.client.delete<ApiResponse<T>>(url, config);
-    return response.data;
+  public async delete<T = any>(url: string, config: RequestConfig = {}): Promise<ApiResponse<T>> {
+    const response = await this.client.delete<ApiResponse<T>>(url, config)
+    return response.data
   }
 
   /**
@@ -377,8 +382,8 @@ export class ApiClient {
         ...params,
         ...config.params,
       },
-    });
-    return response.data;
+    })
+    return response.data
   }
 
   /**
@@ -388,11 +393,11 @@ export class ApiClient {
     url: string,
     file: File,
     config: RequestConfig & {
-      onUploadProgress?: (progressEvent: any) => void;
+      onUploadProgress?: (progressEvent: any) => void
     } = {}
   ): Promise<ApiResponse<T>> {
-    const formData = new FormData();
-    formData.append('file', file);
+    const formData = new FormData()
+    formData.append('file', file)
 
     const response = await this.client.post<ApiResponse<T>>(url, formData, {
       ...config,
@@ -400,46 +405,46 @@ export class ApiClient {
         ...config.headers,
         'Content-Type': 'multipart/form-data',
       },
-    });
-    return response.data;
+    })
+    return response.data
   }
 
   /**
    * Make request with store context
    */
   public withStore(storeId: string): ApiClient {
-    const newClient = new ApiClient(this.config);
-    
-    // Override the handleRequest method to always include storeId
-    const originalHandleRequest = newClient.handleRequest.bind(newClient);
-    newClient.handleRequest = async (config: RequestConfig) => {
-      config.storeId = storeId;
-      return originalHandleRequest(config);
-    };
+    const newClient = new ApiClient(this.config)
 
-    return newClient;
+    // Override the handleRequest method to always include storeId
+    const originalHandleRequest = newClient.handleRequest.bind(newClient)
+    newClient.handleRequest = async (config: RequestConfig) => {
+      config.storeId = storeId
+      return originalHandleRequest(config)
+    }
+
+    return newClient
   }
 
   /**
    * Get raw Axios instance (use sparingly)
    */
   public getRawClient(): AxiosInstance {
-    return this.client;
+    return this.client
   }
 
   /**
    * Update base URL dynamically
    */
   public setBaseURL(baseURL: string): void {
-    this.config.baseURL = baseURL;
-    this.client.defaults.baseURL = baseURL;
+    this.config.baseURL = baseURL
+    this.client.defaults.baseURL = baseURL
   }
 
   /**
    * Set default headers
    */
   public setDefaultHeaders(headers: Record<string, string>): void {
-    Object.assign(this.client.defaults.headers.common, headers);
+    Object.assign(this.client.defaults.headers.common, headers)
   }
 
   /**
@@ -447,10 +452,10 @@ export class ApiClient {
    */
   public async healthCheck(): Promise<boolean> {
     try {
-      await this.get('/health', { skipAuth: true, skipRetry: true });
-      return true;
+      await this.get('/health', { skipAuth: true, skipRetry: true })
+      return true
     } catch (error) {
-      return false;
+      return false
     }
   }
 }
@@ -458,13 +463,13 @@ export class ApiClient {
 /**
  * Default API client instance
  */
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient()
 
 /**
  * Helper function to create a store-specific API client
  */
 export function createStoreApiClient(storeId: string): ApiClient {
-  return apiClient.withStore(storeId);
+  return apiClient.withStore(storeId)
 }
 
 /**
@@ -472,23 +477,18 @@ export function createStoreApiClient(storeId: string): ApiClient {
  */
 export function handleApiError(error: unknown): BaseApiError {
   if (error instanceof Error) {
-    return ApiErrorFactory.fromAxiosError(error as AxiosError);
+    return ApiErrorFactory.fromAxiosError(error as AxiosError)
   }
-  
+
   // Fallback for non-Error objects
   return new (class extends BaseApiError {
     constructor() {
-      super(
-        'An unexpected error occurred',
-        0,
-        'Unknown Error',
-        'UNKNOWN_ERROR'
-      );
+      super('An unexpected error occurred', 0, 'Unknown Error', 'UNKNOWN_ERROR')
     }
-  })();
+  })()
 }
 
 // Export types
-export type { ApiClientConfig, RequestConfig };
+export type { ApiClientConfig, RequestConfig }
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

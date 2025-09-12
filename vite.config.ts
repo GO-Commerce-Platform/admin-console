@@ -5,7 +5,13 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  
+
+  // Vue feature flags
+  define: {
+    __VUE_OPTIONS_API__: true,
+    __VUE_PROD_DEVTOOLS__: false,
+  },
+
   // Path resolution
   resolve: {
     alias: {
@@ -19,36 +25,25 @@ export default defineConfig({
       '@/assets': resolve(__dirname, './src/assets'),
       '@/pages': resolve(__dirname, './src/pages'),
       '@/layouts': resolve(__dirname, './src/layouts'),
-      '@/router': resolve(__dirname, './src/router')
-    }
+      '@/router': resolve(__dirname, './src/router'),
+      // Fix Vue runtime compilation issue
+      'vue': 'vue/dist/vue.esm-bundler.js',
+    },
   },
-  
-  // Dependency optimization configuration
+
+  // Dependency optimization configuration - simplified
   optimizeDeps: {
-    // Exclude problematic dependencies from pre-bundling
-    exclude: [
-      '@chakra-ui/vue-utils',
-      '@chakra-ui/vue-system',
-      '@vueuse/motion'
-    ],
-    // Include dependencies that should be pre-bundled
-    include: [
-      '@chakra-ui/vue-next',
-      '@chakra-ui/styled-system',
-      '@vueuse/core',
-      '@vueuse/shared'
-    ],
     // Force re-optimization on startup
-    force: true
+    force: true,
   },
-  
+
   // Development server configuration
   server: {
     port: 5173,
     host: true,
-    strictPort: true
+    strictPort: true,
   },
-  
+
   // Build configuration
   build: {
     target: 'esnext',
@@ -59,16 +54,16 @@ export default defineConfig({
         manualChunks: {
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
           'ui-vendor': ['@chakra-ui/vue-next'],
-          'utils-vendor': ['axios', '@vueuse/core', 'date-fns']
-        }
-      }
-    }
+          'utils-vendor': ['axios', '@vueuse/core', 'date-fns'],
+        },
+      },
+    },
   },
-  
+
   // Testing configuration (for Vitest)
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test-setup.ts']
-  }
+    setupFiles: ['./src/test-setup.ts'],
+  },
 })

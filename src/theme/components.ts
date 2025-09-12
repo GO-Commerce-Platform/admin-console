@@ -1,11 +1,20 @@
 /**
  * Chakra UI Component Style Overrides
  * Custom component styles that align with the GO Commerce Administration Console design system
- * 
+ *
  * Related GitHub Issue: #1 - Core Infrastructure
  */
 
-import { ComponentStyleConfig } from '@chakra-ui/vue-next';
+// Remove problematic import for now
+// import { ComponentStyleConfig } from '@chakra-ui/vue-next'
+
+// Define our own type for component styles
+type ComponentStyleConfig = {
+  baseStyle?: Record<string, any>
+  sizes?: Record<string, Record<string, any>>
+  variants?: Record<string, Record<string, any>>
+  defaultProps?: Record<string, any>
+}
 
 // Button component styles
 export const Button: ComponentStyleConfig = {
@@ -93,7 +102,7 @@ export const Button: ComponentStyleConfig = {
     variant: 'primary',
     size: 'md',
   },
-};
+}
 
 // Input component styles
 export const Input: ComponentStyleConfig = {
@@ -143,7 +152,7 @@ export const Input: ComponentStyleConfig = {
   defaultProps: {
     size: 'md',
   },
-};
+}
 
 // Card component styles
 export const Card: ComponentStyleConfig = {
@@ -199,7 +208,7 @@ export const Card: ComponentStyleConfig = {
   defaultProps: {
     variant: 'elevated',
   },
-};
+}
 
 // Table component styles
 export const Table: ComponentStyleConfig = {
@@ -253,7 +262,7 @@ export const Table: ComponentStyleConfig = {
       },
     },
   },
-};
+}
 
 // Modal component styles
 export const Modal: ComponentStyleConfig = {
@@ -309,7 +318,7 @@ export const Modal: ComponentStyleConfig = {
   defaultProps: {
     size: 'md',
   },
-};
+}
 
 // Badge component styles
 export const Badge: ComponentStyleConfig = {
@@ -351,7 +360,7 @@ export const Badge: ComponentStyleConfig = {
   defaultProps: {
     variant: 'subtle',
   },
-};
+}
 
 // Alert component styles
 export const Alert: ComponentStyleConfig = {
@@ -404,7 +413,7 @@ export const Alert: ComponentStyleConfig = {
   defaultProps: {
     variant: 'info',
   },
-};
+}
 
 // Export all component overrides
 export const components = {
@@ -415,8 +424,8 @@ export const components = {
   Modal,
   Badge,
   Alert,
-};
+}
 
-export default components;
+export default components
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

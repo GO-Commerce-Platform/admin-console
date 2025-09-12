@@ -1,7 +1,7 @@
 /**
  * Application Logger
  * Provides consistent logging across the application with different levels and development tools
- * 
+ *
  * Related GitHub Issue: #1 - Core Infrastructure
  */
 
@@ -21,24 +21,24 @@ export enum LogLevel {
  * Log entry interface
  */
 interface LogEntry {
-  timestamp: Date;
-  level: LogLevel;
-  category: string;
-  message: string;
-  data?: any;
-  stack?: string;
+  timestamp: Date
+  level: LogLevel
+  category: string
+  message: string
+  data?: any
+  stack?: string
 }
 
 /**
  * Logger configuration
  */
 interface LoggerConfig {
-  level: LogLevel;
-  enableConsole: boolean;
-  enableStorage: boolean;
-  maxStorageEntries: number;
-  categories: string[];
-  colors: Record<LogLevel, string>;
+  level: LogLevel
+  enableConsole: boolean
+  enableStorage: boolean
+  maxStorageEntries: number
+  categories: string[]
+  colors: Record<LogLevel, string>
 }
 
 /**
@@ -53,45 +53,45 @@ const DEFAULT_CONFIG: LoggerConfig = {
   colors: {
     [LogLevel.TRACE]: '#6B7280', // Gray
     [LogLevel.DEBUG]: '#3B82F6', // Blue
-    [LogLevel.INFO]: '#059669',  // Green
-    [LogLevel.WARN]: '#D97706',  // Yellow
+    [LogLevel.INFO]: '#059669', // Green
+    [LogLevel.WARN]: '#D97706', // Yellow
     [LogLevel.ERROR]: '#DC2626', // Red
     [LogLevel.FATAL]: '#7C2D12', // Dark Red
   },
-};
+}
 
 /**
  * Main Logger class
  */
 export class Logger {
-  private config: LoggerConfig;
-  private entries: LogEntry[] = [];
-  private category: string;
+  private config: LoggerConfig
+  private entries: LogEntry[] = []
+  private category: string
 
   constructor(category: string = 'App', config: Partial<LoggerConfig> = {}) {
-    this.category = category;
-    this.config = { ...DEFAULT_CONFIG, ...config };
+    this.category = category
+    this.config = { ...DEFAULT_CONFIG, ...config }
   }
 
   /**
    * Set the minimum log level
    */
   setLevel(level: LogLevel): void {
-    this.config.level = level;
+    this.config.level = level
   }
 
   /**
    * Get the current log level
    */
   getLevel(): LogLevel {
-    return this.config.level;
+    return this.config.level
   }
 
   /**
    * Check if a log level is enabled
    */
   isLevelEnabled(level: LogLevel): boolean {
-    return level >= this.config.level;
+    return level >= this.config.level
   }
 
   /**
@@ -105,33 +105,33 @@ export class Logger {
       message,
       data,
       stack: level >= LogLevel.ERROR ? new Error().stack : undefined,
-    };
+    }
   }
 
   /**
    * Log an entry
    */
   private log(level: LogLevel, message: string, data?: any): void {
-    if (!this.isLevelEnabled(level)) return;
+    if (!this.isLevelEnabled(level)) return
 
-    const entry = this.createEntry(level, message, data);
+    const entry = this.createEntry(level, message, data)
 
     // Store entry
     if (this.config.enableStorage) {
-      this.entries.push(entry);
+      this.entries.push(entry)
       if (this.entries.length > this.config.maxStorageEntries) {
-        this.entries.shift(); // Remove oldest entry
+        this.entries.shift() // Remove oldest entry
       }
     }
 
     // Console output
     if (this.config.enableConsole) {
-      this.logToConsole(entry);
+      this.logToConsole(entry)
     }
 
     // External logging service (could be added later)
     if (level >= LogLevel.ERROR) {
-      this.logToExternalService(entry);
+      this.logToExternalService(entry)
     }
   }
 
@@ -139,26 +139,26 @@ export class Logger {
    * Log to browser console with formatting
    */
   private logToConsole(entry: LogEntry): void {
-    const timestamp = entry.timestamp.toISOString();
-    const levelName = LogLevel[entry.level];
-    const color = this.config.colors[entry.level];
-    
-    const prefix = `%c[${timestamp}] [${levelName}] [${entry.category}]`;
-    const style = `color: ${color}; font-weight: bold;`;
+    const timestamp = entry.timestamp.toISOString()
+    const levelName = LogLevel[entry.level]
+    const color = this.config.colors[entry.level]
 
-    const consoleMethod = this.getConsoleMethod(entry.level);
+    const prefix = `%c[${timestamp}] [${levelName}] [${entry.category}]`
+    const style = `color: ${color}; font-weight: bold;`
+
+    const consoleMethod = this.getConsoleMethod(entry.level)
 
     if (entry.data) {
-      consoleMethod(prefix, style, entry.message, entry.data);
+      consoleMethod(prefix, style, entry.message, entry.data)
     } else {
-      consoleMethod(prefix, style, entry.message);
+      consoleMethod(prefix, style, entry.message)
     }
 
     // Log stack trace for errors
     if (entry.stack && entry.level >= LogLevel.ERROR) {
-      console.groupCollapsed('Stack Trace');
-      console.log(entry.stack);
-      console.groupEnd();
+      console.groupCollapsed('Stack Trace')
+      console.log(entry.stack)
+      console.groupEnd()
     }
   }
 
@@ -169,16 +169,16 @@ export class Logger {
     switch (level) {
       case LogLevel.TRACE:
       case LogLevel.DEBUG:
-        return console.debug;
+        return console.debug
       case LogLevel.INFO:
-        return console.info;
+        return console.info
       case LogLevel.WARN:
-        return console.warn;
+        return console.warn
       case LogLevel.ERROR:
       case LogLevel.FATAL:
-        return console.error;
+        return console.error
       default:
-        return console.log;
+        return console.log
     }
   }
 
@@ -189,7 +189,7 @@ export class Logger {
     // TODO: Implement external logging service integration
     // This could send logs to services like Sentry, LogRocket, etc.
     if (import.meta.env.DEV) {
-      console.debug('[Logger] Would send to external service:', entry);
+      console.debug('[Logger] Would send to external service:', entry)
     }
   }
 
@@ -197,39 +197,45 @@ export class Logger {
    * Public logging methods
    */
   trace(message: string, data?: any): void {
-    this.log(LogLevel.TRACE, message, data);
+    this.log(LogLevel.TRACE, message, data)
   }
 
   debug(message: string, data?: any): void {
-    this.log(LogLevel.DEBUG, message, data);
+    this.log(LogLevel.DEBUG, message, data)
   }
 
   info(message: string, data?: any): void {
-    this.log(LogLevel.INFO, message, data);
+    this.log(LogLevel.INFO, message, data)
   }
 
   warn(message: string, data?: any): void {
-    this.log(LogLevel.WARN, message, data);
+    this.log(LogLevel.WARN, message, data)
   }
 
   error(message: string, error?: Error | any): void {
-    const data = error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    } : error;
-    
-    this.log(LogLevel.ERROR, message, data);
+    const data =
+      error instanceof Error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          }
+        : error
+
+    this.log(LogLevel.ERROR, message, data)
   }
 
   fatal(message: string, error?: Error | any): void {
-    const data = error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    } : error;
-    
-    this.log(LogLevel.FATAL, message, data);
+    const data =
+      error instanceof Error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          }
+        : error
+
+    this.log(LogLevel.FATAL, message, data)
   }
 
   /**
@@ -237,13 +243,13 @@ export class Logger {
    */
   time(label: string): void {
     if (this.isLevelEnabled(LogLevel.DEBUG)) {
-      console.time(`[${this.category}] ${label}`);
+      console.time(`[${this.category}] ${label}`)
     }
   }
 
   timeEnd(label: string): void {
     if (this.isLevelEnabled(LogLevel.DEBUG)) {
-      console.timeEnd(`[${this.category}] ${label}`);
+      console.timeEnd(`[${this.category}] ${label}`)
     }
   }
 
@@ -253,16 +259,16 @@ export class Logger {
   group(label: string, collapsed: boolean = false): void {
     if (this.isLevelEnabled(LogLevel.DEBUG)) {
       if (collapsed) {
-        console.groupCollapsed(`[${this.category}] ${label}`);
+        console.groupCollapsed(`[${this.category}] ${label}`)
       } else {
-        console.group(`[${this.category}] ${label}`);
+        console.group(`[${this.category}] ${label}`)
       }
     }
   }
 
   groupEnd(): void {
     if (this.isLevelEnabled(LogLevel.DEBUG)) {
-      console.groupEnd();
+      console.groupEnd()
     }
   }
 
@@ -272,9 +278,9 @@ export class Logger {
   table(data: any, label?: string): void {
     if (this.isLevelEnabled(LogLevel.DEBUG)) {
       if (label) {
-        console.log(`[${this.category}] ${label}`);
+        console.log(`[${this.category}] ${label}`)
       }
-      console.table(data);
+      console.table(data)
     }
   }
 
@@ -283,30 +289,30 @@ export class Logger {
    */
   getEntries(level?: LogLevel): LogEntry[] {
     if (level !== undefined) {
-      return this.entries.filter(entry => entry.level >= level);
+      return this.entries.filter(entry => entry.level >= level)
     }
-    return [...this.entries];
+    return [...this.entries]
   }
 
   /**
    * Clear all stored entries
    */
   clearEntries(): void {
-    this.entries = [];
+    this.entries = []
   }
 
   /**
    * Export logs as JSON
    */
   exportLogs(): string {
-    return JSON.stringify(this.entries, null, 2);
+    return JSON.stringify(this.entries, null, 2)
   }
 
   /**
    * Create a child logger with a sub-category
    */
   child(subCategory: string): Logger {
-    return new Logger(`${this.category}:${subCategory}`, this.config);
+    return new Logger(`${this.category}:${subCategory}`, this.config)
   }
 }
 
@@ -314,94 +320,87 @@ export class Logger {
  * Development debugging utilities
  */
 export class DevTools {
-  private static isEnabled = import.meta.env.DEV;
+  private static isEnabled = import.meta.env.DEV
 
   /**
    * Enable/disable dev tools
    */
   static setEnabled(enabled: boolean): void {
-    DevTools.isEnabled = enabled;
+    DevTools.isEnabled = enabled
   }
 
   /**
    * Debug function execution time
    */
-  static timeFunction<T extends (...args: any[]) => any>(
-    fn: T,
-    label?: string
-  ): T {
-    if (!DevTools.isEnabled) return fn;
+  static timeFunction<T extends (...args: any[]) => any>(fn: T, label?: string): T {
+    if (!DevTools.isEnabled) return fn
 
     return ((...args: any[]) => {
-      const name = label || fn.name || 'anonymous';
-      const start = performance.now();
-      const result = fn(...args);
-      const end = performance.now();
-      
-      console.debug(`[DevTools] Function '${name}' took ${(end - start).toFixed(2)}ms`);
-      
-      return result;
-    }) as T;
+      const name = label || fn.name || 'anonymous'
+      const start = performance.now()
+      const result = fn(...args)
+      const end = performance.now()
+
+      console.debug(`[DevTools] Function '${name}' took ${(end - start).toFixed(2)}ms`)
+
+      return result
+    }) as T
   }
 
   /**
    * Debug async function execution time
    */
-  static timeAsyncFunction<T extends (...args: any[]) => Promise<any>>(
-    fn: T,
-    label?: string
-  ): T {
-    if (!DevTools.isEnabled) return fn;
+  static timeAsyncFunction<T extends (...args: any[]) => Promise<any>>(fn: T, label?: string): T {
+    if (!DevTools.isEnabled) return fn
 
     return (async (...args: any[]) => {
-      const name = label || fn.name || 'anonymous';
-      const start = performance.now();
-      const result = await fn(...args);
-      const end = performance.now();
-      
-      console.debug(`[DevTools] Async function '${name}' took ${(end - start).toFixed(2)}ms`);
-      
-      return result;
-    }) as T;
+      const name = label || fn.name || 'anonymous'
+      const start = performance.now()
+      const result = await fn(...args)
+      const end = performance.now()
+
+      console.debug(`[DevTools] Async function '${name}' took ${(end - start).toFixed(2)}ms`)
+
+      return result
+    }) as T
   }
 
   /**
    * Log component render cycles
    */
   static logRender(componentName: string, props?: any): void {
-    if (!DevTools.isEnabled) return;
-    
-    console.debug(`[DevTools] Rendering component: ${componentName}`, props);
+    if (!DevTools.isEnabled) return
+
+    console.debug(`[DevTools] Rendering component: ${componentName}`, props)
   }
 
   /**
    * Log API calls
    */
   static logApiCall(method: string, url: string, data?: any): void {
-    if (!DevTools.isEnabled) return;
-    
-    console.group(`[DevTools] API Call: ${method.toUpperCase()} ${url}`);
+    if (!DevTools.isEnabled) return
+
+    console.group(`[DevTools] API Call: ${method.toUpperCase()} ${url}`)
     if (data) {
-      console.log('Data:', data);
+      console.log('Data:', data)
     }
-    console.groupEnd();
+    console.groupEnd()
   }
 
   /**
    * Add global debug utilities to window object
    */
   static enableGlobalDebug(): void {
-    if (typeof window === 'undefined' || !DevTools.isEnabled) return;
-
-    (window as any).__GOCOMMERCE_DEBUG__ = {
-      logger: logger,
+    if (typeof window === 'undefined' || !DevTools.isEnabled) return
+    ;(window as any).__GOCOMMERCE_DEBUG__ = {
+      logger,
       performance: {
         mark: (name: string) => performance.mark(name),
         measure: (name: string, start: string, end?: string) => {
-          performance.measure(name, start, end);
-          const measures = performance.getEntriesByName(name);
-          const latest = measures[measures.length - 1];
-          console.log(`[Performance] ${name}: ${latest.duration.toFixed(2)}ms`);
+          performance.measure(name, start, end)
+          const measures = performance.getEntriesByName(name)
+          const latest = measures[measures.length - 1]
+          console.log(`[Performance] ${name}: ${latest.duration.toFixed(2)}ms`)
         },
         getEntries: () => performance.getEntries(),
         clearMarks: () => performance.clearMarks(),
@@ -409,17 +408,17 @@ export class DevTools {
       },
       memory: () => {
         if ('memory' in performance) {
-          return (performance as any).memory;
+          return (performance as any).memory
         }
-        return 'Memory API not available';
+        return 'Memory API not available'
       },
       stores: () => {
         // This will be populated by the store manager
-        return (window as any).__STORE_MANAGER__?.getAllStores() || {};
+        return (window as any).__STORE_MANAGER__?.getAllStores() || {}
       },
-    };
+    }
 
-    console.log('[DevTools] Global debug utilities available at window.__GOCOMMERCE_DEBUG__');
+    console.log('[DevTools] Global debug utilities available at window.__GOCOMMERCE_DEBUG__')
   }
 }
 
@@ -427,27 +426,27 @@ export class DevTools {
  * Feature flags system for gradual rollouts
  */
 export class FeatureFlags {
-  private static flags: Map<string, boolean> = new Map();
+  private static flags: Map<string, boolean> = new Map()
 
   /**
    * Set a feature flag
    */
   static setFlag(name: string, enabled: boolean): void {
-    FeatureFlags.flags.set(name, enabled);
+    FeatureFlags.flags.set(name, enabled)
   }
 
   /**
    * Check if a feature is enabled
    */
   static isEnabled(name: string): boolean {
-    return FeatureFlags.flags.get(name) || false;
+    return FeatureFlags.flags.get(name) || false
   }
 
   /**
    * Get all feature flags
    */
   static getAllFlags(): Record<string, boolean> {
-    return Object.fromEntries(FeatureFlags.flags.entries());
+    return Object.fromEntries(FeatureFlags.flags.entries())
   }
 
   /**
@@ -456,12 +455,12 @@ export class FeatureFlags {
   static async loadFlags(): Promise<void> {
     try {
       // Try to load from environment variables first
-      const envFlags = import.meta.env.VITE_FEATURE_FLAGS;
+      const envFlags = import.meta.env.VITE_FEATURE_FLAGS
       if (envFlags) {
-        const flags = JSON.parse(envFlags);
+        const flags = JSON.parse(envFlags)
         Object.entries(flags).forEach(([name, enabled]) => {
-          FeatureFlags.setFlag(name, Boolean(enabled));
-        });
+          FeatureFlags.setFlag(name, Boolean(enabled))
+        })
       }
 
       // TODO: Load from API endpoint
@@ -470,9 +469,8 @@ export class FeatureFlags {
       // Object.entries(flags).forEach(([name, enabled]) => {
       //   FeatureFlags.setFlag(name, Boolean(enabled));
       // });
-
     } catch (error) {
-      logger.warn('Failed to load feature flags:', error);
+      logger.warn('Failed to load feature flags:', error)
     }
   }
 }
@@ -481,7 +479,7 @@ export class FeatureFlags {
  * Environment configuration loader
  */
 export class Environment {
-  private static config: Record<string, any> = {};
+  private static config: Record<string, any> = {}
 
   /**
    * Load environment configuration
@@ -495,51 +493,51 @@ export class Environment {
       ENVIRONMENT: import.meta.env.MODE || 'development',
       VERSION: import.meta.env.VITE_APP_VERSION || '1.0.0',
       BUILD_TIME: import.meta.env.VITE_BUILD_TIME || new Date().toISOString(),
-    };
+    }
   }
 
   /**
    * Get configuration value
    */
   static get<T = string>(key: string, defaultValue?: T): T {
-    return Environment.config[key] ?? defaultValue;
+    return Environment.config[key] ?? defaultValue
   }
 
   /**
    * Get all configuration
    */
   static getAll(): Record<string, any> {
-    return { ...Environment.config };
+    return { ...Environment.config }
   }
 
   /**
    * Check if running in development
    */
   static isDevelopment(): boolean {
-    return import.meta.env.DEV;
+    return import.meta.env.DEV
   }
 
   /**
    * Check if running in production
    */
   static isProduction(): boolean {
-    return import.meta.env.PROD;
+    return import.meta.env.PROD
   }
 }
 
 // Create default logger instance
-export const logger = new Logger('GoCommerce');
+export const logger = new Logger('GoCommerce')
 
 // Initialize environment and feature flags
-Environment.loadConfig();
-FeatureFlags.loadFlags();
+Environment.loadConfig()
+FeatureFlags.loadFlags()
 
 // Enable global debug in development
 if (import.meta.env.DEV) {
-  DevTools.enableGlobalDebug();
+  DevTools.enableGlobalDebug()
 }
 
 // Export utilities
-export default logger;
+export default logger
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

@@ -1,6 +1,6 @@
 /**
  * Compatibility utilities for handling missing exports from dependencies
- * 
+ *
  * This module provides polyfills and wrappers for functions that are missing
  * from the current versions of dependencies but are expected by other packages.
  */
@@ -10,10 +10,10 @@ export { isStylePropFn as isStyleProp } from '@chakra-ui/styled-system'
 
 /**
  * Check if a value is a function
- * 
+ *
  * This was removed from @vueuse/shared in newer versions but is still
  * expected by some packages like @vueuse/motion.
- * 
+ *
  * @param val - The value to check
  * @returns True if the value is a function
  */
@@ -23,7 +23,7 @@ export function isFunction(val: unknown): val is Function {
 
 /**
  * Type guard for checking if a value is defined (not null or undefined)
- * 
+ *
  * @param val - The value to check
  * @returns True if the value is defined
  */
@@ -33,7 +33,7 @@ export function isDefined<T>(val: T): val is NonNullable<T> {
 
 /**
  * Check if a value is a string
- * 
+ *
  * @param val - The value to check
  * @returns True if the value is a string
  */
@@ -43,7 +43,7 @@ export function isString(val: unknown): val is string {
 
 /**
  * Check if a value is a number
- * 
+ *
  * @param val - The value to check
  * @returns True if the value is a number and not NaN
  */
@@ -53,7 +53,7 @@ export function isNumber(val: unknown): val is number {
 
 /**
  * Check if a value is a boolean
- * 
+ *
  * @param val - The value to check
  * @returns True if the value is a boolean
  */
@@ -63,7 +63,7 @@ export function isBoolean(val: unknown): val is boolean {
 
 /**
  * Check if a value is an object (excluding null and arrays)
- * 
+ *
  * @param val - The value to check
  * @returns True if the value is a plain object
  */

@@ -1,36 +1,42 @@
 /**
  * Vue Router Guards
  * Provides authentication, role-based access control, and store context validation
- * 
+ *
  * Related GitHub Issue: #2 - Authentication System & Security
  */
 
-import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router';
-import { useAuthStore, AuthenticationError, AuthorizationError, StoreAccessError } from '@/stores/auth';
-import type { RoleName } from '@/types/auth';
-import { logger } from '@/utils/logger';
+import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router'
+import {
+  useAuthStore,
+  AuthenticationError,
+  AuthorizationError,
+  StoreAccessError,
+} from '@/stores/auth'
+import type { RoleName } from '@/types/auth'
+import { logger } from '@/utils/logger'
 
 /**
  * Route meta interface for authentication and authorization
  */
 export interface RouteMeta {
-  requiresAuth?: boolean;
-  roles?: RoleName[];
-  storeScoped?: boolean;
-  public?: boolean;
+  requiresAuth?: boolean
+  roles?: RoleName[]
+  storeScoped?: boolean
+  public?: boolean
+  guestOnly?: boolean
 }
 
 /**
  * Enhanced route location with typed meta
  */
 interface TypedRouteLocation extends RouteLocationNormalized {
-  meta: RouteMeta;
+  meta: RouteMeta
 }
 
 /**
  * Guard execution result
  */
-type GuardResult = boolean | string | { name: string; params?: any; query?: any };
+type GuardResult = boolean | string | { name: string; params?: any; query?: any }
 
 /**
  * Authentication guard
@@ -41,18 +47,31 @@ export function authGuard(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
+
+  // Handle guest-only routes (redirect authenticated users away)
+  if (to.meta.guestOnly && authStore.isAuthenticated) {
+    const redirectPath = '/dashboard'
+    logger.info('Authenticated user accessing guest-only page, redirecting', {
+      from: to.path,
+      to: redirectPath,
+      isAuthenticated: authStore.isAuthenticated,
+      isPlatformAdmin: authStore.isPlatformAdmin
+    })
+    next(redirectPath)
+    return
+  }
 
   // Skip auth for public routes
   if (to.meta.public) {
-    next();
-    return;
+    next()
+    return
   }
 
   // Skip auth for routes that don't require it
   if (!to.meta.requiresAuth) {
-    next();
-    return;
+    next()
+    return
   }
 
   // Check if auth is still initializing
@@ -60,25 +79,25 @@ export function authGuard(
     // Wait for auth initialization to complete
     const unwatch = authStore.$subscribe((mutation, state) => {
       if (!state.isInitializing) {
-        unwatch(); // Stop watching
-        
+        unwatch() // Stop watching
+
         if (state.isAuthenticated) {
-          next();
+          next()
         } else {
-          redirectToLogin(to, next);
+          redirectToLogin(to, next)
         }
       }
-    });
-    return;
+    })
+    return
   }
 
   // Check authentication status
   if (!authStore.isAuthenticated) {
-    redirectToLogin(to, next);
-    return;
+    redirectToLogin(to, next)
+    return
   }
 
-  next();
+  next()
 }
 
 /**
@@ -90,18 +109,18 @@ export function rolesGuard(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   // Skip for routes without role requirements
   if (!to.meta.roles || to.meta.roles.length === 0) {
-    next();
-    return;
+    next()
+    return
   }
 
   // Must be authenticated first
   if (!authStore.isAuthenticated) {
-    redirectToLogin(to, next);
-    return;
+    redirectToLogin(to, next)
+    return
   }
 
   // Check if user has any of the required roles
@@ -110,17 +129,17 @@ export function rolesGuard(
       requiredRoles: to.meta.roles,
       userRoles: authStore.roles,
       route: to.path,
-    });
+    })
 
     redirectToUnauthorized(to, next, {
       reason: 'insufficient_roles',
       requiredRoles: to.meta.roles,
       userRoles: authStore.roles,
-    });
-    return;
+    })
+    return
   }
 
-  next();
+  next()
 }
 
 /**
@@ -132,29 +151,29 @@ export function storeAccessGuard(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   // Skip for routes that are not store-scoped
   if (!to.meta.storeScoped) {
-    next();
-    return;
+    next()
+    return
   }
 
   // Must be authenticated first
   if (!authStore.isAuthenticated) {
-    redirectToLogin(to, next);
-    return;
+    redirectToLogin(to, next)
+    return
   }
 
   // Platform admins can access any store-scoped route
   if (authStore.isPlatformAdmin) {
-    next();
-    return;
+    next()
+    return
   }
 
   // Check if a store ID is provided in route params
-  const storeId = to.params.storeId as string;
-  
+  const storeId = to.params.storeId as string
+
   if (storeId) {
     // Validate access to the specific store
     if (!authStore.canAccessStore(storeId)) {
@@ -162,7 +181,7 @@ export function storeAccessGuard(
         storeId,
         availableStores: authStore.availableStores.map(s => s.storeId),
         route: to.path,
-      });
+      })
 
       redirectToUnauthorized(to, next, {
         reason: 'store_access_denied',
@@ -171,32 +190,32 @@ export function storeAccessGuard(
           id: s.storeId,
           name: s.storeName,
         })),
-      });
-      return;
+      })
+      return
     }
 
     // Set store context if not already set
     if (authStore.selectedStoreId !== storeId) {
-      authStore.setSelectedStore(storeId);
+      authStore.setSelectedStore(storeId)
     }
 
-    next();
-    return;
+    next()
+    return
   }
 
   // No store ID in route, check if user has a selected store
   if (!authStore.selectedStoreId) {
     // If user has only one store, auto-select it
     if (authStore.availableStores.length === 1) {
-      const store = authStore.availableStores[0];
-      authStore.setSelectedStore(store.storeId);
-      
+      const store = authStore.availableStores[0]
+      authStore.setSelectedStore(store.storeId)
+
       // Redirect to the same route with store ID
       next({
         ...to,
         params: { ...to.params, storeId: store.storeId },
-      });
-      return;
+      })
+      return
     }
 
     // Multiple stores available, redirect to store selection
@@ -206,16 +225,16 @@ export function storeAccessGuard(
         query: {
           redirect: to.fullPath,
         },
-      });
-      return;
+      })
+      return
     }
 
     // No stores available
     redirectToUnauthorized(to, next, {
       reason: 'no_store_access',
       message: 'No store access available',
-    });
-    return;
+    })
+    return
   }
 
   // User has selected store, validate access
@@ -223,11 +242,11 @@ export function storeAccessGuard(
     redirectToUnauthorized(to, next, {
       reason: 'store_access_denied',
       storeId: authStore.selectedStoreId,
-    });
-    return;
+    })
+    return
   }
 
-  next();
+  next()
 }
 
 /**
@@ -240,36 +259,33 @@ export function authAndRoleGuard(
   next: NavigationGuardNext
 ): void {
   // Run guards in sequence
-  authGuard(to, from, (result) => {
+  authGuard(to, from, result => {
     if (result !== true && result !== undefined) {
-      next(result);
-      return;
+      next(result)
+      return
     }
 
-    rolesGuard(to, from, (result) => {
+    rolesGuard(to, from, result => {
       if (result !== true && result !== undefined) {
-        next(result);
-        return;
+        next(result)
+        return
       }
 
-      storeAccessGuard(to, from, (result) => {
-        next(result);
-      });
-    });
-  });
+      storeAccessGuard(to, from, result => {
+        next(result)
+      })
+    })
+  })
 }
 
 /**
  * Redirect to login page with return URL
  */
-function redirectToLogin(
-  to: RouteLocationNormalized,
-  next: NavigationGuardNext
-): void {
-  logger.info('Redirecting to login', { 
+function redirectToLogin(to: RouteLocationNormalized, next: NavigationGuardNext): void {
+  logger.info('Redirecting to login', {
     from: to.path,
-    requiresAuth: to.meta.requiresAuth 
-  });
+    requiresAuth: to.meta.requiresAuth,
+  })
 
   next({
     name: 'Login',
@@ -277,7 +293,7 @@ function redirectToLogin(
       redirect: to.fullPath,
       reason: 'authentication_required',
     },
-  });
+  })
 }
 
 /**
@@ -287,31 +303,31 @@ function redirectToUnauthorized(
   to: RouteLocationNormalized,
   next: NavigationGuardNext,
   context: {
-    reason: string;
-    requiredRoles?: RoleName[];
-    userRoles?: RoleName[];
-    storeId?: string;
-    availableStores?: Array<{ id: string; name: string }>;
-    message?: string;
+    reason: string
+    requiredRoles?: RoleName[]
+    userRoles?: RoleName[]
+    storeId?: string
+    availableStores?: Array<{ id: string; name: string }>
+    message?: string
   }
 ): void {
-  logger.warn('Redirecting to unauthorized', { 
+  logger.warn('Redirecting to unauthorized', {
     from: to.path,
-    context 
-  });
+    context,
+  })
 
   next({
     name: 'Unauthorized',
     query: {
       from: to.path,
       reason: context.reason,
-      ...(context.requiredRoles && { 
-        requiredRoles: context.requiredRoles.join(',') 
+      ...(context.requiredRoles && {
+        requiredRoles: context.requiredRoles.join(','),
       }),
       ...(context.storeId && { storeId: context.storeId }),
       ...(context.message && { message: context.message }),
     },
-  });
+  })
 }
 
 /**
@@ -322,22 +338,55 @@ export function guestGuard(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
+
+  // If auth is still initializing, wait for it to complete
+  if (authStore.isInitializing) {
+    logger.debug('Guest guard - auth initializing, waiting...')
+    
+    // Wait for auth initialization to complete
+    const unwatch = authStore.$subscribe((mutation, state) => {
+      if (!state.isInitializing) {
+        unwatch() // Stop watching
+        
+        if (state.isAuthenticated) {
+          const redirectPath = (to.query.redirect as string) || '/dashboard'
+          logger.info('Guest guard - auth complete, authenticated user redirecting', {
+            from: to.path,
+            to: redirectPath
+          })
+          next(redirectPath)
+        } else {
+          next() // Allow access to guest page
+        }
+      }
+    })
+    return
+  }
 
   // If user is authenticated, redirect to dashboard
   if (authStore.isAuthenticated) {
-    const redirectPath = (to.query.redirect as string) || '/dashboard';
-    
-    logger.info('Authenticated user accessing guest page, redirecting', {
+    const redirectPath = (to.query.redirect as string) || '/dashboard'
+
+    logger.info('Guest guard - authenticated user accessing guest page, redirecting', {
       from: to.path,
       to: redirectPath,
-    });
+      isAuthenticated: authStore.isAuthenticated,
+      isPlatformAdmin: authStore.isPlatformAdmin,
+      roles: authStore.roles
+    })
 
-    next(redirectPath);
-    return;
+    next(redirectPath)
+    return
   }
 
-  next();
+  logger.debug('Guest guard - user not authenticated, allowing access to guest page', {
+    to: to.path,
+    isAuthenticated: authStore.isAuthenticated,
+    isInitializing: authStore.isInitializing
+  })
+
+  next()
 }
 
 /**
@@ -348,11 +397,11 @@ export function platformAdminGuard(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   if (!authStore.isAuthenticated) {
-    redirectToLogin(to, next);
-    return;
+    redirectToLogin(to, next)
+    return
   }
 
   if (!authStore.isPlatformAdmin) {
@@ -360,11 +409,11 @@ export function platformAdminGuard(
       reason: 'platform_admin_required',
       requiredRoles: ['platform-admin'],
       userRoles: authStore.roles,
-    });
-    return;
+    })
+    return
   }
 
-  next();
+  next()
 }
 
 /**
@@ -375,16 +424,16 @@ export function storeAdminGuard(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  const typedTo = to as TypedRouteLocation;
-  
+  const typedTo = to as TypedRouteLocation
+
   // Set required roles for store admin
   typedTo.meta = {
     ...typedTo.meta,
     requiresAuth: true,
     roles: ['platform-admin', 'store-admin'],
-  };
+  }
 
-  authAndRoleGuard(typedTo, from, next);
+  authAndRoleGuard(typedTo, from, next)
 }
 
 /**
@@ -394,17 +443,17 @@ export function storeAdminGuard(
 export function setupRouterGuards(router: Router): void {
   // Global before guard
   router.beforeEach((to, from, next) => {
-    const typedTo = to as TypedRouteLocation;
-    
+    const typedTo = to as TypedRouteLocation
+
     logger.debug('Route navigation started', {
       from: from.path,
       to: to.path,
       meta: to.meta,
-    });
+    })
 
     // Run combined guard
-    authAndRoleGuard(typedTo, from, next);
-  });
+    authAndRoleGuard(typedTo, from, next)
+  })
 
   // Global after guard for logging
   router.afterEach((to, from, failure) => {
@@ -413,16 +462,16 @@ export function setupRouterGuards(router: Router): void {
         from: from.path,
         to: to.path,
         failure,
-      });
+      })
     } else {
       logger.debug('Route navigation completed', {
         from: from.path,
         to: to.path,
-      });
+      })
     }
-  });
+  })
 
-  logger.info('Router guards setup completed');
+  logger.info('Router guards setup completed')
 }
 
 /**
@@ -432,17 +481,17 @@ export function canAccessRoute(
   route: RouteLocationNormalized,
   authStore?: ReturnType<typeof useAuthStore>
 ): {
-  canAccess: boolean;
-  reason?: string;
-  missingRoles?: RoleName[];
-  redirectTo?: string;
+  canAccess: boolean
+  reason?: string
+  missingRoles?: RoleName[]
+  redirectTo?: string
 } {
-  const auth = authStore || useAuthStore();
-  const typedRoute = route as TypedRouteLocation;
+  const auth = authStore || useAuthStore()
+  const typedRoute = route as TypedRouteLocation
 
   // Public routes are always accessible
   if (typedRoute.meta.public) {
-    return { canAccess: true };
+    return { canAccess: true }
   }
 
   // Check authentication
@@ -451,7 +500,7 @@ export function canAccessRoute(
       canAccess: false,
       reason: 'authentication_required',
       redirectTo: '/login',
-    };
+    }
   }
 
   // Check roles
@@ -462,20 +511,20 @@ export function canAccessRoute(
         reason: 'insufficient_roles',
         missingRoles: typedRoute.meta.roles,
         redirectTo: '/unauthorized',
-      };
+      }
     }
   }
 
   // Check store access
   if (typedRoute.meta.storeScoped) {
-    const storeId = route.params.storeId as string;
-    
+    const storeId = route.params.storeId as string
+
     if (storeId && !auth.canAccessStore(storeId)) {
       return {
         canAccess: false,
         reason: 'store_access_denied',
         redirectTo: '/unauthorized',
-      };
+      }
     }
 
     if (!storeId && !auth.selectedStoreId && auth.availableStores.length > 1) {
@@ -483,14 +532,14 @@ export function canAccessRoute(
         canAccess: false,
         reason: 'store_selection_required',
         redirectTo: '/store-selection',
-      };
+      }
     }
   }
 
-  return { canAccess: true };
+  return { canAccess: true }
 }
 
 // Export types
-export type { RouteMeta, TypedRouteLocation, GuardResult };
+export type { RouteMeta, TypedRouteLocation, GuardResult }
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

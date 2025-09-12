@@ -31,7 +31,7 @@ export default [
         ecmaVersion: 'latest',
         sourceType: 'module',
         project: './tsconfig.app.json',
-        tsconfigRootDir: '.'
+        tsconfigRootDir: import.meta.dirname
       }
     },
     plugins: {
@@ -79,7 +79,7 @@ export default [
         parser: tsParser,
         project: './tsconfig.app.json',
         extraFileExtensions: ['.vue'],
-        tsconfigRootDir: '.'
+        tsconfigRootDir: import.meta.dirname
       }
     },
     plugins: {

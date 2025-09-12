@@ -1,132 +1,111 @@
 <template>
   <div id="app">
-    <!-- Authentication Loading Screen -->
-    <div v-if="isInitializing" class="auth-loading">
-      <div class="loading-container">
-        <c-spinner size="xl" color="blue.500" thickness="3px" />
-        <c-text mt="4" font-size="lg" color="gray.600">
-          Initializing GO Commerce Admin Console...
-        </c-text>
+    <div class="app-content">
+      <!-- Debug Banner -->
+      <div class="debug-banner">
+        <p>🔧 DEBUG MODE: Authentication bypassed - Simple frontend version</p>
       </div>
-    </div>
-    
-    <!-- Application Content -->
-    <div v-else class="app-content">
-      <!-- Router View for Page Content -->
-      <router-view />
+
+      <!-- Navigation Header -->
+      <header class="app-header">
+        <h1>GO Commerce Admin Console</h1>
+        <nav class="main-nav">
+          <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
+          <router-link to="/login" class="nav-link">Login</router-link>
+        </nav>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <router-view />
+      </main>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { CSpinner, CText } from '@chakra-ui/vue-next';
-import { useAuth } from '@/composables/useAuth';
-import { StoreManager } from '@/stores';
-import { logger } from '@/utils/logger';
+  import { onMounted } from 'vue'
 
-/**
- * Main Application Component
- * Handles authentication initialization and provides router view
- * 
- * Related GitHub Issue: #2 - Authentication System & Security
- */
+  /**
+   * Main Application Component
+   * Handles authentication initialization and provides router view
+   *
+   * Related GitHub Issue: #2 - Authentication System & Security
+   */
 
-// Authentication composable
-const { isInitializing } = useAuth();
-
-/**
- * Initialize authentication system
- */
-async function initializeAuth(): Promise<void> {
-  try {
-    logger.info('Initializing authentication system...');
-    
-    // Get auth store
-    const authStore = StoreManager.getStore('auth');
-    if (!authStore) {
-      logger.error('Auth store not found');
-      return;
-    }
-    
-    // Initialize authentication
-    await authStore.init();
-    
-    logger.info('Authentication system initialized');
-  } catch (error) {
-    logger.error('Failed to initialize authentication:', error);
-  }
-}
-
-// Initialize authentication on mount
-onMounted(() => {
-  // Small delay to ensure stores are properly set up
-  setTimeout(() => {
-    initializeAuth();
-  }, 100);
-});
+  onMounted(() => {
+    console.log('App.vue loaded - simple frontend version')
+  })
 </script>
 
 <style scoped>
-#app {
-  min-height: 100vh;
-  width: 100%;
-}
-
-.auth-loading {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  min-width: 300px;
-}
-
-.app-content {
-  min-height: 100vh;
-  width: 100%;
-}
-
-/* Global styles */
-:deep(body) {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-:deep(#app) {
-  color: #2c3e50;
-}
-
-/* Loading animation */
-.loading-container {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  #app {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .app-content {
+    min-height: 100vh;
   }
-}
+
+  .debug-banner {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    padding: 12px 20px;
+    margin: 0;
+  }
+
+  .debug-banner p {
+    margin: 0;
+    font-size: 14px;
+    color: #1976d2;
+  }
+
+  .app-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .app-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  .main-nav {
+    display: flex;
+    gap: 20px;
+  }
+
+  .nav-link {
+    color: #666;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .nav-link:hover {
+    background: #f5f5f5;
+    color: #1976d2;
+  }
+
+  .nav-link.router-link-active {
+    background: #e3f2fd;
+    color: #1976d2;
+    font-weight: 500;
+  }
+
+  .main-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 </style>
 
 <!-- Copilot: This file may have been generated or refactored by GitHub Copilot. -->

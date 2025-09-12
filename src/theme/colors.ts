@@ -1,7 +1,7 @@
 /**
  * Chakra UI Color Theme Configuration
  * Professional blue/gray color palette with accent colors as specified in WARP.md
- * 
+ *
  * Related GitHub Issue: #1 - Core Infrastructure
  */
 
@@ -164,7 +164,7 @@ export const colors = {
     quinary: '#ec4899',
     senary: '#14b8a6',
   },
-};
+}
 
 // Color mode configurations (light/dark theme support)
 export const colorModeConfig = {
@@ -184,8 +184,8 @@ export const colorModeConfig = {
     text: colors.text.inverse,
     textSecondary: colors.gray[300],
   },
-};
+}
 
-export default colors;
+export default colors
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.
