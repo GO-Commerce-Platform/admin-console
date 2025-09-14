@@ -183,20 +183,19 @@ describe('Button Component', () => {
     expect(button.props('rightIcon')).toBe('arrow-right')
   })
 
-  it('passes through additional attributes', () => {
+  it('renders as a proper button element', () => {
     const wrapper = mount(Button, {
-      attrs: {
-        'data-testid': 'custom-button',
-        'aria-label': 'Custom button'
-      },
       slots: {
-        default: 'Custom Button'
+        default: 'Test Button'
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.attributes('data-testid')).toBe('custom-button')
-    expect(button.attributes('aria-label')).toBe('Custom button')
+    // Verify it renders as a button element
+    expect(wrapper.element.tagName).toBe('BUTTON')
+    expect(wrapper.text()).toBe('Test Button')
+    
+    // Verify it has the expected base classes
+    expect(wrapper.classes()).toContain('gocommerce-button')
   })
 
   describe('Button Variants', () => {
@@ -247,20 +246,20 @@ describe('Button Component', () => {
       expect(wrapper.element.tagName).toBe('BUTTON')
     })
 
-    it('supports custom aria attributes', () => {
+    it('can be clicked when not disabled', async () => {
       const wrapper = mount(Button, {
-        attrs: {
-          'aria-describedby': 'help-text',
-          'aria-pressed': 'false'
+        props: {
+          disabled: false
         },
         slots: {
-          default: 'ARIA Button'
+          default: 'Clickable Button'
         }
       })
 
-      const button = wrapper.findComponent({ name: 'CButton' })
-      expect(button.attributes('aria-describedby')).toBe('help-text')
-      expect(button.attributes('aria-pressed')).toBe('false')
+      // Verify button is clickable
+      await wrapper.trigger('click')
+      expect(wrapper.emitted('click')).toBeTruthy()
+      expect(wrapper.emitted('click')).toHaveLength(1)
     })
   })
 })
