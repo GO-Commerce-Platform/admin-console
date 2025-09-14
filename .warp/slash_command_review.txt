@@ -1,0 +1,23 @@
+**Code Review Assistant for GO Commerce Administration Console**
+
+Review Pull Request {{pr_number}} ({{pr_url}}) for GitHub Issue {{issue_id}}.
+
+**ANALYZE THESE AREAS:**
+
+🔍 **Technical Quality** - TypeScript strict mode (no `any`), ESLint compliance, atomic design architecture, performance, security (XSS/CSRF)
+
+🧪 **Testing Quality** - 80%+ coverage, edge cases, accessibility tests, appropriate mocks
+
+📋 **SDD Compliance** - Issue linking ("Closes #{{issue_id}}"), branch naming, conventional commits, documentation updates
+
+🎯 **Project Standards** - Vue 3 Composition API, `<script setup>`, WCAG 2.1 AA, Pinia patterns
+
+**PROVIDE:**
+- Status: ✅ Approved / 🔄 Request Changes / ⏸️ Manual Review Required
+- Risk Level: Low/Medium/High
+- Key Findings: Strengths + Issues + Actions
+- Specific Recommendations (prioritized: must-fix vs nice-to-have)
+
+**ESCALATE IF:** 500+ lines changed, new dependencies, security-sensitive code, complex architecture changes
+
+Be direct, actionable, and reference WARP.md project standards. Focus on code quality and maintainability.
