@@ -1,111 +1,132 @@
 <template>
   <div id="app">
-    <div class="app-content">
-      <!-- Debug Banner -->
-      <div class="debug-banner">
-        <p>🔧 DEBUG MODE: Authentication bypassed - Simple frontend version</p>
-      </div>
-
-      <!-- Navigation Header -->
-      <header class="app-header">
-        <h1>GO Commerce Admin Console</h1>
-        <nav class="main-nav">
-          <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
-          <router-link to="/login" class="nav-link">Login</router-link>
-        </nav>
-      </header>
-
-      <!-- Main Content -->
-      <main class="main-content">
-        <router-view />
-      </main>
+    <!-- Initialize authentication and then show appropriate content -->
+    <div v-if="authInitialized" class="app-content">
+      <router-view />
+    </div>
+    
+    <!-- Loading state during authentication initialization -->
+    <div v-else class="app-loading">
+      <div class="app-loading__spinner"></div>
+      <p>Initializing application...</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useAuth } from '@/composables/useAuth'
 
-  /**
-   * Main Application Component
-   * Handles authentication initialization and provides router view
-   *
-   * Related GitHub Issue: #2 - Authentication System & Security
-   */
+/**
+ * Main Application Component
+ * 
+ * Handles global application initialization including:
+ * - Authentication system initialization
+ * - Global error handling
+ * - Application-level state management
+ * - Router view management
+ * 
+ * The actual layout is handled by individual route components
+ * that use AppLayout for authenticated areas.
+ * 
+ * Related GitHub Issue: #3 - Layout, Navigation & Routing System
+ */
 
-  onMounted(() => {
-    console.log('App.vue loaded - simple frontend version')
-  })
+const { initialize } = useAuth()
+const authInitialized = ref(false)
+
+// Initialize authentication on app load
+onMounted(async () => {
+  try {
+    console.log('🚀 Initializing GO Commerce Admin Console...')
+    
+    // Initialize authentication system
+    await initialize()
+    
+    // Mark as initialized
+    authInitialized.value = true
+    
+    console.log('✅ Application initialized successfully')
+  } catch (error) {
+    console.error('❌ Failed to initialize application:', error)
+    
+    // Even if auth fails, show the app so user can see login page
+    authInitialized.value = true
+  }
+})
 </script>
 
 <style scoped>
-  #app {
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  }
+#app {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 
+               'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1f2937;
+  background: #f8fafc;
+}
 
-  .app-content {
-    min-height: 100vh;
-  }
+.app-content {
+  min-height: 100vh;
+}
 
-  .debug-banner {
-    background: #e3f2fd;
-    border: 1px solid #bbdefb;
-    padding: 12px 20px;
-    margin: 0;
-  }
+.app-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 20px;
+  color: #6b7280;
+}
 
-  .debug-banner p {
-    margin: 0;
-    font-size: 14px;
-    color: #1976d2;
-  }
+.app-loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
 
-  .app-header {
-    background: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 16px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.app-loading p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
 
-  .app-header h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #2c3e50;
-    font-weight: 600;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
+}
 
-  .main-nav {
-    display: flex;
-    gap: 20px;
-  }
+/* Global styles */
+* {
+  box-sizing: border-box;
+}
 
-  .nav-link {
-    color: #666;
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
+body {
+  margin: 0;
+  line-height: 1.6;
+}
 
-  .nav-link:hover {
-    background: #f5f5f5;
-    color: #1976d2;
-  }
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
 
-  .nav-link.router-link-active {
-    background: #e3f2fd;
-    color: #1976d2;
-    font-weight: 500;
-  }
+/* Remove default focus styles and add custom ones */
+*:focus {
+  outline: none;
+}
 
-  .main-content {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
 </style>
 
 <!-- Copilot: This file may have been generated or refactored by GitHub Copilot. -->

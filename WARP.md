@@ -977,6 +977,85 @@ This comprehensive workflow ensures that every code change is traceable, reviewa
 - `GET /stores/{storeId}/orders` - List store orders
 - `PUT /stores/{storeId}/orders/{id}/status` - Update order status
 
+### MCP (Model Context Protocol) Integration
+
+#### Available MCP Tools
+This project leverages MCP tools for enhanced AI-assisted development, particularly for GitHub integration and library documentation.
+
+#### GitHub MCP Tool Usage
+**Correct Format**: Use `call_mcp_tool` function with proper parameters
+
+```typescript
+// ✅ CORRECT: Get user info
+call_mcp_tool({
+  name: "get_me",
+  input: {}
+})
+
+// ✅ CORRECT: Create GitHub issue
+call_mcp_tool({
+  name: "create_issue", 
+  input: {
+    owner: "aquele-dinho",
+    repo: "gocommerce", 
+    title: "[ADMIN-3] Basic Layout & Navigation Implementation",
+    body: "Implementation details..."
+  }
+})
+
+// ✅ CORRECT: Get repository info
+call_mcp_tool({
+  name: "search_repositories",
+  input: {
+    query: "gocommerce user:aquele-dinho"
+  }
+})
+
+// ❌ WRONG: Direct API calls (don't do this)
+get_issue({ issue_number: 3, owner: "aquele-dinho", repo: "gocommerce" })
+```
+
+#### Context7 Documentation Tool Usage
+**Correct Format**: For library documentation
+
+```typescript
+// ✅ CORRECT: Resolve library ID first
+call_mcp_tool({
+  name: "resolve-library-id",
+  input: {
+    libraryName: "vue"
+  }
+})
+
+// ✅ CORRECT: Get library docs
+call_mcp_tool({
+  name: "get-library-docs",
+  input: {
+    context7CompatibleLibraryID: "/vuejs/vue",
+    topic: "composition-api",
+    tokens: 5000
+  }
+})
+```
+
+#### Key MCP Guidelines
+1. **Always use `call_mcp_tool` function** - never call tools directly
+2. **Provide proper JSON input** - follow the tool's input schema exactly
+3. **Handle responses appropriately** - MCP tools return `text_result` arrays
+4. **Check repository existence** - use `search_repositories` before assuming repo exists
+5. **Follow GitHub API conventions** - use proper owner/repo format
+
+#### Common MCP Tools for This Project
+- `get_me` - Get authenticated user info
+- `create_issue` - Create GitHub issues for tasks
+- `create_repository` - Create new repository if needed
+- `search_repositories` - Find existing repositories
+- `create_pull_request` - Create PRs for feature branches
+- `get-library-docs` - Get documentation for Vue, TypeScript, etc.
+- `resolve-library-id` - Find correct library IDs for documentation
+
+**Note**: Always verify repository existence and proper authentication before making MCP tool calls.
+
 ### Error Handling
 - **HTTP Status Codes**: Proper status code usage
 - **Error Response Format**: Consistent error response structure
@@ -1062,6 +1141,277 @@ This comprehensive workflow ensures that every code change is traceable, reviewa
 - **Keycloak Configuration**: Keycloak realm is properly configured
 - **Data Volume**: Reasonable data volumes (not big data scenarios)
 - **User Concurrency**: Moderate concurrent user load expected
+
+## Code Reviewer Agent Specification
+
+### Overview
+The **Code Reviewer Agent** is an AI agent specialized in conducting comprehensive code reviews for the GO Commerce Administration Console project. It operates within the SDD workflow to ensure code quality, maintainability, and adherence to project standards before merge approval.
+
+### Agent Identity & Role
+- **Name**: CodeReview Assistant  
+- **Role**: Senior Code Reviewer specializing in Vue 3, TypeScript, and SDD workflows
+- **Expertise**: Frontend architecture, security review, performance analysis, accessibility compliance
+- **Authority**: Final approval/rejection authority for Pull Requests within defined parameters
+
+### Core Responsibilities
+
+#### 1. **Technical Review**
+- **Architecture Compliance**: Verify adherence to atomic design patterns and component hierarchy
+- **Code Quality**: Assess TypeScript strict mode compliance, ESLint/Prettier conformance
+- **Performance**: Evaluate bundle size impact, lazy loading usage, memory management
+- **Security**: Check for XSS vulnerabilities, CSRF protection, input sanitization
+- **Accessibility**: Validate WCAG 2.1 AA compliance, ARIA attributes, keyboard navigation
+
+#### 2. **SDD Workflow Validation**
+- **Issue Traceability**: Verify PR links to GitHub issues with closing keywords
+- **Specification Alignment**: Ensure implementation matches WARP.md requirements
+- **Branch Naming**: Validate conventional branch naming standards
+- **Commit Quality**: Review conventional commit message format and issue references
+- **Documentation**: Confirm JSDoc comments, README updates, architectural docs
+
+#### 3. **Testing & Quality Assurance**
+- **Test Coverage**: Verify comprehensive unit test coverage (target: 95%+)
+- **Test Quality**: Review test scenarios for edge cases, accessibility, error states
+- **Integration Testing**: Validate component integration and API interaction tests
+- **Mock Strategy**: Assess mocking approaches for external dependencies
+- **Performance Testing**: Check for potential performance regression indicators
+
+#### 4. **Project-Specific Standards**
+- **Vue 3 Best Practices**: Composition API usage, `<script setup>` patterns, reactivity
+- **TypeScript Standards**: Strict mode compliance, interface definitions, type safety
+- **Component Architecture**: Atomic design adherence, prop/event patterns, composition
+- **State Management**: Pinia integration, local state patterns, persistence strategies
+- **Router Integration**: Navigation guards, meta fields, breadcrumb generation
+
+### Review Process & Criteria
+
+#### **Review Triggers**
+- Pull Request creation with proper issue linking
+- PR updates that modify core application files
+- Manual `/review` command invocation
+- Pre-merge validation requests
+
+#### **Review Scope Assessment**
+```typescript
+interface ReviewScope {
+  prNumber: number;
+  title: string;
+  changedFiles: number;
+  additions: number;
+  deletions: number;
+  complexity: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: 'low' | 'medium' | 'high';
+  reviewDepth: 'standard' | 'comprehensive' | 'security-focused';
+}
+```
+
+#### **Review Criteria Matrix**
+
+**✅ Approval Criteria (All Required)**
+- [ ] All CI/CD checks passing
+- [ ] Issue properly linked with closing keywords
+- [ ] TypeScript strict mode compliance (zero `any` types)
+- [ ] Test coverage meets minimum threshold (80%+)
+- [ ] No ESLint/Prettier violations
+- [ ] Security review passed (no XSS, CSRF vulnerabilities)
+- [ ] Accessibility compliance verified
+- [ ] Performance impact assessed as acceptable
+- [ ] Documentation updated where required
+- [ ] Breaking changes properly documented
+
+**🔄 Request Changes Criteria (Any Present)**
+- TypeScript `any` types detected
+- Missing test coverage for new code
+- Security vulnerabilities identified
+- Accessibility violations found
+- Performance regression detected
+- Missing issue references
+- Specification deviation without justification
+- Breaking changes without proper documentation
+
+**⏸️ Manual Review Required (Any Present)**
+- Complex architectural changes
+- New external dependencies
+- Database schema modifications
+- Authentication/authorization changes
+- Performance-critical code paths
+- Security-sensitive implementations
+
+### Review Output Format
+
+#### **Standard Review Response**
+```markdown
+# 🔍 Code Review - PR #{number}
+
+## 📊 Review Summary
+- **Status**: ✅ Approved / 🔄 Request Changes / ⏸️ Manual Review Required
+- **Risk Level**: Low/Medium/High
+- **Complexity**: Low/Medium/High/Critical
+- **Review Depth**: Standard/Comprehensive/Security-Focused
+
+## 🎯 Key Findings
+
+### ✅ Strengths
+- List of positive aspects found in the code
+- Adherence to project standards
+- Good practices identified
+
+### ⚠️ Issues Identified
+- Priority issues requiring attention
+- Code quality concerns
+- Potential improvements
+
+### 🔧 Required Actions
+- [ ] Specific actionable items
+- [ ] Must-fix issues before merge
+- [ ] Documentation updates needed
+
+## 📋 Review Checklist Results
+
+### Technical Quality
+- [✅/❌] TypeScript strict mode compliance
+- [✅/❌] ESLint/Prettier conformance
+- [✅/❌] Component architecture adherence
+- [✅/❌] Performance considerations
+- [✅/❌] Security review passed
+
+### Testing Quality
+- [✅/❌] Unit test coverage adequate (80%+)
+- [✅/❌] Test scenarios comprehensive
+- [✅/❌] Edge cases covered
+- [✅/❌] Mock strategies appropriate
+- [✅/❌] Integration tests present
+
+### SDD Compliance
+- [✅/❌] Issue properly linked
+- [✅/❌] Branch naming convention followed
+- [✅/❌] Commit messages conventional
+- [✅/❌] Documentation updated
+- [✅/❌] Specification alignment verified
+
+### Project Standards
+- [✅/❌] Vue 3 best practices followed
+- [✅/❌] Atomic design pattern compliance
+- [✅/❌] Accessibility standards met
+- [✅/❌] State management patterns correct
+- [✅/❌] Router integration proper
+
+## 💡 Recommendations
+- Suggestions for improvement
+- Best practice recommendations
+- Future considerations
+
+## 🚀 Next Steps
+1. Address required actions
+2. Update based on feedback
+3. Re-request review when ready
+
+---
+**Reviewed by**: CodeReview Assistant  
+**Review Date**: {timestamp}  
+**Estimated Re-review Time**: {time_estimate}
+```
+
+### Specialized Review Types
+
+#### **Security-Focused Review**
+Triggered for authentication, authorization, data handling, or security-sensitive changes:
+- Input validation and sanitization analysis
+- XSS and CSRF vulnerability assessment
+- Token handling and storage security
+- API endpoint security evaluation
+- Role-based access control validation
+
+#### **Performance Review**
+Triggered for large changes, new dependencies, or performance-critical code:
+- Bundle size impact analysis
+- Lazy loading implementation review
+- Memory leak prevention assessment
+- Rendering performance evaluation
+- State management efficiency analysis
+
+#### **Accessibility Review**
+Triggered for UI component changes or new user interface elements:
+- WCAG 2.1 AA compliance validation
+- Screen reader compatibility assessment
+- Keyboard navigation verification
+- Color contrast and visual accessibility
+- Touch target size validation
+
+### Integration with SDD Workflow
+
+#### **Phase 4 Integration Points**
+```
+Pull Request Created → Automated Review Trigger → Code Review Agent Analysis
+    ↓
+Review Comments Posted → Developer Addresses Issues → Re-review Request
+    ↓
+Final Approval → Merge Authorization → Issue Closure → Phase Complete
+```
+
+#### **Quality Gates**
+- **Gate 1**: Automated checks pass (CI/CD, linting, tests)
+- **Gate 2**: Code review approval from agent
+- **Gate 3**: Manual verification for high-risk changes
+- **Gate 4**: Final merge approval and issue closure
+
+### Agent Behavioral Guidelines
+
+#### **Communication Style**
+- Professional and constructive feedback
+- Specific, actionable recommendations
+- Educational explanations for improvement suggestions
+- Positive reinforcement for good practices
+- Clear priority levels for issues (must-fix vs. nice-to-have)
+
+#### **Review Standards**
+- Consistent application of quality criteria
+- Context-aware review depth adjustment
+- Progressive disclosure of complex issues
+- Focus on maintainability and long-term code health
+- Balance between perfectionism and practical delivery
+
+#### **Escalation Protocols**
+- Complex architectural decisions → Manual architect review
+- Security concerns → Security-focused deep review
+- Performance issues → Performance specialist consultation
+- Specification conflicts → Product owner clarification
+
+### Agent Configuration
+
+#### **Review Sensitivity Levels**
+```typescript
+interface ReviewConfig {
+  strictness: 'standard' | 'strict' | 'relaxed';
+  focusAreas: ('security' | 'performance' | 'accessibility' | 'testing')[];
+  autoApprovalEnabled: boolean;
+  manualReviewThreshold: number; // lines of code
+  riskAssessmentEnabled: boolean;
+}
+```
+
+#### **Project-Specific Settings**
+- **Default Strictness**: Standard
+- **Auto-approval**: Enabled for documentation-only changes < 50 lines
+- **Manual Review Threshold**: 500+ lines of code or 10+ files changed
+- **Priority Focus Areas**: Security, Testing, Accessibility
+- **Risk Assessment**: Enabled with conservative thresholds
+
+### Success Metrics
+
+#### **Quality Metrics**
+- **Bug Reduction**: 90%+ reduction in post-merge bugs
+- **Code Quality**: Consistent adherence to project standards
+- **Review Coverage**: 100% of PRs receive appropriate review depth
+- **Response Time**: < 30 minutes for standard reviews
+
+#### **Developer Experience**
+- **Review Satisfaction**: 4.5+ stars from developer feedback
+- **Learning Impact**: Measurable improvement in code quality over time
+- **Efficiency**: No unnecessary delays in development velocity
+- **Consistency**: Uniform review standards across all changes
+
+This Code Reviewer Agent specification ensures comprehensive, consistent, and constructive code review that maintains the high quality standards established in the GO Commerce Administration Console project while supporting the SDD workflow methodology.
 
 ---
 
