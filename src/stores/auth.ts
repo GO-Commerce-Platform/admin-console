@@ -279,24 +279,24 @@ export const useAuthStore = defineStore('auth', {
 
         // Exchange authorization code for tokens
         const tokenResponse = await this.exchangeCodeForTokens(code, codeVerifier, state)
-        
+
         if (tokenResponse) {
           // Store tokens
           tokenManager.storeTokens(tokenResponse)
-          
+
           // Load user profile
           await this.loadProfile()
-          
+
           // Set authenticated state
           this.setAuthenticated()
-          
+
           // Clean up PKCE verifier
           sessionStorage.removeItem('pkce_code_verifier')
-          
+
           logger.info('OAuth2 callback processed successfully')
           return true
         }
-        
+
         return false
       } catch (error) {
         this.handleAuthError('OAuth2 callback processing failed', error)
@@ -320,15 +320,15 @@ export const useAuthStore = defineStore('auth', {
         client_id: clientId,
         code,
         redirect_uri: redirectUri,
-        code_verifier: codeVerifier
+        code_verifier: codeVerifier,
       })
 
       const response = await fetch(`${baseUrl}/realms/${realm}/protocol/openid-connect/token`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: params.toString()
+        body: params.toString(),
       })
 
       if (!response.ok) {
@@ -337,13 +337,13 @@ export const useAuthStore = defineStore('auth', {
       }
 
       const tokenData = await response.json()
-      
+
       return {
         accessToken: tokenData.access_token,
         refreshToken: tokenData.refresh_token,
         expiresIn: tokenData.expires_in,
         tokenType: tokenData.token_type || 'Bearer',
-        scope: tokenData.scope || ''
+        scope: tokenData.scope || '',
       }
     },
 
@@ -472,13 +472,13 @@ export const useAuthStore = defineStore('auth', {
       this.status = 'authenticated'
       this.isAuthenticated = true
       this.error = null
-      
+
       logger.info('Authentication state changed to authenticated', {
         isAuthenticated: this.isAuthenticated,
         isPlatformAdmin: this.isPlatformAdmin,
         userId: this.user?.id,
         roles: this.roles,
-        currentRoute: window.location.pathname
+        currentRoute: window.location.pathname,
       })
     },
 

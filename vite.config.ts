@@ -27,7 +27,7 @@ export default defineConfig({
       '@/layouts': resolve(__dirname, './src/layouts'),
       '@/router': resolve(__dirname, './src/router'),
       // Fix Vue runtime compilation issue
-      'vue': 'vue/dist/vue.esm-bundler.js',
+      vue: 'vue/dist/vue.esm-bundler.js',
     },
   },
 

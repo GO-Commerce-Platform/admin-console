@@ -231,6 +231,17 @@ const routes: RouteRecordRaw[] = [
     },
   },
 
+  // Component showcase route (shows actual theme and components)
+  {
+    path: '/showcase',
+    name: 'ComponentShowcase',
+    component: () => import('@/pages/ComponentShowcase.vue'),
+    meta: {
+      public: true,
+      title: 'Component Library Showcase - GO Commerce Admin',
+    },
+  },
+
   // Catch-all route for 404
   {
     path: '/:pathMatch(.*)*',

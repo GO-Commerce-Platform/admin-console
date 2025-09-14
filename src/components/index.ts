@@ -1,9 +1,9 @@
 /**
  * GO Commerce Administration Console Component Library
- * 
+ *
  * Atomic Design Component exports for easy importing throughout the application.
  * Components are organized by atomic design principles: Atoms, Molecules, Organisms
- * 
+ *
  * Related GitHub Issue: #11 - Component Library & Design System
  */
 
@@ -120,7 +120,7 @@ export const getStatusVariant = (status: string): string => {
     draft: 'neutral',
     archived: 'neutral',
   }
-  
+
   return statusMap[status.toLowerCase()] || 'neutral'
 }
 
@@ -163,7 +163,7 @@ export const getMetricIcon = (type: string): string => {
     visitors: 'eye',
     sales: 'credit-card',
   }
-  
+
   return iconMap[type.toLowerCase()] || 'bar-chart'
 }
 
@@ -236,11 +236,11 @@ export const componentRegistry = {
 export default {
   // Re-export all components
   Button,
-  Input, 
+  Input,
   Badge,
   MetricCard,
   AnimatedNumber,
-  
+
   // Export utilities
   getStatusVariant,
   getTrendColor,

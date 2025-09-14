@@ -12,10 +12,13 @@ import { theme } from '@/theme'
 
 // Configure Vue Test Utils to use Chakra UI
 config.global.plugins = [
-  [ChakraUIVuePlugin, {
-    extendTheme: theme,
-    resetCSS: false, // Disable in tests
-  }]
+  [
+    ChakraUIVuePlugin,
+    {
+      extendTheme: theme,
+      resetCSS: false, // Disable in tests
+    },
+  ],
 ]
 
 // Global test setup

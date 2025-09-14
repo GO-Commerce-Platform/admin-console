@@ -1,9 +1,9 @@
 /**
  * Navigation Composable
- * 
+ *
  * Provides navigation state management and utilities for the GO Commerce Admin Console.
  * Handles navigation items, breadcrumbs, and navigation state for different user roles.
- * 
+ *
  * Related GitHub Issue: #3 - Layout, Navigation & Routing System
  */
 
@@ -60,7 +60,7 @@ export function useNavigation(): UseNavigation {
       icon: 'dashboard',
       roles: ['platform-admin'],
       isActive: false,
-      children: []
+      children: [],
     },
     {
       id: 'platform-stores',
@@ -69,7 +69,7 @@ export function useNavigation(): UseNavigation {
       icon: 'store',
       roles: ['platform-admin'],
       isActive: false,
-      children: []
+      children: [],
     },
     {
       id: 'platform-users',
@@ -78,7 +78,7 @@ export function useNavigation(): UseNavigation {
       icon: 'users',
       roles: ['platform-admin'],
       isActive: false,
-      children: []
+      children: [],
     },
     {
       id: 'platform-analytics',
@@ -87,8 +87,8 @@ export function useNavigation(): UseNavigation {
       icon: 'analytics',
       roles: ['platform-admin'],
       isActive: false,
-      children: []
-    }
+      children: [],
+    },
   ])
 
   // Store admin navigation items
@@ -100,7 +100,7 @@ export function useNavigation(): UseNavigation {
       icon: 'dashboard',
       roles: ['platform-admin', 'store-admin'],
       isActive: false,
-      children: []
+      children: [],
     },
     {
       id: 'store-products',
@@ -115,21 +115,21 @@ export function useNavigation(): UseNavigation {
           id: 'products-list',
           title: 'All Products',
           path: '/store/:storeId/products',
-          roles: ['platform-admin', 'store-admin', 'product-manager']
+          roles: ['platform-admin', 'store-admin', 'product-manager'],
         },
         {
           id: 'products-categories',
           title: 'Categories',
           path: '/store/:storeId/products/categories',
-          roles: ['platform-admin', 'store-admin', 'product-manager']
+          roles: ['platform-admin', 'store-admin', 'product-manager'],
         },
         {
           id: 'products-inventory',
           title: 'Inventory',
           path: '/store/:storeId/products/inventory',
-          roles: ['platform-admin', 'store-admin', 'product-manager']
-        }
-      ]
+          roles: ['platform-admin', 'store-admin', 'product-manager'],
+        },
+      ],
     },
     {
       id: 'store-customers',
@@ -138,7 +138,7 @@ export function useNavigation(): UseNavigation {
       icon: 'users',
       roles: ['platform-admin', 'store-admin', 'customer-service'],
       isActive: false,
-      children: []
+      children: [],
     },
     {
       id: 'store-orders',
@@ -148,7 +148,7 @@ export function useNavigation(): UseNavigation {
       roles: ['platform-admin', 'store-admin', 'order-manager', 'customer-service'],
       isActive: false,
       badge: { content: '5', variant: 'warning' },
-      children: []
+      children: [],
     },
     {
       id: 'store-analytics',
@@ -157,7 +157,7 @@ export function useNavigation(): UseNavigation {
       icon: 'analytics',
       roles: ['platform-admin', 'store-admin'],
       isActive: false,
-      children: []
+      children: [],
     },
     {
       id: 'store-settings',
@@ -166,8 +166,8 @@ export function useNavigation(): UseNavigation {
       icon: 'settings',
       roles: ['platform-admin', 'store-admin'],
       isActive: false,
-      children: []
-    }
+      children: [],
+    },
   ])
 
   // Combined navigation items based on user context
@@ -208,29 +208,29 @@ export function useNavigation(): UseNavigation {
   const hasAccess = (requiredRoles: string[]): boolean => {
     if (!requiredRoles.length) return true
     if (!roles.value.length) return false
-    
+
     return requiredRoles.some(role => roles.value.includes(role))
   }
 
   // Update current path when route changes
-  router.afterEach((to) => {
+  router.afterEach(to => {
     currentPath.value = to.path
-    
+
     // Auto-generate breadcrumbs based on route
     const pathSegments = to.path.split('/').filter(Boolean)
     const newBreadcrumbs: BreadcrumbItem[] = []
-    
+
     pathSegments.forEach((segment, index) => {
       const path = '/' + pathSegments.slice(0, index + 1).join('/')
       const title = segment.charAt(0).toUpperCase() + segment.slice(1)
-      
+
       newBreadcrumbs.push({
         title,
         path,
-        isActive: index === pathSegments.length - 1
+        isActive: index === pathSegments.length - 1,
       })
     })
-    
+
     setBreadcrumbs(newBreadcrumbs)
   })
 
@@ -240,20 +240,20 @@ export function useNavigation(): UseNavigation {
     isMobileMenuOpen,
     currentPath,
     breadcrumbs,
-    
+
     // Actions
     toggleSidebar,
     toggleMobileMenu,
     closeMobileMenu,
     navigateTo,
     setBreadcrumbs,
-    
+
     // Getters
     navigationItems,
     platformNavigationItems,
     storeNavigationItems,
     isCurrentRoute,
-    hasAccess
+    hasAccess,
   }
 }
 

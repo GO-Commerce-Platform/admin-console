@@ -369,7 +369,8 @@ export class KeycloakService {
    */
   public async getUserProfile(): Promise<UserProfile> {
     // Check if we have valid tokens (either from Keycloak or token manager)
-    const hasValidToken = this.isAuthenticated() || await tokenManager.getValidAccessToken() !== null
+    const hasValidToken =
+      this.isAuthenticated() || (await tokenManager.getValidAccessToken()) !== null
     if (!hasValidToken) {
       throw new LoginRequiredError()
     }
@@ -385,11 +386,11 @@ export class KeycloakService {
       })
 
       logger.info('User profile loaded successfully', { apiResponse })
-      
+
       // The apiClient.get() should return ApiResponse<UserProfile>, so we access .data
       // However, if the backend is returning UserProfile directly, the apiResponse might BE the UserProfile
       let userProfile: any
-      
+
       if (apiResponse && typeof apiResponse === 'object' && 'data' in apiResponse) {
         // Backend is returning ApiResponse<UserProfile> format
         userProfile = (apiResponse as any).data
@@ -397,16 +398,16 @@ export class KeycloakService {
         // Backend is returning UserProfile directly (current case based on logs)
         userProfile = apiResponse as unknown as any
       }
-      
+
       logger.debug('Raw user profile from API:', userProfile)
-      
+
       logger.info('Processed user profile', { userProfile })
-      
+
       // Ensure the profile has the expected structure
       if (!userProfile || typeof userProfile !== 'object') {
         throw new Error('Invalid user profile response structure')
       }
-      
+
       // Map API response to UserProfile interface
       // The API returns: {username, userId, roles} but frontend expects {id, username, roles, storeAccess, etc.}
       const mappedProfile: UserProfile = {
@@ -417,31 +418,31 @@ export class KeycloakService {
         firstName: userProfile.firstName || '',
         lastName: userProfile.lastName || '',
         emailVerified: userProfile.emailVerified || false,
-        
+
         // Handle roles - convert string array to Role objects
         roles: this.convertRolesToRoleObjects(userProfile.roles || []),
-        
+
         // Ensure storeAccess is an array (fallback to empty array if undefined)
         storeAccess: Array.isArray(userProfile.storeAccess) ? userProfile.storeAccess : [],
-        
+
         // Default values for other required fields
         preferences: userProfile.preferences || {
           theme: 'system',
           language: 'en',
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          dashboardLayout: {}
+          dashboardLayout: {},
         },
         createdAt: userProfile.createdAt ? new Date(userProfile.createdAt) : new Date(),
         updatedAt: userProfile.updatedAt ? new Date(userProfile.updatedAt) : new Date(),
       }
-      
+
       logger.debug('Mapped user profile:', mappedProfile)
-      logger.info('Final role assignment:', { 
+      logger.info('Final role assignment:', {
         roleCount: mappedProfile.roles.length,
         roleNames: mappedProfile.roles.map(r => r.name),
-        isPlatformAdmin: mappedProfile.roles.some(r => r.name === 'platform-admin')
+        isPlatformAdmin: mappedProfile.roles.some(r => r.name === 'platform-admin'),
       })
-      
+
       return mappedProfile
     } catch (error) {
       const profileError = new ProfileLoadError('Failed to load user profile', error as Error)
@@ -507,24 +508,25 @@ export class KeycloakService {
   private convertRolesToRoleObjects(roleNames: string[]): Role[] {
     if (!Array.isArray(roleNames) || roleNames.length === 0) {
       // Default role for any authenticated user if no roles provided
-      return [{
-        name: 'platform-admin', // TEMPORARY: Force platform-admin role for debugging
-        scope: 'platform',
-        permissions: []
-      }];
+      return [
+        {
+          name: 'platform-admin', // TEMPORARY: Force platform-admin role for debugging
+          scope: 'platform',
+          permissions: [],
+        },
+      ]
     }
-    
+
     return roleNames.map(roleName => {
       // Determine scope based on role name
-      const scope: 'platform' | 'store' = 
-        roleName === 'platform-admin' ? 'platform' : 'store';
-      
+      const scope: 'platform' | 'store' = roleName === 'platform-admin' ? 'platform' : 'store'
+
       return {
         name: roleName as RoleName,
         scope,
-        permissions: [] // Permissions would be loaded from backend in real implementation
-      };
-    });
+        permissions: [], // Permissions would be loaded from backend in real implementation
+      }
+    })
   }
 
   /**

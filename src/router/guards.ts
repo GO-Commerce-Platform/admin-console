@@ -56,7 +56,7 @@ export function authGuard(
       from: to.path,
       to: redirectPath,
       isAuthenticated: authStore.isAuthenticated,
-      isPlatformAdmin: authStore.isPlatformAdmin
+      isPlatformAdmin: authStore.isPlatformAdmin,
     })
     next(redirectPath)
     return
@@ -343,17 +343,17 @@ export function guestGuard(
   // If auth is still initializing, wait for it to complete
   if (authStore.isInitializing) {
     logger.debug('Guest guard - auth initializing, waiting...')
-    
+
     // Wait for auth initialization to complete
     const unwatch = authStore.$subscribe((mutation, state) => {
       if (!state.isInitializing) {
         unwatch() // Stop watching
-        
+
         if (state.isAuthenticated) {
           const redirectPath = (to.query.redirect as string) || '/dashboard'
           logger.info('Guest guard - auth complete, authenticated user redirecting', {
             from: to.path,
-            to: redirectPath
+            to: redirectPath,
           })
           next(redirectPath)
         } else {
@@ -373,7 +373,7 @@ export function guestGuard(
       to: redirectPath,
       isAuthenticated: authStore.isAuthenticated,
       isPlatformAdmin: authStore.isPlatformAdmin,
-      roles: authStore.roles
+      roles: authStore.roles,
     })
 
     next(redirectPath)
@@ -383,7 +383,7 @@ export function guestGuard(
   logger.debug('Guest guard - user not authenticated, allowing access to guest page', {
     to: to.path,
     isAuthenticated: authStore.isAuthenticated,
-    isInitializing: authStore.isInitializing
+    isInitializing: authStore.isInitializing,
   })
 
   next()

@@ -1,7 +1,7 @@
 /**
  * Chakra UI Color Theme Configuration
  * Modern dark theme with purple/indigo gradients inspired by template design
- * 
+ *
  * Related GitHub Issue: #11 - Component Library & Design System
  */
 
@@ -166,7 +166,7 @@ export const colors = {
   // Data visualization colors for charts and graphs (bright and distinct)
   chart: {
     primary: '#6366f1', // Indigo
-    secondary: '#10b981', // Emerald 
+    secondary: '#10b981', // Emerald
     tertiary: '#f59e0b', // Amber
     quaternary: '#8b5cf6', // Violet
     quinary: '#ec4899', // Pink

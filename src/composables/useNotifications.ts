@@ -1,7 +1,7 @@
 /**
  * Notifications Composable
  * Manages user notifications, alerts, and messaging
- * 
+ *
  * Related GitHub Issue: #11 - Component Library & Design System
  */
 
@@ -33,23 +33,17 @@ const state = reactive<NotificationState>({
 
 /**
  * Use Notifications Composable
- * 
+ *
  * Provides reactive notification management functionality
  */
 export function useNotifications() {
   // Computed values
-  const unreadCount = computed(() => 
-    state.notifications.filter(n => !n.read).length
-  )
-  
-  const unreadNotifications = computed(() =>
-    state.notifications.filter(n => !n.read)
-  )
-  
+  const unreadCount = computed(() => state.notifications.filter(n => !n.read).length)
+
+  const unreadNotifications = computed(() => state.notifications.filter(n => !n.read))
+
   const recentNotifications = computed(() =>
-    state.notifications
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      .slice(0, 10)
+    state.notifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10)
   )
 
   // Actions
@@ -60,16 +54,16 @@ export function useNotifications() {
       timestamp: new Date(),
       read: false,
     }
-    
+
     state.notifications.unshift(newNotification)
-    
+
     // Auto-remove success notifications after 5 seconds
     if (notification.type === 'success') {
       setTimeout(() => {
         removeNotification(newNotification.id)
       }, 5000)
     }
-    
+
     return newNotification.id
   }
 
@@ -103,9 +97,9 @@ export function useNotifications() {
 
   // Convenience methods for different notification types
   const showSuccess = (title: string, message: string, actionUrl?: string, actionText?: string) => {
-    return addNotification({ 
-      title, 
-      message, 
+    return addNotification({
+      title,
+      message,
       type: 'success',
       actionUrl,
       actionText,
@@ -113,9 +107,9 @@ export function useNotifications() {
   }
 
   const showError = (title: string, message: string, actionUrl?: string, actionText?: string) => {
-    return addNotification({ 
-      title, 
-      message, 
+    return addNotification({
+      title,
+      message,
       type: 'error',
       actionUrl,
       actionText,
@@ -123,9 +117,9 @@ export function useNotifications() {
   }
 
   const showWarning = (title: string, message: string, actionUrl?: string, actionText?: string) => {
-    return addNotification({ 
-      title, 
-      message, 
+    return addNotification({
+      title,
+      message,
       type: 'warning',
       actionUrl,
       actionText,
@@ -133,9 +127,9 @@ export function useNotifications() {
   }
 
   const showInfo = (title: string, message: string, actionUrl?: string, actionText?: string) => {
-    return addNotification({ 
-      title, 
-      message, 
+    return addNotification({
+      title,
+      message,
       type: 'info',
       actionUrl,
       actionText,
@@ -146,7 +140,7 @@ export function useNotifications() {
   const loadNotifications = async () => {
     state.loading = true
     state.error = null
-    
+
     try {
       // TODO: Replace with actual API call
       // For now, we'll just simulate some notifications
@@ -157,7 +151,7 @@ export function useNotifications() {
           message: 'Your admin console is ready to use',
           type: 'success',
         })
-        
+
         addNotification({
           title: 'New Order Received',
           message: 'Order #12345 needs processing',
@@ -165,7 +159,7 @@ export function useNotifications() {
           actionUrl: '/orders/12345',
           actionText: 'View Order',
         })
-        
+
         addNotification({
           title: 'Low Inventory Alert',
           message: 'Product "Premium Widget" is running low on stock',
@@ -189,7 +183,7 @@ export function useNotifications() {
     recentNotifications,
     loading: computed(() => state.loading),
     error: computed(() => state.error),
-    
+
     // Actions
     addNotification,
     removeNotification,
@@ -198,7 +192,7 @@ export function useNotifications() {
     clearAll,
     clearRead,
     loadNotifications,
-    
+
     // Convenience methods
     showSuccess,
     showError,
