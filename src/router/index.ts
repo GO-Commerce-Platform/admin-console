@@ -67,125 +67,135 @@ const routes: RouteRecordRaw[] = [
     },
   },
 
-  // Protected dashboard route (placeholder)
+  // Protected routes with layout wrapper
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('@/pages/Dashboard.vue'),
+    path: '/',
+    component: () => import('@/layouts/AppLayout.vue'),
     meta: {
       requiresAuth: true,
-      title: 'Dashboard - GO Commerce Admin',
-    },
-  },
-
-  // Platform admin routes
-  {
-    path: '/platform',
-    name: 'Platform',
-    redirect: '/platform/dashboard',
-    meta: {
-      requiresAuth: true,
-      roles: ['platform-admin'],
     },
     children: [
+      // Dashboard route
       {
         path: 'dashboard',
-        name: 'PlatformDashboard',
-        component: () => import('@/pages/platform/Dashboard.vue'),
+        name: 'Dashboard',
+        component: () => import('@/pages/Dashboard.vue'),
         meta: {
           requiresAuth: true,
-          roles: ['platform-admin'],
-          title: 'Platform Dashboard - GO Commerce Admin',
+          title: 'Dashboard - GO Commerce Admin',
         },
       },
+
+      // Platform admin routes
       {
-        path: 'stores',
-        name: 'PlatformStores',
-        component: () => import('@/pages/platform/Stores.vue'),
+        path: 'platform',
+        name: 'Platform',
+        redirect: '/platform/dashboard',
         meta: {
           requiresAuth: true,
           roles: ['platform-admin'],
-          title: 'Store Management - GO Commerce Admin',
         },
+        children: [
+          {
+            path: 'dashboard',
+            name: 'PlatformDashboard',
+            component: () => import('@/pages/platform/Dashboard.vue'),
+            meta: {
+              requiresAuth: true,
+              roles: ['platform-admin'],
+              title: 'Platform Dashboard - GO Commerce Admin',
+            },
+          },
+          {
+            path: 'stores',
+            name: 'PlatformStores',
+            component: () => import('@/pages/platform/Stores.vue'),
+            meta: {
+              requiresAuth: true,
+              roles: ['platform-admin'],
+              title: 'Store Management - GO Commerce Admin',
+            },
+          },
+          {
+            path: 'users',
+            name: 'PlatformUsers',
+            component: () => import('@/pages/platform/Users.vue'),
+            meta: {
+              requiresAuth: true,
+              roles: ['platform-admin'],
+              title: 'User Management - GO Commerce Admin',
+            },
+          },
+        ],
       },
+
+      // Store-scoped routes
       {
-        path: 'users',
-        name: 'PlatformUsers',
-        component: () => import('@/pages/platform/Users.vue'),
+        path: 'store/:storeId',
+        name: 'Store',
+        redirect: to => `/store/${to.params.storeId}/dashboard`,
         meta: {
           requiresAuth: true,
-          roles: ['platform-admin'],
-          title: 'User Management - GO Commerce Admin',
+          storeScoped: true,
+        },
+        children: [
+          {
+            path: 'dashboard',
+            name: 'StoreDashboard',
+            component: () => import('@/pages/store/Dashboard.vue'),
+            meta: {
+              requiresAuth: true,
+              storeScoped: true,
+              title: 'Store Dashboard - GO Commerce Admin',
+            },
+          },
+          {
+            path: 'products',
+            name: 'StoreProducts',
+            component: () => import('@/pages/store/Products.vue'),
+            meta: {
+              requiresAuth: true,
+              storeScoped: true,
+              roles: ['platform-admin', 'store-admin', 'product-manager'],
+              title: 'Product Management - GO Commerce Admin',
+            },
+          },
+          {
+            path: 'customers',
+            name: 'StoreCustomers',
+            component: () => import('@/pages/store/Customers.vue'),
+            meta: {
+              requiresAuth: true,
+              storeScoped: true,
+              roles: ['platform-admin', 'store-admin', 'customer-service'],
+              title: 'Customer Management - GO Commerce Admin',
+            },
+          },
+          {
+            path: 'orders',
+            name: 'StoreOrders',
+            component: () => import('@/pages/store/Orders.vue'),
+            meta: {
+              requiresAuth: true,
+              storeScoped: true,
+              roles: ['platform-admin', 'store-admin', 'order-manager', 'customer-service'],
+              title: 'Order Management - GO Commerce Admin',
+            },
+          },
+        ],
+      },
+
+      // Store selection route (for multi-store users)
+      {
+        path: 'store-selection',
+        name: 'StoreSelection',
+        component: () => import('@/pages/StoreSelection.vue'),
+        meta: {
+          requiresAuth: true,
+          title: 'Select Store - GO Commerce Admin',
         },
       },
     ],
-  },
-
-  // Store-scoped routes
-  {
-    path: '/store/:storeId',
-    name: 'Store',
-    redirect: to => `/store/${to.params.storeId}/dashboard`,
-    meta: {
-      requiresAuth: true,
-      storeScoped: true,
-    },
-    children: [
-      {
-        path: 'dashboard',
-        name: 'StoreDashboard',
-        component: () => import('@/pages/store/Dashboard.vue'),
-        meta: {
-          requiresAuth: true,
-          storeScoped: true,
-          title: 'Store Dashboard - GO Commerce Admin',
-        },
-      },
-      {
-        path: 'products',
-        name: 'StoreProducts',
-        component: () => import('@/pages/store/Products.vue'),
-        meta: {
-          requiresAuth: true,
-          storeScoped: true,
-          roles: ['platform-admin', 'store-admin', 'product-manager'],
-          title: 'Product Management - GO Commerce Admin',
-        },
-      },
-      {
-        path: 'customers',
-        name: 'StoreCustomers',
-        component: () => import('@/pages/store/Customers.vue'),
-        meta: {
-          requiresAuth: true,
-          storeScoped: true,
-          roles: ['platform-admin', 'store-admin', 'customer-service'],
-          title: 'Customer Management - GO Commerce Admin',
-        },
-      },
-      {
-        path: 'orders',
-        name: 'StoreOrders',
-        component: () => import('@/pages/store/Orders.vue'),
-        meta: {
-          requiresAuth: true,
-          storeScoped: true,
-          roles: ['platform-admin', 'store-admin', 'order-manager', 'customer-service'],
-          title: 'Order Management - GO Commerce Admin',
-        },
-      },
-    ],
-  },
-
-  // Store selection route (for multi-store users)
-  {
-    path: '/store-selection',
-    name: 'StoreSelection',
-    component: () => import('@/pages/StoreSelection.vue'),
-    meta: {
-      requiresAuth: true,
-      title: 'Select Store - GO Commerce Admin',
-    },
   },
 
   // Catch-all route for 404
