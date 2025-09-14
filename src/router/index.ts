@@ -195,7 +195,40 @@ const routes: RouteRecordRaw[] = [
           title: 'Select Store - GO Commerce Admin',
         },
       },
+
+      // Layout demo route for development and review
+      {
+        path: 'layout-demo',
+        name: 'LayoutDemo',
+        component: () => import('@/pages/LayoutDemo.vue'),
+        meta: {
+          public: true, // Make it public for easy access
+          title: 'Layout Demo - GO Commerce Admin',
+        },
+      },
     ],
+  },
+
+  // Layout demo route (public access for review)
+  {
+    path: '/demo',
+    name: 'PublicLayoutDemo',
+    component: () => import('@/pages/LayoutDemo.vue'),
+    meta: {
+      public: true,
+      title: 'Layout Components Demo - GO Commerce Admin',
+    },
+  },
+
+  // Layout preview route (shows visual mock)
+  {
+    path: '/preview',
+    name: 'LayoutPreview',
+    component: () => import('@/pages/LayoutPreview.vue'),
+    meta: {
+      public: true,
+      title: 'Layout Preview - GO Commerce Admin',
+    },
   },
 
   // Catch-all route for 404
