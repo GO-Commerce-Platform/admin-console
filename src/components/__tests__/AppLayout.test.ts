@@ -21,37 +21,31 @@ import type { User } from '@/types/auth'
  * Related GitHub Issue: #3 - Layout, Navigation & Routing System
  */
 
-// Mock useAuth composable
-const mockUseAuth = vi.fn(() => ({
-  user: { value: null },
-  isAuthenticated: { value: false },
-  logout: vi.fn()
-}))
-
+// Mock useAuth composable - defined outside to avoid hoisting issues
 vi.mock('@/composables/useAuth', () => ({
-  useAuth: mockUseAuth
+  useAuth: vi.fn(() => ({
+    user: { value: null },
+    isAuthenticated: { value: false },
+    logout: vi.fn()
+  }))
 }))
 
 // Mock useNavigation composable
-const mockUseNavigation = vi.fn(() => ({
-  navigationSections: { value: [] },
-  availableStores: { value: [] },
-  currentStoreId: { value: null },
-  breadcrumbs: { value: [] }
-}))
-
 vi.mock('@/composables/useNavigation', () => ({
-  useNavigation: mockUseNavigation
+  useNavigation: vi.fn(() => ({
+    navigationSections: { value: [] },
+    availableStores: { value: [] },
+    currentStoreId: { value: null },
+    breadcrumbs: { value: [] }
+  }))
 }))
 
 // Mock useNotifications composable
-const mockUseNotifications = vi.fn(() => ({
-  unreadCount: { value: 0 },
-  notifications: { value: [] }
-}))
-
 vi.mock('@/composables/useNotifications', () => ({
-  useNotifications: mockUseNotifications
+  useNotifications: vi.fn(() => ({
+    unreadCount: { value: 0 },
+    notifications: { value: [] }
+  }))
 }))
 
 // Mock localStorage
@@ -92,19 +86,24 @@ describe('AppLayout', () => {
     ]
   }
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Reset all mocks before each test
     vi.clearAllMocks()
     
+    // Import mocked composables to reset them
+    const { useAuth } = await import('@/composables/useAuth')
+    const { useNavigation } = await import('@/composables/useNavigation')
+    const { useNotifications } = await import('@/composables/useNotifications')
+    
     // Default auth mock return
-    mockUseAuth.mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
       user: { value: mockUser },
       isAuthenticated: { value: true },
       logout: vi.fn()
     })
 
     // Default navigation mock
-    mockUseNavigation.mockReturnValue({
+    vi.mocked(useNavigation).mockReturnValue({
       navigationSections: { value: [] },
       availableStores: { value: [] },
       currentStoreId: { value: null },
@@ -115,7 +114,7 @@ describe('AppLayout', () => {
     })
 
     // Default notifications mock
-    mockUseNotifications.mockReturnValue({
+    vi.mocked(useNotifications).mockReturnValue({
       unreadCount: { value: 3 },
       notifications: { value: [] }
     })

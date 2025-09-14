@@ -1,8 +1,8 @@
 /**
  * Chakra UI Component Style Overrides
- * Custom component styles that align with the GO Commerce Administration Console design system
+ * Dark theme component styles with glassmorphism effects for GO Commerce Administration Console
  *
- * Related GitHub Issue: #1 - Core Infrastructure
+ * Related GitHub Issue: #11 - Component Library & Design System
  */
 
 // Remove problematic import for now
@@ -16,14 +16,16 @@ type ComponentStyleConfig = {
   defaultProps?: Record<string, any>
 }
 
-// Button component styles
+// Button component styles with glassmorphism
 export const Button: ComponentStyleConfig = {
   baseStyle: {
     fontWeight: '500',
-    borderRadius: '6px',
+    borderRadius: '8px',
     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    border: '1px solid transparent',
     _focus: {
-      boxShadow: '0 0 0 3px rgba(0, 136, 255, 0.1)',
+      outline: 'none',
+      boxShadow: '0 0 0 2px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.3)',
     },
   },
   sizes: {
@@ -48,40 +50,47 @@ export const Button: ComponentStyleConfig = {
   },
   variants: {
     primary: {
-      bg: 'primary.500',
+      bg: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
       color: 'white',
+      border: '1px solid rgba(99, 102, 241, 0.3)',
+      boxShadow: '0 4px 15px rgba(99, 102, 241, 0.2)',
       _hover: {
-        bg: 'primary.600',
-        transform: 'translateY(-1px)',
-        boxShadow: '0 4px 12px rgba(0, 136, 255, 0.3)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.2)',
+        bg: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
       },
       _active: {
-        bg: 'primary.700',
-        transform: 'translateY(0)',
+        transform: 'translateY(-1px)',
+        boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
       },
     },
     secondary: {
-      bg: 'gray.100',
+      bg: 'rgba(71, 85, 105, 0.3)',
       color: 'text.primary',
-      border: '1px solid',
-      borderColor: 'border.default',
+      border: '1px solid rgba(71, 85, 105, 0.3)',
+      backdropFilter: 'blur(12px)',
       _hover: {
-        bg: 'gray.200',
-        borderColor: 'border.medium',
+        bg: 'rgba(71, 85, 105, 0.4)',
+        borderColor: 'rgba(99, 102, 241, 0.5)',
+        transform: 'translateY(-1px)',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
       },
       _active: {
-        bg: 'gray.300',
+        bg: 'rgba(71, 85, 105, 0.5)',
+        transform: 'translateY(0)',
       },
     },
     ghost: {
       bg: 'transparent',
       color: 'text.secondary',
       _hover: {
-        bg: 'gray.100',
+        bg: 'rgba(71, 85, 105, 0.2)',
         color: 'text.primary',
+        transform: 'translateY(-1px)',
       },
       _active: {
-        bg: 'gray.200',
+        bg: 'rgba(71, 85, 105, 0.3)',
+        transform: 'translateY(0)',
       },
     },
     danger: {
@@ -154,26 +163,28 @@ export const Input: ComponentStyleConfig = {
   },
 }
 
-// Card component styles
+// Card component styles with glassmorphism
 export const Card: ComponentStyleConfig = {
   baseStyle: {
     container: {
-      bg: 'background.paper',
-      borderRadius: '8px',
-      border: '1px solid',
-      borderColor: 'border.light',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
-      transition: 'all 0.2s',
+      bg: 'rgba(30, 41, 59, 0.6)',
+      borderRadius: '12px',
+      border: '1px solid rgba(71, 85, 105, 0.3)',
+      backdropFilter: 'blur(12px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       _hover: {
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06)',
-        transform: 'translateY(-1px)',
+        transform: 'translateY(-4px)',
+        boxShadow: '0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.2)',
+        borderColor: 'rgba(99, 102, 241, 0.4)',
       },
     },
     header: {
       px: '24px',
       py: '20px',
-      borderBottom: '1px solid',
-      borderBottomColor: 'border.light',
+      borderBottom: '1px solid rgba(71, 85, 105, 0.2)',
+      borderTopRadius: '12px',
     },
     body: {
       px: '24px',
@@ -182,26 +193,35 @@ export const Card: ComponentStyleConfig = {
     footer: {
       px: '24px',
       py: '16px',
-      borderTop: '1px solid',
-      borderTopColor: 'border.light',
-      bg: 'background.elevated',
+      borderTop: '1px solid rgba(71, 85, 105, 0.2)',
+      bg: 'rgba(51, 65, 85, 0.3)',
+      borderBottomRadius: '12px',
     },
   },
   variants: {
     elevated: {
       container: {
-        boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.1)',
         _hover: {
-          boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.3)',
+          transform: 'translateY(-6px)',
         },
       },
     },
     outline: {
       container: {
         bg: 'transparent',
-        border: '1px solid',
-        borderColor: 'border.default',
+        border: '1px solid rgba(71, 85, 105, 0.4)',
+        backdropFilter: 'blur(8px)',
         boxShadow: 'none',
+      },
+    },
+    glass: {
+      container: {
+        bg: 'rgba(255, 255, 255, 0.05)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
       },
     },
   },

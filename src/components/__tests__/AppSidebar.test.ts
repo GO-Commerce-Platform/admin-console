@@ -22,26 +22,22 @@ import type { StoreOption } from '@/types/navigation'
  */
 
 // Mock useAuth composable
-const mockUseAuth = vi.fn(() => ({
-  user: { value: null },
-  isPlatformAdmin: { value: false },
-  hasRole: vi.fn(() => true),
-  hasPermission: vi.fn(() => true)
-}))
-
 vi.mock('@/composables/useAuth', () => ({
-  useAuth: mockUseAuth
+  useAuth: vi.fn(() => ({
+    user: { value: null },
+    isPlatformAdmin: { value: false },
+    hasRole: vi.fn(() => true),
+    hasPermission: vi.fn(() => true)
+  }))
 }))
 
 // Mock useNavigation composable
-const mockUseNavigation = vi.fn(() => ({
-  navigationSections: { value: [] },
-  availableStores: { value: [] },
-  currentStoreId: { value: null }
-}))
-
 vi.mock('@/composables/useNavigation', () => ({
-  useNavigation: mockUseNavigation
+  useNavigation: vi.fn(() => ({
+    navigationSections: { value: [] },
+    availableStores: { value: [] },
+    currentStoreId: { value: null }
+  }))
 }))
 
 // Mock router
@@ -137,12 +133,16 @@ describe('AppSidebar', () => {
     }
   ]
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Reset all mocks before each test
     vi.clearAllMocks()
     
+    // Import mocked composables to reset them
+    const { useAuth } = await import('@/composables/useAuth')
+    const { useNavigation } = await import('@/composables/useNavigation')
+    
     // Default auth mock return
-    mockUseAuth.mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
       user: { value: mockUser },
       isPlatformAdmin: { value: true },
       hasRole: vi.fn(() => true),
@@ -150,7 +150,7 @@ describe('AppSidebar', () => {
     })
 
     // Default navigation mock
-    mockUseNavigation.mockReturnValue({
+    vi.mocked(useNavigation).mockReturnValue({
       navigationSections: { value: mockNavSections },
       availableStores: { value: mockStores },
       currentStoreId: { value: 'store-1' }

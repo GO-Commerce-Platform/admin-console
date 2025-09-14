@@ -7,7 +7,7 @@
 
 import { extendTheme } from '@chakra-ui/vue-next'
 import { colors, colorModeConfig } from './colors'
-// import { components } from './components' // Temporarily disabled to avoid type issues
+import { components } from './components'
 
 // Typography configuration - System fonts with clear hierarchy
 const fonts = {
@@ -215,7 +215,7 @@ const letterSpacings = {
   widest: '0.1em',
 }
 
-// Global styles
+// Global styles with dark theme and glassmorphism
 const styles = {
   global: {
     // Reset and base styles
@@ -225,32 +225,36 @@ const styles = {
     html: {
       fontSize: '16px',
       lineHeight: 1.5,
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+      minHeight: '100vh',
     },
     body: {
       fontFamily: 'body',
       color: 'text.primary',
-      bg: 'background.default',
+      bg: 'transparent', // Let HTML gradient show through
       transition: 'color 0.2s, background-color 0.2s',
       lineHeight: 'base',
       fontFeatureSettings: `'kern' 1`,
       textRendering: 'optimizeLegibility',
       WebkitFontSmoothing: 'antialiased',
       MozOsxFontSmoothing: 'grayscale',
+      minHeight: '100vh',
     },
-    // Focus styles
+    // Focus styles with glow effect
     '*:focus': {
-      outline: '2px solid',
-      outlineColor: 'primary.500',
-      outlineOffset: '2px',
+      outline: 'none',
+      boxShadow: '0 0 0 2px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.3)',
+      transition: 'box-shadow 0.2s ease-in-out',
     },
     // Selection styles
     '::selection': {
-      bg: 'primary.100',
-      color: 'primary.800',
+      bg: 'rgba(99, 102, 241, 0.3)',
+      color: 'white',
     },
     // Placeholder styles
     '::placeholder': {
       color: 'text.tertiary',
+      opacity: 0.6,
     },
     // Link styles
     a: {
@@ -267,35 +271,42 @@ const styles = {
       fontFamily: 'inherit',
       fontSize: 'inherit',
     },
-    // Scrollbar styles (webkit)
+    // Scrollbar styles (webkit) - Dark theme
     '::-webkit-scrollbar': {
       width: '8px',
       height: '8px',
     },
     '::-webkit-scrollbar-track': {
-      bg: 'gray.100',
+      bg: 'rgba(51, 65, 85, 0.3)',
     },
     '::-webkit-scrollbar-thumb': {
-      bg: 'gray.400',
+      bg: 'rgba(99, 102, 241, 0.6)',
       borderRadius: 'base',
       _hover: {
-        bg: 'gray.500',
+        bg: 'rgba(99, 102, 241, 0.8)',
       },
+    },
+    // Add backdrop blur support for glassmorphism
+    '.chakra-glass': {
+      backdropFilter: 'blur(12px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+      background: 'rgba(30, 41, 59, 0.6)',
+      border: '1px solid rgba(71, 85, 105, 0.3)',
     },
   },
 }
 
-// Configuration for color mode (light/dark theme)
+// Configuration for color mode (dark theme primary)
 const config = {
-  initialColorMode: 'light',
-  useSystemColorMode: true,
+  initialColorMode: 'dark',
+  useSystemColorMode: false, // Force dark theme by default
   cssVarPrefix: 'gocommerce',
 }
 
-// Create and export the theme (without components for now)
+// Create and export the theme with all components
 export const theme = extendTheme({
   colors,
-  // components, // Temporarily disabled
+  components,
   fonts,
   fontSizes,
   fontWeights,
