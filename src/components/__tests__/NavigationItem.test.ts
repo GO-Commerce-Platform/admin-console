@@ -20,14 +20,12 @@ import type { NavigationItem as NavItem } from '@/types/navigation'
  */
 
 // Mock useAuth composable
-const mockUseAuth = vi.fn(() => ({
-  user: { value: null },
-  hasRole: vi.fn(() => true),
-  hasPermission: vi.fn(() => true)
-}))
-
 vi.mock('@/composables/useAuth', () => ({
-  useAuth: mockUseAuth
+  useAuth: vi.fn(() => ({
+    user: { value: null },
+    hasRole: vi.fn(() => true),
+    hasPermission: vi.fn(() => true)
+  }))
 }))
 
 // Mock router
@@ -84,16 +82,17 @@ describe('NavigationItem', () => {
     requiredRoles: ['order-manager']
   }
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Reset all mocks before each test
     vi.clearAllMocks()
     
-    // Default auth mock return
-    mockUseAuth.mockReturnValue({
+    // Mock the useAuth composable
+    const { useAuth } = await import('@/composables/useAuth')
+    vi.mocked(useAuth).mockReturnValue({
       user: { value: { id: '1', roles: ['store-admin'] } },
       hasRole: vi.fn(() => true),
       hasPermission: vi.fn(() => true)
-    })
+    } as any)
   })
 
   it('renders simple navigation item correctly', () => {

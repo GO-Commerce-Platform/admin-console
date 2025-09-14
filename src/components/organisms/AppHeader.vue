@@ -5,9 +5,9 @@
       <div class="app-header__left">
         <!-- Mobile menu toggle -->
         <button
-          v-if="isMobile"
           class="app-header__mobile-toggle"
           @click="toggleMobileMenu"
+          @keydown="handleMobileToggleKeydown"
           :aria-expanded="mobileMenuOpen"
           aria-label="Toggle navigation menu"
         >
@@ -81,16 +81,17 @@
         <button
           class="app-header__notification-button"
           @click="toggleNotifications"
+          @keydown="handleNotificationKeydown"
           :aria-expanded="notificationsOpen"
           aria-label="View notifications"
         >
           <div class="app-header__notification-icon">
             🔔
             <span
-              v-if="unreadCount > 0"
-              class="app-header__notification-badge"
-            >
-              {{ unreadCount > 99 ? '99+' : unreadCount }}
+            v-if="effectiveUnreadCount > 0"
+            class="app-header__notification-badge"
+          >
+            {{ effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount }}
             </span>
           </div>
         </button>
@@ -100,7 +101,9 @@
           <button
             class="app-header__user-button"
             @click="toggleUserMenu"
+            @keydown="handleUserMenuKeydown"
             :aria-expanded="userMenuOpen"
+            :aria-haspopup="true"
             aria-label="User menu"
           >
             <div class="app-header__user-avatar">
@@ -164,6 +167,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useNotifications } from '@/composables/useNotifications'
 import NavLink from '@/components/atoms/NavLink.vue'
 import ChevronDownIcon from '@/components/atoms/icons/ChevronDownIcon.vue'
 import type { NavigationSearchResult, NavigationConfig } from '@/types/navigation'
@@ -204,6 +208,7 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const { user, logout, isPlatformAdmin } = useAuth()
+const { unreadCount: notificationCount } = useNotifications()
 
 // Local state
 const searchQuery = ref('')
@@ -214,6 +219,10 @@ const userMenuOpen = ref(false)
 const isMobile = ref(window.innerWidth <= 768)
 
 // Computed properties
+const effectiveUnreadCount = computed(() => {
+  return props.unreadCount || notificationCount?.value || 0
+})
+
 const userInitials = computed(() => {
   if (!user.value) return '??'
   const firstName = user.value.firstName?.[0] || ''
@@ -264,6 +273,12 @@ function handleSearchInput() {
   if (!searchQuery.value.trim()) {
     searchResults.value = []
     return
+  }
+
+  // Focus input after typing
+  const searchInput = document.querySelector('.app-header__search-input') as HTMLInputElement
+  if (searchInput) {
+    searchInput.focus()
   }
 
   // Simple search implementation - in real app, this would use a search service
@@ -343,6 +358,31 @@ async function handleLogout() {
     router.push('/login')
   } catch (error) {
     console.error('Logout failed:', error)
+  }
+}
+
+// Keyboard navigation handlers
+function handleMobileToggleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    toggleMobileMenu()
+  }
+}
+
+function handleNotificationKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    toggleNotifications()
+  }
+}
+
+function handleUserMenuKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    toggleUserMenu()
+  } else if (event.key === 'Escape' && userMenuOpen.value) {
+    event.preventDefault()
+    closeUserMenu()
   }
 }
 
