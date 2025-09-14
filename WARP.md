@@ -977,6 +977,85 @@ This comprehensive workflow ensures that every code change is traceable, reviewa
 - `GET /stores/{storeId}/orders` - List store orders
 - `PUT /stores/{storeId}/orders/{id}/status` - Update order status
 
+### MCP (Model Context Protocol) Integration
+
+#### Available MCP Tools
+This project leverages MCP tools for enhanced AI-assisted development, particularly for GitHub integration and library documentation.
+
+#### GitHub MCP Tool Usage
+**Correct Format**: Use `call_mcp_tool` function with proper parameters
+
+```typescript
+// ✅ CORRECT: Get user info
+call_mcp_tool({
+  name: "get_me",
+  input: {}
+})
+
+// ✅ CORRECT: Create GitHub issue
+call_mcp_tool({
+  name: "create_issue", 
+  input: {
+    owner: "aquele-dinho",
+    repo: "gocommerce", 
+    title: "[ADMIN-3] Basic Layout & Navigation Implementation",
+    body: "Implementation details..."
+  }
+})
+
+// ✅ CORRECT: Get repository info
+call_mcp_tool({
+  name: "search_repositories",
+  input: {
+    query: "gocommerce user:aquele-dinho"
+  }
+})
+
+// ❌ WRONG: Direct API calls (don't do this)
+get_issue({ issue_number: 3, owner: "aquele-dinho", repo: "gocommerce" })
+```
+
+#### Context7 Documentation Tool Usage
+**Correct Format**: For library documentation
+
+```typescript
+// ✅ CORRECT: Resolve library ID first
+call_mcp_tool({
+  name: "resolve-library-id",
+  input: {
+    libraryName: "vue"
+  }
+})
+
+// ✅ CORRECT: Get library docs
+call_mcp_tool({
+  name: "get-library-docs",
+  input: {
+    context7CompatibleLibraryID: "/vuejs/vue",
+    topic: "composition-api",
+    tokens: 5000
+  }
+})
+```
+
+#### Key MCP Guidelines
+1. **Always use `call_mcp_tool` function** - never call tools directly
+2. **Provide proper JSON input** - follow the tool's input schema exactly
+3. **Handle responses appropriately** - MCP tools return `text_result` arrays
+4. **Check repository existence** - use `search_repositories` before assuming repo exists
+5. **Follow GitHub API conventions** - use proper owner/repo format
+
+#### Common MCP Tools for This Project
+- `get_me` - Get authenticated user info
+- `create_issue` - Create GitHub issues for tasks
+- `create_repository` - Create new repository if needed
+- `search_repositories` - Find existing repositories
+- `create_pull_request` - Create PRs for feature branches
+- `get-library-docs` - Get documentation for Vue, TypeScript, etc.
+- `resolve-library-id` - Find correct library IDs for documentation
+
+**Note**: Always verify repository existence and proper authentication before making MCP tool calls.
+
 ### Error Handling
 - **HTTP Status Codes**: Proper status code usage
 - **Error Response Format**: Consistent error response structure
