@@ -356,6 +356,61 @@ Interactive mockup demonstrating:
 - ✅ **Git Workflow**: Conventional commits with proper issue linking
 - ✅ **Review Ready**: Demo pages for stakeholder review
 
+## 🤖 Code Review Agent Integration
+
+### **Automated Code Review**
+Integrated comprehensive code review system following SDD methodology:
+
+#### **Setup & Usage**
+- **Quick Setup**: Add aliases to `~/.zshrc`:
+  ```bash
+  source /Users/aquele_dinho/Projects/gocommerce/frontend/admin-console/.warp/aliases.sh
+  ```
+- **Review Commands**:
+  - `review` - Review most recent PR
+  - `review 3` - Review specific PR by number
+  - `pr-list` - List all pull requests
+  - `pr-status` - Check PR status
+
+#### **Review Scope**
+The Code Review Agent analyzes PRs across four key areas:
+
+**🔍 Technical Quality**
+- TypeScript strict mode compliance (zero `any` types)
+- ESLint/Prettier conformance
+- Component architecture adherence (atomic design)
+- Performance considerations and security vulnerabilities
+
+**🧪 Testing Quality**
+- Unit test coverage (target: 80%+ for new code)
+- Test scenario comprehensiveness (edge cases, error states)
+- Integration test presence and accessibility testing
+
+**📋 SDD Compliance**
+- Issue properly linked with closing keywords
+- Branch naming convention followed
+- Commit messages use conventional format
+- Documentation updates where required
+
+**🎯 Project Standards**
+- Vue 3 best practices (Composition API, `<script setup>`)
+- Atomic design pattern compliance
+- WCAG 2.1 AA accessibility standards
+- State management patterns (Pinia integration)
+
+#### **Review Output**
+Standardized review responses include:
+- ✅ Approved / 🔄 Request Changes / ⏸️ Manual Review Required
+- Risk level and complexity assessment
+- Key findings (strengths, issues, required actions)
+- Detailed checklist results for all quality criteria
+- Specific recommendations and actionable next steps
+
+#### **Documentation**
+- **Complete Guide**: `.warp/README.md`
+- **Quick Setup**: `.warp/SETUP.md`
+- **Agent Specification**: Defined in `WARP.md`
+
 ## 📞 Support and Maintenance
 
 ### **Development Tools**
@@ -363,6 +418,7 @@ Interactive mockup demonstrating:
 - **Testing**: `npm run test`
 - **Build**: `npm run build`
 - **Linting**: `npm run lint`
+- **Code Review**: `review [PR_NUMBER]` (with aliases loaded)
 
 ### **Component Documentation**
 Each component includes:
