@@ -9,7 +9,9 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 
-// Chakra UI removed for simplicity - using plain CSS
+// Chakra UI Vue Next configuration
+import ChakraUIVuePlugin, { chakra, extendTheme } from '@chakra-ui/vue-next'
+import { theme } from '@/theme'
 
 // Router configuration
 import router from '@/router'
@@ -64,7 +66,11 @@ async function initializeApp(): Promise<void> {
     // Setup router guards - temporarily disabled for debugging
     // setupRouterGuards(router)
 
-    // No UI library setup - using plain CSS
+    // Setup Chakra UI Vue
+    app.use(ChakraUIVuePlugin, {
+      extendTheme: theme,
+      resetCSS: true,
+    })
 
     // Global error handler with proper logging
     app.config.errorHandler = (error: any, instance: any, info: string) => {

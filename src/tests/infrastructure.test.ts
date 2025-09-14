@@ -32,7 +32,7 @@ describe('Theme Configuration', () => {
 
   it('should have professional color palette', () => {
     expect(theme.colors.primary).toBeDefined();
-    expect(theme.colors.primary[500]).toBe('#0088ff');
+    expect(theme.colors.primary[500]).toBe('#6366f1');
     expect(theme.colors.secondary).toBeDefined();
     expect(theme.colors.gray).toBeDefined();
     expect(theme.colors.success).toBeDefined();

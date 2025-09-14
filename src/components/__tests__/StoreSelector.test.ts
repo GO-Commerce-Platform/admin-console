@@ -364,8 +364,9 @@ describe('StoreSelector', () => {
     await wrapper.find('.store-selector__trigger').trigger('click')
     expect(wrapper.find('.store-selector__menu').exists()).toBe(true)
 
-    // Simulate escape key
-    await wrapper.trigger('keydown', { key: 'Escape' })
+    // Simulate escape key on document (where the component listens)
+    const keydownEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+    document.dispatchEvent(keydownEvent)
     
     // Should close dropdown
     await wrapper.vm.$nextTick()

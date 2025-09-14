@@ -1,51 +1,51 @@
 /**
  * Chakra UI Color Theme Configuration
- * Professional blue/gray color palette with accent colors as specified in WARP.md
- *
- * Related GitHub Issue: #1 - Core Infrastructure
+ * Modern dark theme with purple/indigo gradients inspired by template design
+ * 
+ * Related GitHub Issue: #11 - Component Library & Design System
  */
 
 export const colors = {
-  // Primary brand colors - Professional blue palette
+  // Primary brand colors - Deep purple/indigo palette (main brand)
   primary: {
-    50: '#e6f3ff',
-    100: '#b3deff',
-    200: '#80c8ff',
-    300: '#4db2ff',
-    400: '#1a9dff',
-    500: '#0088ff', // Primary brand color
-    600: '#0066cc',
-    700: '#004d99',
-    800: '#003366',
-    900: '#001a33',
+    50: '#f0f0ff',
+    100: '#e0e0ff',
+    200: '#c7c7ff',
+    300: '#a5a5ff',
+    400: '#8080ff',
+    500: '#6366f1', // Primary brand color (indigo-500)
+    600: '#4f46e5', // Indigo-600
+    700: '#4338ca', // Indigo-700
+    800: '#3730a3', // Indigo-800
+    900: '#312e81', // Indigo-900
   },
 
-  // Secondary colors - Professional gray palette
+  // Secondary colors - Purple palette for accents
   secondary: {
-    50: '#f7f9fc',
-    100: '#e8ecf1',
-    200: '#d9e0e7',
-    300: '#c4ced9',
-    400: '#9aa5b1',
-    500: '#697d8a', // Secondary brand color
-    600: '#5a6c78',
-    700: '#485966',
-    800: '#374654',
-    900: '#253342',
+    50: '#faf5ff',
+    100: '#f3e8ff',
+    200: '#e9d5ff',
+    300: '#d8b4fe',
+    400: '#c084fc',
+    500: '#a855f7', // Purple-500
+    600: '#9333ea', // Purple-600
+    700: '#7c3aed', // Purple-700
+    800: '#6b21a8', // Purple-800
+    900: '#581c87', // Purple-900
   },
 
-  // Neutral colors - Enhanced gray scale
+  // Neutral colors - Dark theme gray scale
   gray: {
-    50: '#fafbfc',
-    100: '#f2f4f6',
-    200: '#e8ecf0',
-    300: '#d1d9e0',
-    400: '#b4c1cc',
-    500: '#95a3b0',
-    600: '#7a8794',
-    700: '#636e7a',
-    800: '#4d5761',
-    900: '#374047',
+    50: '#f8fafc',
+    100: '#f1f5f9',
+    200: '#e2e8f0',
+    300: '#cbd5e1',
+    400: '#94a3b8',
+    500: '#64748b',
+    600: '#475569',
+    700: '#334155',
+    800: '#1e293b', // Main dark background
+    900: '#0f172a', // Darkest background
   },
 
   // Success colors
@@ -104,46 +104,54 @@ export const colors = {
     900: '#1e3a8a',
   },
 
-  // Background colors for different contexts
+  // Background colors for dark theme
   background: {
-    default: '#ffffff',
-    paper: '#fafbfc',
-    elevated: '#f7f9fc',
-    sidebar: '#374047',
-    header: '#ffffff',
-    disabled: '#e8ecf0',
+    default: '#0f172a', // Main dark background (gray-900)
+    paper: '#1e293b', // Card/paper background (gray-800)
+    elevated: '#334155', // Elevated elements (gray-700)
+    sidebar: '#1e293b', // Sidebar background
+    header: 'rgba(30, 41, 59, 0.8)', // Semi-transparent header
+    disabled: '#475569', // Disabled state
+    gradient: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)', // Gradient background
+    card: 'rgba(30, 41, 59, 0.6)', // Semi-transparent card with glassmorphism
+    overlay: 'rgba(15, 23, 42, 0.8)', // Modal overlay
   },
 
-  // Border colors
+  // Border colors for dark theme
   border: {
-    default: '#e8ecf0',
-    light: '#f2f4f6',
-    medium: '#d1d9e0',
-    dark: '#b4c1cc',
-    focus: '#0088ff',
+    default: 'rgba(71, 85, 105, 0.3)', // Semi-transparent border
+    light: 'rgba(100, 116, 139, 0.2)', // Lighter border
+    medium: 'rgba(71, 85, 105, 0.5)', // Medium border
+    dark: 'rgba(51, 65, 85, 0.8)', // Darker border
+    focus: '#6366f1', // Primary focus color
+    glow: 'rgba(99, 102, 241, 0.3)', // Glowing border effect
   },
 
-  // Text colors with proper contrast ratios
+  // Text colors optimized for dark theme
   text: {
-    primary: '#374047',
-    secondary: '#636e7a',
-    tertiary: '#95a3b0',
-    inverse: '#ffffff',
-    link: '#0088ff',
-    linkHover: '#0066cc',
-    disabled: '#b4c1cc',
+    primary: '#f8fafc', // High contrast white text
+    secondary: '#cbd5e1', // Medium contrast gray text
+    tertiary: '#94a3b8', // Low contrast gray text
+    inverse: '#0f172a', // Dark text for light backgrounds
+    link: '#8b5cf6', // Purple link color
+    linkHover: '#a855f7', // Lighter purple on hover
+    disabled: '#64748b', // Disabled text color
+    muted: '#64748b', // Muted text
+    accent: '#06b6d4', // Cyan accent text
   },
 
-  // Accent colors for highlights and special elements
+  // Bright accent colors for highlights and special elements
   accent: {
-    blue: '#0088ff',
-    green: '#00d190',
-    orange: '#f97316',
-    red: '#ef4444',
-    purple: '#8b5cf6',
-    teal: '#14b8a6',
-    pink: '#ec4899',
-    indigo: '#6366f1',
+    blue: '#3b82f6', // Bright blue
+    green: '#10b981', // Bright green (emerald)
+    orange: '#f59e0b', // Bright orange (amber)
+    red: '#ef4444', // Bright red
+    purple: '#8b5cf6', // Bright purple (violet)
+    teal: '#06b6d4', // Bright teal (cyan)
+    pink: '#ec4899', // Bright pink
+    indigo: '#6366f1', // Bright indigo
+    yellow: '#eab308', // Bright yellow
+    lime: '#84cc16', // Bright lime
   },
 
   // Status colors for various states
@@ -155,34 +163,45 @@ export const colors = {
     archived: '#b4c1cc',
   },
 
-  // Data visualization colors for charts and graphs
+  // Data visualization colors for charts and graphs (bright and distinct)
   chart: {
-    primary: '#0088ff',
-    secondary: '#00d190',
-    tertiary: '#f97316',
-    quaternary: '#8b5cf6',
-    quinary: '#ec4899',
-    senary: '#14b8a6',
+    primary: '#6366f1', // Indigo
+    secondary: '#10b981', // Emerald 
+    tertiary: '#f59e0b', // Amber
+    quaternary: '#8b5cf6', // Violet
+    quinary: '#ec4899', // Pink
+    senary: '#06b6d4', // Cyan
+    septenary: '#ef4444', // Red
+    octonary: '#84cc16', // Lime
+  },
+
+  // Glassmorphism effect colors
+  glass: {
+    primary: 'rgba(99, 102, 241, 0.1)', // Primary with transparency
+    secondary: 'rgba(168, 85, 247, 0.1)', // Secondary with transparency
+    white: 'rgba(255, 255, 255, 0.1)', // White glass effect
+    dark: 'rgba(15, 23, 42, 0.6)', // Dark glass effect
+    card: 'rgba(30, 41, 59, 0.6)', // Card glass effect
   },
 }
 
-// Color mode configurations (light/dark theme support)
+// Color mode configurations (primarily dark theme)
 export const colorModeConfig = {
   light: {
-    background: colors.background.default,
-    surface: colors.background.paper,
+    background: '#ffffff',
+    surface: '#f8fafc',
     primary: colors.primary[500],
     secondary: colors.secondary[500],
-    text: colors.text.primary,
-    textSecondary: colors.text.secondary,
+    text: '#0f172a',
+    textSecondary: '#475569',
   },
   dark: {
-    background: colors.gray[900],
-    surface: colors.gray[800],
-    primary: colors.primary[400],
-    secondary: colors.secondary[400],
-    text: colors.text.inverse,
-    textSecondary: colors.gray[300],
+    background: colors.background.default, // #0f172a
+    surface: colors.background.paper, // #1e293b
+    primary: colors.primary[500], // #6366f1
+    secondary: colors.secondary[500], // #a855f7
+    text: colors.text.primary, // #f8fafc
+    textSecondary: colors.text.secondary, // #cbd5e1
   },
 }
 

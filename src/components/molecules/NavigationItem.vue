@@ -5,31 +5,31 @@
       {
         'navigation-item--expanded': expanded,
         'navigation-item--has-children': hasChildren,
-        'navigation-item--active': isActive
+        'navigation-item--active': isActive,
+        'navigation-item--hidden': !hasPermission
       }
     ]"
   >
-    <NavLink
-      :to="item.to"
-      :icon="item.icon"
-      :label="item.label"
-      :badge="item.badge"
-      :disabled="item.disabled || !hasPermission"
-      :class="[
-        'navigation-item__link',
-        {
-          'navigation-item__link--parent': hasChildren
-        }
-      ]"
-      @click="handleClick"
-    >
-      <template v-if="hasChildren">
-        <span class="navigation-item__expand-icon">
-          <ChevronDownIcon v-if="expanded" />
-          <ChevronRightIcon v-else />
-        </span>
-      </template>
-    </NavLink>
+    <div class="navigation-item__wrapper">
+      <NavLink
+        :to="item.to"
+        :icon="item.icon"
+        :label="item.label"
+        :badge="item.badge"
+        :disabled="item.disabled || !hasPermission"
+        :class="[
+          'navigation-item__link',
+          {
+            'navigation-item__link--parent': hasChildren
+          }
+        ]"
+        @click="handleClick"
+      />
+      <span v-if="hasChildren" class="navigation-item__expand-icon">
+        <ChevronDownIcon v-if="expanded" />
+        <ChevronRightIcon v-else />
+      </span>
+    </div>
 
     <!-- Sub-navigation items -->
     <Transition name="slide-down">
@@ -160,10 +160,15 @@ if (isActive.value && hasChildren.value) {
   margin-bottom: 2px;
 }
 
+.navigation-item__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .navigation-item__link {
   width: 100%;
   justify-content: flex-start;
-  position: relative;
 }
 
 .navigation-item__link--parent {
@@ -182,6 +187,7 @@ if (isActive.value && hasChildren.value) {
   height: 20px;
   color: #94a3b8;
   transition: color 0.2s ease-in-out;
+  pointer-events: none; /* Let clicks pass through to NavLink */
 }
 
 .navigation-item:hover .navigation-item__expand-icon {
@@ -209,8 +215,8 @@ if (isActive.value && hasChildren.value) {
   min-height: 32px;
 }
 
-/* Hide items without permission */
-.navigation-item:has(.nav-link--disabled) {
+/* Hide items without permission using class instead of :has() selector */
+.navigation-item--hidden {
   display: none;
 }
 

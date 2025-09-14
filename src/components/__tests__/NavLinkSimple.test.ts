@@ -83,7 +83,7 @@ describe('NavLink (Simplified)', () => {
     const wrapper = mount(NavLink, {
       props: {
         label: 'Badge Link',
-        badge: { content: '5' }
+        badge: '5'
       },
       global: {
         plugins: [router]

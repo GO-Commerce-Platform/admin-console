@@ -6,6 +6,17 @@
 import { expect, afterEach, beforeEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/vue'
 import '@testing-library/jest-dom'
+import { config } from '@vue/test-utils'
+import ChakraUIVuePlugin from '@chakra-ui/vue-next'
+import { theme } from '@/theme'
+
+// Configure Vue Test Utils to use Chakra UI
+config.global.plugins = [
+  [ChakraUIVuePlugin, {
+    extendTheme: theme,
+    resetCSS: false, // Disable in tests
+  }]
+]
 
 // Global test setup
 beforeEach(() => {
