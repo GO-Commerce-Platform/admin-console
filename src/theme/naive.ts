@@ -6,7 +6,6 @@
  * Related GitHub Issue: #25 - UI Migration from Chakra UI to Naive UI
  */
 
-import { darkTheme, GlobalTheme } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 
 /**
@@ -200,13 +199,8 @@ export const themeOverrides: GlobalThemeOverrides = {
   },
 }
 
-/**
- * Create the complete theme configuration
- */
-export const naiveTheme: GlobalTheme = {
-  ...darkTheme,
-  ...themeOverrides,
-}
+// Theme configuration is exported via themeOverrides above
+// The base theme (darkTheme) is imported directly from naive-ui in main.ts
 
 /**
  * Export colors for use in components

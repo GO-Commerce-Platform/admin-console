@@ -10,8 +10,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 
 // Naive UI configuration
-import { create, NConfigProvider } from 'naive-ui'
-import { naiveTheme, themeOverrides } from '@/theme/naive'
+import { create, NConfigProvider, darkTheme } from 'naive-ui'
+import { themeOverrides } from '@/theme/naive'
 
 // Router configuration
 import router from '@/router'
@@ -69,7 +69,7 @@ async function initializeApp(): Promise<void> {
     // Setup Naive UI with custom theme
     const naive = create({
       components: [],
-      theme: naiveTheme,
+      theme: darkTheme,
       themeOverrides: themeOverrides,
     })
     app.use(naive)
