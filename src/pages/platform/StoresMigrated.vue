@@ -245,19 +245,19 @@
       </NCard>
     </div>
 
-    <!-- Modals -->
-    <CreateStoreModal
+    <!-- Modals - TODO: Implement modal components -->
+    <!-- <CreateStoreModal
       v-if="showCreateStoreModal"
       @close="closeCreateStoreModal"
       @created="handleStoreCreated"
-    />
+    /> -->
 
-    <EditStoreModal
+    <!-- <EditStoreModal
       v-if="showEditStoreModal && selectedStore"
       :store="selectedStore"
       @close="closeEditStoreModal"
       @updated="handleStoreUpdated"
-    />
+    /> -->
 
     <!-- Delete Confirmation -->
     <NModal
@@ -313,8 +313,9 @@ import { useStoresStore } from '@/stores/stores'
 import { useAuth } from '@/composables/useAuth'
 import { useDebounce } from '@/composables/useDebounce'
 import MetricCard from '@/components/molecules/MetricCard.vue'
-import CreateStoreModal from '@/components/organisms/CreateStoreModal.vue'
-import EditStoreModal from '@/components/organisms/EditStoreModal.vue'
+// TODO: Create modal components
+// import CreateStoreModal from '@/components/organisms/CreateStoreModal.vue'
+// import EditStoreModal from '@/components/organisms/EditStoreModal.vue'
 import type { StoreDto, StoreStatus, StoreTemplateCategory } from '@/types/store'
 import type { DataTableColumns } from 'naive-ui'
 
@@ -485,12 +486,14 @@ const refreshStores = () => {
   storesStore.fetchStores(true)
 }
 
-// Modal handlers
+// Modal handlers - TODO: Implement modal components
 const openCreateStoreModal = () => {
   if (!isPlatformAdmin.value) {
     return
   }
-  showCreateStoreModal.value = true
+  // TODO: Implement CreateStoreModal component
+  console.log('Create Store modal - Coming Soon!')
+  // showCreateStoreModal.value = true
 }
 
 const closeCreateStoreModal = () => {
@@ -503,8 +506,10 @@ const handleStoreCreated = (store: StoreDto) => {
 }
 
 const openEditStoreModal = (store: StoreDto) => {
-  selectedStore.value = store
-  showEditStoreModal.value = true
+  // TODO: Implement EditStoreModal component
+  console.log('Edit Store modal - Coming Soon!', store.name)
+  // selectedStore.value = store
+  // showEditStoreModal.value = true
 }
 
 const closeEditStoreModal = () => {
