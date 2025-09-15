@@ -32,8 +32,8 @@ describe('Button Component', () => {
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.props('variant')).toBe('primary')
+    const button = wrapper.findComponent({ name: 'NButton' })
+    expect(button.props('type')).toBe('primary')
   })
 
   it('applies correct size classes', () => {
@@ -46,8 +46,8 @@ describe('Button Component', () => {
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.props('size')).toBe('lg')
+    const button = wrapper.findComponent({ name: 'NButton' })
+    expect(button.props('size')).toBe('large')
   })
 
   it('handles loading state correctly', () => {
@@ -60,8 +60,8 @@ describe('Button Component', () => {
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.props('isLoading')).toBe(true)
+    const button = wrapper.findComponent({ name: 'NButton' })
+    expect(button.props('loading')).toBe(true)
   })
 
   it('handles disabled state correctly', () => {
@@ -74,8 +74,8 @@ describe('Button Component', () => {
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.props('isDisabled')).toBe(true)
+    const button = wrapper.findComponent({ name: 'NButton' })
+    expect(button.props('disabled')).toBe(true)
   })
 
   it('applies glass class when glass prop is true', () => {
@@ -88,7 +88,7 @@ describe('Button Component', () => {
       }
     })
 
-    expect(wrapper.find('.chakra-glass').exists()).toBe(true)
+    expect(wrapper.find('.naive-glass').exists()).toBe(true)
   })
 
   it('does not apply glass class when glass prop is false', () => {
@@ -101,7 +101,7 @@ describe('Button Component', () => {
       }
     })
 
-    expect(wrapper.find('.chakra-glass').exists()).toBe(false)
+    expect(wrapper.find('.naive-glass').exists()).toBe(false)
   })
 
   it('emits click event when clicked and not disabled', async () => {
@@ -165,8 +165,8 @@ describe('Button Component', () => {
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.props('leftIcon')).toBe('plus')
+    // With Naive UI, icons are rendered in slots
+    expect(wrapper.props('leftIcon')).toBe('plus')
   })
 
   it('supports right icon prop', () => {
@@ -179,8 +179,8 @@ describe('Button Component', () => {
       }
     })
 
-    const button = wrapper.findComponent({ name: 'CButton' })
-    expect(button.props('rightIcon')).toBe('arrow-right')
+    // With Naive UI, icons are rendered in slots
+    expect(wrapper.props('rightIcon')).toBe('arrow-right')
   })
 
   it('renders as a proper button element', () => {

@@ -7,26 +7,28 @@
   Related GitHub Issue: #11 - Component Library & Design System
 -->
 <template>
-  <CButton
-    :variant="variant"
-    :size="size"
-    :isLoading="loading"
-    :isDisabled="disabled"
-    :leftIcon="leftIcon"
-    :rightIcon="rightIcon"
+  <NButton
+    :type="naiveVariant"
+    :size="naiveSize"
+    :loading="loading"
+    :disabled="disabled"
     :class="['gocommerce-button', glassClass]"
     v-bind="$attrs"
     @click="handleClick"
   >
+    <template v-if="leftIcon" #icon>
+      <NIcon><component :is="leftIcon" /></NIcon>
+    </template>
     <slot />
-  </CButton>
+    <template v-if="rightIcon" #suffix>
+      <NIcon><component :is="rightIcon" /></NIcon>
+    </template>
+  </NButton>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-// TODO: Migrate to Naive UI
-// import { CButton } from '@chakra-ui/vue-next'
-import { NButton as CButton } from 'naive-ui' // Temporary fallback
+import { NButton, NIcon } from 'naive-ui'
 
 /**
  * Button Component Props
@@ -69,8 +71,27 @@ const emit = defineEmits<ButtonEmits>()
 /**
  * Computed Properties
  */
+const naiveVariant = computed(() => {
+  const variantMap = {
+    primary: 'primary',
+    secondary: 'default', 
+    ghost: 'tertiary',
+    danger: 'error'
+  }
+  return variantMap[props.variant] || 'primary'
+})
+
+const naiveSize = computed(() => {
+  const sizeMap = {
+    sm: 'small',
+    md: 'medium',
+    lg: 'large'
+  }
+  return sizeMap[props.size] || 'medium'
+})
+
 const glassClass = computed(() => {
-  return props.glass ? 'chakra-glass' : ''
+  return props.glass ? 'naive-glass' : ''
 })
 
 /**
@@ -111,7 +132,7 @@ const handleClick = (event: Event) => {
 }
 
 /* Glassmorphism enhancement */
-.chakra-glass.gocommerce-button {
+.naive-glass.gocommerce-button {
   position: relative;
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);

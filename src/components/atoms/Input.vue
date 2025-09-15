@@ -7,48 +7,31 @@
   Related GitHub Issue: #11 - Component Library & Design System
 -->
 <template>
-  <CFormControl :isInvalid="!!error" :isRequired="required">
-    <CFormLabel v-if="label" :htmlFor="inputId">
-      {{ label }}
-    </CFormLabel>
-    <CInput
-      :id="inputId"
+  <NFormItem
+    :label="label"
+    :validation-status="error ? 'error' : undefined"
+    :feedback="error || helper"
+    :required="required"
+  >
+    <NInput
       :type="type"
       :placeholder="placeholder"
       :value="modelValue"
-      :size="size"
-      :isDisabled="disabled"
-      :isReadOnly="readonly"
+      :size="naiveSize"
+      :disabled="disabled"
+      :readonly="readonly"
       :class="['gocommerce-input', glassClass]"
       v-bind="$attrs"
       @input="handleInput"
       @blur="handleBlur"
       @focus="handleFocus"
     />
-    <CFormHelperText v-if="helper && !error">
-      {{ helper }}
-    </CFormHelperText>
-    <CFormErrorMessage v-if="error">
-      {{ error }}
-    </CFormErrorMessage>
-  </CFormControl>
+  </NFormItem>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-// TODO: Migrate to Naive UI
-// import {
-//   CFormControl,
-//   CFormLabel,
-//   CInput,
-//   CFormHelperText,
-//   CFormErrorMessage,
-// } from '@chakra-ui/vue-next'
-import { NFormItem as CFormControl, NInput as CInput } from 'naive-ui'
-// Temporary fallbacks
-const CFormLabel = 'label'
-const CFormHelperText = 'div'
-const CFormErrorMessage = 'div'
+import { NFormItem, NInput } from 'naive-ui'
 
 /**
  * Input Component Props
@@ -106,12 +89,17 @@ const emit = defineEmits<InputEmits>()
 /**
  * Computed Properties
  */
-const inputId = computed(() => {
-  return `gocommerce-input-${Math.random().toString(36).substr(2, 9)}`
+const naiveSize = computed(() => {
+  const sizeMap = {
+    sm: 'small',
+    md: 'medium',
+    lg: 'large'
+  }
+  return sizeMap[props.size] || 'medium'
 })
 
 const glassClass = computed(() => {
-  return props.glass ? 'chakra-glass' : ''
+  return props.glass ? 'naive-glass' : ''
 })
 
 /**
@@ -148,14 +136,14 @@ const handleFocus = (event: Event) => {
 }
 
 /* Glassmorphism enhancement */
-.chakra-glass.gocommerce-input {
+.naive-glass.gocommerce-input {
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(71, 85, 105, 0.3);
 }
 
-.chakra-glass.gocommerce-input:focus {
+.naive-glass.gocommerce-input:focus {
   background: rgba(30, 41, 59, 0.8);
   border-color: rgba(99, 102, 241, 0.6);
 }

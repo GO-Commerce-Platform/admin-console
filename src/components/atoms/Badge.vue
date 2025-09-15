@@ -7,21 +7,19 @@
   Related GitHub Issue: #11 - Component Library & Design System
 -->
 <template>
-  <CBadge
-    :variant="computedVariant"
-    :size="size"
+  <NTag
+    :type="naiveVariant"
+    :size="naiveSize"
     :class="['gocommerce-badge', glowClass]"
     v-bind="$attrs"
   >
     <slot />
-  </CBadge>
+  </NTag>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-// TODO: Migrate to Naive UI
-// import { CBadge } from '@chakra-ui/vue-next'
-import { NTag as CBadge } from 'naive-ui' // Temporary fallback
+import { NTag } from 'naive-ui'
 
 /**
  * Badge Component Props
@@ -44,19 +42,28 @@ const props = withDefaults(defineProps<BadgeProps>(), {
 /**
  * Computed Properties
  */
-const computedVariant = computed(() => {
-  // Map our custom variants to Chakra UI variants
+const naiveVariant = computed(() => {
+  // Map our custom variants to Naive UI variants
   const variantMap = {
     success: 'success',
     warning: 'warning', 
     error: 'error',
     info: 'info',
-    primary: 'solid',
-    secondary: 'subtle',
-    neutral: 'subtle',
+    primary: 'primary',
+    secondary: 'default',
+    neutral: 'default',
   }
   
-  return variantMap[props.variant] || 'subtle'
+  return variantMap[props.variant] || 'default'
+})
+
+const naiveSize = computed(() => {
+  const sizeMap = {
+    sm: 'small',
+    md: 'medium',
+    lg: 'large'
+  }
+  return sizeMap[props.size] || 'medium'
 })
 
 const glowClass = computed(() => {
