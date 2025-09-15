@@ -1,12 +1,12 @@
 <template>
   <NaiveUIProvider>
     <div id="app">
-      <!-- Initialize authentication and then show appropriate content -->
-      <div v-if="authInitialized" class="app-content">
+      <!-- Show content when app is ready -->
+      <div v-if="appReady" class="app-content">
         <router-view />
       </div>
       
-      <!-- Loading state during authentication initialization -->
+      <!-- Loading state during initialization -->
       <div v-else class="app-loading">
         <div class="app-loading__spinner"></div>
         <p>Initializing application...</p>
@@ -16,18 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import NaiveUIProvider from '@/components/providers/NaiveUIProvider.vue'
 
 /**
  * Main Application Component
  * 
- * Handles global application initialization including:
- * - Authentication system initialization
- * - Global error handling
- * - Application-level state management
- * - Router view management
+ * Handles global application display and routing.
+ * Authentication is handled by the router guards and services.
  * 
  * The actual layout is handled by individual route components
  * that use AppLayout for authenticated areas.
@@ -35,28 +32,10 @@ import NaiveUIProvider from '@/components/providers/NaiveUIProvider.vue'
  * Related GitHub Issue: #3 - Layout, Navigation & Routing System
  */
 
-const { initialize } = useAuth()
-const authInitialized = ref(false)
+const { isInitializing } = useAuth()
 
-// Initialize authentication on app load
-onMounted(async () => {
-  try {
-    console.log('🚀 Initializing GO Commerce Admin Console...')
-    
-    // Initialize authentication system
-    await initialize()
-    
-    // Mark as initialized
-    authInitialized.value = true
-    
-    console.log('✅ Application initialized successfully')
-  } catch (error) {
-    console.error('❌ Failed to initialize application:', error)
-    
-    // Even if auth fails, show the app so user can see login page
-    authInitialized.value = true
-  }
-})
+// App is ready when authentication initialization is complete
+const appReady = computed(() => !isInitializing.value)
 </script>
 
 <style scoped>
