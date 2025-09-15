@@ -505,8 +505,8 @@ Thank you.
       width: 100%;
     }
 
-    .primary-actions :deep(.chakra-button),
-    .secondary-actions :deep(.chakra-button) {
+    .primary-actions :deep(.n-button),
+    .secondary-actions :deep(.n-button) {
       width: 100%;
     }
   }
@@ -527,33 +527,33 @@ Thank you.
     }
   }
 
-  /* Button hover effects */
-  .unauthorized-actions :deep(.chakra-button:hover:not([disabled])) {
+  /* Button hover effects - Updated for Naive UI */
+  .unauthorized-actions :deep(.n-button:hover:not(.n-button--disabled)) {
     transform: translateY(-1px);
     transition: all 0.2s ease-in-out;
   }
 
-  .store-list :deep(.chakra-button:hover:not([disabled])) {
+  .store-list :deep(.n-button:hover:not(.n-button--disabled)) {
     transform: translateY(-1px);
     transition: all 0.2s ease-in-out;
   }
 
-  /* Focus styles */
-  .unauthorized-actions :deep(.chakra-button:focus),
-  .store-list :deep(.chakra-button:focus) {
+  /* Focus styles - Updated for Naive UI */
+  .unauthorized-actions :deep(.n-button:focus-visible),
+  .store-list :deep(.n-button:focus-visible) {
     box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
   }
 
-  /* Alert spacing */
-  .context-info :deep(.chakra-alert) {
+  /* Alert spacing - Updated for Naive UI */
+  .context-info :deep(.n-alert) {
     text-align: left;
   }
 
-  .context-info :deep(.chakra-alert-description) {
+  .context-info :deep(.n-alert__content) {
     margin-top: 0.5rem;
   }
 
-  .context-info :deep(.chakra-tag) {
+  .context-info :deep(.n-tag) {
     margin-left: 0.25rem;
     margin-right: 0.25rem;
   }
