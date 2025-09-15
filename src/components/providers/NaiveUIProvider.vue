@@ -8,7 +8,7 @@
 -->
 <template>
   <NConfigProvider
-    :theme="naiveTheme"
+    :theme="darkTheme"
     :theme-overrides="themeOverrides"
     :locale="locale"
     :date-locale="dateLocale"
@@ -34,10 +34,11 @@ import {
   NDialogProvider,
   NNotificationProvider,
   NLoadingBarProvider,
+  darkTheme,
   enUS,
   dateEnUS,
 } from 'naive-ui'
-import { naiveTheme, themeOverrides } from '@/theme/naive'
+import { themeOverrides } from '@/theme/naive'
 
 /**
  * Component Props

@@ -7,13 +7,13 @@ import { expect, afterEach, beforeEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/vue'
 import '@testing-library/jest-dom'
 import { config } from '@vue/test-utils'
-import { create } from 'naive-ui'
-import { naiveTheme, themeOverrides } from '@/theme/naive'
+import { create, darkTheme } from 'naive-ui'
+import { themeOverrides } from '@/theme/naive'
 
 // Configure Vue Test Utils to use Naive UI
 const naive = create({
   components: [],
-  theme: naiveTheme,
+  theme: darkTheme,
   themeOverrides: themeOverrides,
 })
 
