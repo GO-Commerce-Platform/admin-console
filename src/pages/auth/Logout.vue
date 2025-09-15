@@ -13,8 +13,7 @@
       <div class="logout-content">
         <!-- Loading State -->
         <div v-if="isLoggingOut" class="logout-loading">
-          <CSpinner size="xl" color="blue.500"
-thickness="3px" />
+          <NSpin size="large" />
           <h2 class="logout-title">Signing Out...</h2>
           <p class="logout-description">Please wait while we securely log you out.</p>
         </div>
@@ -22,8 +21,9 @@ thickness="3px" />
         <!-- Success State -->
         <div v-else-if="logoutComplete" class="logout-success">
           <div class="success-icon">
-            <CIcon name="check-circle" size="3rem"
-color="green.500" />
+            <NIcon size="48" color="#10b981">
+              <CheckCircle />
+            </NIcon>
           </div>
           <h2 class="logout-title">Signed Out Successfully</h2>
           <p class="logout-description">
@@ -31,23 +31,25 @@ color="green.500" />
           </p>
 
           <div class="logout-actions">
-            <CButton color-scheme="blue" size="lg"
-@click="goToLogin">
-              <CIcon name="arrow-forward"
-mr="2" />
+            <NButton type="primary" size="large" @click="goToLogin">
+              <template #icon>
+                <NIcon><ArrowRight /></NIcon>
+              </template>
               Sign In Again
-            </CButton>
+            </NButton>
 
-            <CButton variant="ghost" size="lg"
-@click="goToHome"> Go to Homepage </CButton>
+            <NButton quaternary size="large" @click="goToHome">
+              Go to Homepage
+            </NButton>
           </div>
         </div>
 
         <!-- Error State -->
         <div v-else-if="error" class="logout-error">
           <div class="error-icon">
-            <CIcon name="warning" size="3rem"
-color="red.500" />
+            <NIcon size="48" color="#f87171">
+              <ExclamationTriangle />
+            </NIcon>
           </div>
           <h2 class="logout-title">Logout Error</h2>
           <p class="logout-description">
@@ -55,26 +57,25 @@ color="red.500" />
           </p>
 
           <div class="logout-actions">
-            <CButton color-scheme="red" size="lg" @click="retryLogout" :is-loading="isLoggingOut">
-              <CIcon name="repeat"
-mr="2" />
+            <NButton type="error" size="large" :loading="isLoggingOut" @click="retryLogout">
+              <template #icon>
+                <NIcon><Repeat /></NIcon>
+              </template>
               Try Again
-            </CButton>
+            </NButton>
 
-            <CButton variant="ghost" size="lg"
-@click="forceLogout">
+            <NButton quaternary size="large" @click="forceLogout">
               Clear Session & Go to Login
-            </CButton>
+            </NButton>
           </div>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="logout-footer">
-        <CText font-size="xs"
-color="gray.500" text-align="center">
+        <NText size="small" depth="3" style="text-align: center;">
           © {{ currentYear }} GO Commerce Platform. All rights reserved.
-        </CText>
+        </NText>
       </div>
     </div>
 
@@ -86,7 +87,8 @@ color="gray.500" text-align="center">
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import { CSpinner, CButton, CText, CIcon } from '@chakra-ui/vue-next'
+  import { NSpin, NButton, NText, NIcon } from 'naive-ui'
+  import { CheckCircle, ArrowRight, ExclamationTriangle, Repeat } from '@vicons/tabler'
   import { useAuth } from '@/composables/useAuth'
   import { logger } from '@/utils/logger'
 
@@ -375,24 +377,19 @@ color="gray.500" text-align="center">
     }
   }
 
-  /* Spinner animation */
-  .logout-loading :deep(.chakra-spinner) {
-    margin-bottom: 1rem;
-  }
-
   /* Button animations */
-  .logout-actions :deep(.chakra-button:hover:not([disabled])) {
+  .logout-actions :deep(.n-button:hover:not(.n-button--disabled)) {
     transform: translateY(-1px);
     transition: all 0.2s ease-in-out;
   }
 
-  .logout-actions :deep(.chakra-button:active) {
+  .logout-actions :deep(.n-button:active) {
     transform: translateY(0);
   }
 
   /* Focus styles */
-  .logout-actions :deep(.chakra-button:focus) {
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+  .logout-actions :deep(.n-button:focus-visible) {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.6);
   }
 </style>
 

@@ -19,7 +19,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CBadge } from '@chakra-ui/vue-next'
+// TODO: Migrate to Naive UI
+// import { CBadge } from '@chakra-ui/vue-next'
+import { NTag as CBadge } from 'naive-ui' // Temporary fallback
 
 /**
  * Badge Component Props

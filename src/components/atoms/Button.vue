@@ -24,7 +24,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CButton } from '@chakra-ui/vue-next'
+// TODO: Migrate to Naive UI
+// import { CButton } from '@chakra-ui/vue-next'
+import { NButton as CButton } from 'naive-ui' // Temporary fallback
 
 /**
  * Button Component Props

@@ -36,13 +36,19 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import {
-  CFormControl,
-  CFormLabel,
-  CInput,
-  CFormHelperText,
-  CFormErrorMessage,
-} from '@chakra-ui/vue-next'
+// TODO: Migrate to Naive UI
+// import {
+//   CFormControl,
+//   CFormLabel,
+//   CInput,
+//   CFormHelperText,
+//   CFormErrorMessage,
+// } from '@chakra-ui/vue-next'
+import { NFormItem as CFormControl, NInput as CInput } from 'naive-ui'
+// Temporary fallbacks
+const CFormLabel = 'label'
+const CFormHelperText = 'div'
+const CFormErrorMessage = 'div'
 
 /**
  * Input Component Props
