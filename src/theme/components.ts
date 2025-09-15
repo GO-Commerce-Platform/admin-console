@@ -1,11 +1,11 @@
 /**
  * LEGACY - Component Style Configurations
  * 
- * This file contains legacy component style configurations from the Chakra UI migration.
+ * This file contains legacy component style configurations from the previous Chakra UI implementation.
  * These styles are preserved for reference and potential integration with Naive UI theming.
  * 
  * Current UI Framework: Naive UI
- * Previous UI Framework: Chakra UI (migrated)
+ * Previous UI Framework: Chakra UI (legacy)
  *
  * Related GitHub Issue: #25 - UI Migration from Chakra UI to Naive UI
  * Related GitHub Issue: #11 - Component Library & Design System
@@ -233,8 +233,8 @@ export const LegacyCard: LegacyComponentStyleConfig = {
   },
 }
 
-// Table component styles
-export const Table: ComponentStyleConfig = {
+// LEGACY - Table component styles (Chakra UI)
+export const LegacyTable: LegacyComponentStyleConfig = {
   baseStyle: {
     table: {
       borderCollapse: 'collapse',
@@ -287,8 +287,8 @@ export const Table: ComponentStyleConfig = {
   },
 }
 
-// Modal component styles
-export const Modal: ComponentStyleConfig = {
+// LEGACY - Modal component styles (Chakra UI)
+export const LegacyModal: LegacyComponentStyleConfig = {
   baseStyle: {
     dialog: {
       bg: 'background.default',
@@ -343,8 +343,8 @@ export const Modal: ComponentStyleConfig = {
   },
 }
 
-// Badge component styles
-export const Badge: ComponentStyleConfig = {
+// LEGACY - Badge component styles (Chakra UI)
+export const LegacyBadge: LegacyComponentStyleConfig = {
   baseStyle: {
     px: '8px',
     py: '4px',
@@ -385,8 +385,8 @@ export const Badge: ComponentStyleConfig = {
   },
 }
 
-// Alert component styles
-export const Alert: ComponentStyleConfig = {
+// LEGACY - Alert component styles (Chakra UI)
+export const LegacyAlert: LegacyComponentStyleConfig = {
   baseStyle: {
     container: {
       borderRadius: '6px',
@@ -438,17 +438,20 @@ export const Alert: ComponentStyleConfig = {
   },
 }
 
-// Export all component overrides
-export const components = {
-  Button,
-  Input,
-  Card,
-  Table,
-  Modal,
-  Badge,
-  Alert,
+// LEGACY - Export all legacy component overrides (preserved for reference)
+export const legacyComponents = {
+  LegacyButton,
+  LegacyInput,
+  LegacyCard,
+  LegacyTable,
+  LegacyModal,
+  LegacyBadge,
+  LegacyAlert,
 }
 
-export default components
+export default legacyComponents
+
+// NOTE: This file contains legacy Chakra UI styles preserved for reference only.
+// The actual styling for the application is now handled by Naive UI components.
 
 // Copilot: This file may have been generated or refactored by GitHub Copilot.

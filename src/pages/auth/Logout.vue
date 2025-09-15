@@ -22,7 +22,7 @@
         <div v-else-if="logoutComplete" class="logout-success">
           <div class="success-icon">
             <NIcon size="48" color="#10b981">
-              <CheckCircle />
+              <CircleCheck />
             </NIcon>
           </div>
           <h2 class="logout-title">Signed Out Successfully</h2>
@@ -88,7 +88,7 @@
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { NSpin, NButton, NText, NIcon } from 'naive-ui'
-  import { CheckCircle, ArrowRight, ExclamationTriangle, Repeat } from '@vicons/tabler'
+  import { CircleCheck, ArrowRight, ExclamationTriangle, Repeat } from '@vicons/tabler'
   import { useAuth } from '@/composables/useAuth'
   import { logger } from '@/utils/logger'
 

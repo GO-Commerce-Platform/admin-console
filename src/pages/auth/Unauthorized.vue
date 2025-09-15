@@ -114,7 +114,7 @@
               @click="goToStoreSelection"
             >
               <template #icon>
-                <NIcon><BuildingStorefront /></NIcon>
+                <NIcon><BuildingStore /></NIcon>
               </template>
               Select Store
             </NButton>
@@ -156,7 +156,7 @@
     ArrowLeft,
     Home,
     Lock,
-    BuildingStorefront,
+    BuildingStore,
     QuestionMark,
   } from '@vicons/tabler'
   import { useAuth } from '@/composables/useAuth'

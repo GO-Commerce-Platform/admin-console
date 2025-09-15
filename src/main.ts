@@ -17,8 +17,9 @@ import { themeOverrides } from '@/theme/naive'
 import router from '@/router'
 import { setupRouterGuards } from '@/router/guards'
 
-// Authentication store - temporarily disabled
-// import { useAuthStore } from '@/stores/auth'
+// Authentication store
+import { useAuthStore } from '@/stores/auth'
+import type { UserProfile } from '@/types/auth'
 
 // Global styles
 import './style.css'
@@ -33,8 +34,76 @@ async function bootstrap(): Promise<void> {
   logger.info('Bootstrapping GO Commerce Admin Console...')
 
   try {
-    // Skip all authentication initialization for debugging
-    logger.info('Skipping authentication system for debugging...')
+    // Skip Keycloak authentication initialization for debugging
+    logger.info('Skipping Keycloak authentication system for debugging...')
+    
+    // Initialize auth store without Keycloak to set proper state
+    const authStore = useAuthStore()
+    
+    // Set debugging state: create mock authenticated user for testing
+    authStore.isInitializing = false
+    authStore.status = 'authenticated'
+    authStore.isAuthenticated = true
+    
+    // Create mock user with platform-admin role for debugging
+    authStore.user = {
+      id: 'debug-user-123',
+      username: 'debug@gocommerce.dev',
+      email: 'debug@gocommerce.dev',
+      firstName: 'Debug',
+      lastName: 'User',
+      emailVerified: true,
+      roles: [
+        {
+          name: 'platform-admin',
+          scope: 'platform',
+          permissions: [
+            {
+              resource: 'stores',
+              actions: ['create', 'read', 'update', 'delete']
+            },
+            {
+              resource: 'users',
+              actions: ['create', 'read', 'update', 'delete']
+            }
+          ]
+        }
+      ],
+      storeAccess: [
+        {
+          storeId: 'debug-store-1',
+          storeName: 'Debug Store 1',
+          roles: ['store-admin'],
+          isDefault: true
+        },
+        {
+          storeId: 'debug-store-2', 
+          storeName: 'Debug Store 2',
+          roles: ['store-admin'],
+          isDefault: false
+        }
+      ],
+      preferences: {
+        theme: 'dark',
+        language: 'en',
+        timezone: 'UTC',
+        defaultStore: 'debug-store-1',
+        dashboardLayout: {}
+      },
+      createdAt: new Date('2024-01-01'),
+      updatedAt: new Date()
+    }
+    
+    // Set roles array for easy access
+    authStore.roles = ['platform-admin']
+    
+    logger.info('Auth store initialized for debugging mode', {
+      isAuthenticated: authStore.isAuthenticated,
+      userId: authStore.user?.id,
+      roles: authStore.roles,
+      isPlatformAdmin: authStore.isPlatformAdmin,
+      availableStores: authStore.availableStores.length
+    })
     logger.info('Bootstrap completed successfully')
   } catch (error) {
     logger.error('Failed to bootstrap services:', error)
@@ -63,8 +132,8 @@ async function initializeApp(): Promise<void> {
     // Setup Vue Router
     app.use(router)
 
-    // Setup router guards - temporarily disabled for debugging
-    // setupRouterGuards(router)
+    // Setup router guards (enabled for proper navigation in debug mode)
+    setupRouterGuards(router)
 
     // Setup Naive UI with custom theme
     const naive = create({

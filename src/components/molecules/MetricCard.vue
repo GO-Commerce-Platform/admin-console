@@ -18,12 +18,12 @@
       <div>
         <!-- Icon -->
         <div
-          v-if="icon"
+          v-if="iconComponent"
           class="metric-card__icon"
           :style="{ background: iconBg }"
         >
           <NIcon size="20" color="#ffffff">
-            <component :is="icon" />
+            <component :is="iconComponent" />
           </NIcon>
         </div>
 
@@ -35,7 +35,7 @@
 
       <!-- Trend indicator -->
       <NFlex
-        v-if="trend !== undefined"
+        v-if="trend !== undefined && trendIcon"
         align="center"
         :wrap="false"
         :style="{ color: trendColor }"
@@ -83,6 +83,7 @@
 import { computed } from 'vue'
 import { NCard, NFlex, NText, NIcon } from 'naive-ui'
 import AnimatedNumber from './AnimatedNumber.vue'
+import { getIcon } from '@/utils/icons'
 
 /**
  * MetricCard Component Props
@@ -139,14 +140,19 @@ const glassClass = computed(() => {
   return props.glass ? 'naive-glass' : ''
 })
 
+const iconComponent = computed(() => {
+  return props.icon ? getIcon(props.icon) : null
+})
+
 const trendColor = computed(() => {
   if (props.trend === undefined) return '#94a3b8' // slate-400
   return props.trend >= 0 ? '#10b981' : '#ef4444' // emerald-500 : red-500
 })
 
 const trendIcon = computed(() => {
-  if (props.trend === undefined) return ''
-  return props.trend >= 0 ? 'TrendingUp' : 'TrendingDown'
+  if (props.trend === undefined) return null
+  const iconName = props.trend >= 0 ? 'TrendingUp' : 'TrendingDown'
+  return getIcon(iconName)
 })
 
 const progressGradient = computed(() => {
@@ -167,14 +173,19 @@ const handleClick = () => {
 
 <style scoped>
 .metric-card {
-  /* Enhanced glassmorphism effect */
+  /* Enhanced glassmorphism effect - GO Commerce Design System */
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(30, 41, 59, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .metric-card::before {
@@ -196,6 +207,15 @@ const handleClick = () => {
 
 .metric-card:hover::before {
   opacity: 1;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(99, 102, 241, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
 }
 
 /* Subtle animation on load */
@@ -262,6 +282,15 @@ const handleClick = () => {
   display: flex;
   justify-content: space-between;
   margin-top: 4px;
+}
+
+/* Text color overrides for consistency with design system */
+.metric-card :deep(.n-text) {
+  color: #f1f5f9 !important;
+}
+
+.metric-card :deep(.n-text[depth="3"]) {
+  color: #94a3b8 !important;
 }
 </style>
 
