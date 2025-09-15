@@ -7,66 +7,48 @@
   Related GitHub Issue: #11 - Component Library & Design System
 -->
 <template>
-  <CBox
+  <NCard
     :class="['metric-card', glassClass]"
-    p="6"
-    borderRadius="12px"
-    border="1px solid"
-    borderColor="border.light"
-    bg="background.card"
-    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-    cursor="pointer"
-    _hover="hover"
+    size="medium"
+    :bordered="true"
     @click="handleClick"
   >
     <!-- Header with icon and trend -->
-    <CFlex justify="space-between" align="flex-start" mb="4">
-      <CBox>
+    <NFlex justify="space-between" align="flex-start" :wrap="false" :size="16">
+      <div>
         <!-- Icon -->
-        <CBox
+        <div
           v-if="icon"
-          :bg="iconBg"
-          p="2"
-          borderRadius="8px"
-          mb="3"
-          display="inline-flex"
-          alignItems="center"
-          justifyContent="center"
+          class="metric-card__icon"
+          :style="{ background: iconBg }"
         >
-          <CIcon :name="icon" color="white" boxSize="5" />
-        </CBox>
-        
+          <NIcon size="20" color="#ffffff">
+            <component :is="icon" />
+          </NIcon>
+        </div>
+
         <!-- Title -->
-        <CText fontSize="sm" color="text.secondary" fontWeight="500">
+        <NText depth="3" strong>
           {{ title }}
-        </CText>
-      </CBox>
-      
+        </NText>
+      </div>
+
       <!-- Trend indicator -->
-      <CFlex
+      <NFlex
         v-if="trend !== undefined"
         align="center"
-        :color="trendColor"
-        fontSize="sm"
-        fontWeight="600"
+        :wrap="false"
+        :style="{ color: trendColor }"
       >
-        <CIcon
-          :name="trendIcon"
-          boxSize="4"
-          mr="1"
-        />
-        {{ Math.abs(trend) }}%
-      </CFlex>
-    </CFlex>
-    
+        <NIcon size="16">
+          <component :is="trendIcon" />
+        </NIcon>
+        <NText strong style="margin-left: 4px;">{{ Math.abs(trend) }}%</NText>
+      </NFlex>
+    </NFlex>
+
     <!-- Main metric value -->
-    <CText
-      fontSize="3xl"
-      fontWeight="700"
-      color="text.primary"
-      lineHeight="1.2"
-      mb="1"
-    >
+    <div class="metric-card__value">
       <AnimatedNumber
         v-if="typeof value === 'number'"
         :value="value"
@@ -74,48 +56,32 @@
         :duration="animationDuration"
       />
       <template v-else>{{ value }}</template>
-    </CText>
-    
+    </div>
+
     <!-- Subtitle/description -->
-    <CText v-if="subtitle" fontSize="xs" color="text.tertiary">
+    <NText v-if="subtitle" depth="3">
       {{ subtitle }}
-    </CText>
-    
-    <!-- Progress bar (optional) -->
-    <CBox v-if="progress !== undefined" mt="4">
-      <CProgress
-        :value="progress"
-        :max="progressMax"
-        size="sm"
-        borderRadius="full"
-        bg="rgba(71, 85, 105, 0.3)"
-        :sx="{
-          '& > div': {
-            bg: progressGradient,
-          }
-        }"
-      />
-      <CFlex justify="space-between" mt="1">
-        <CText fontSize="xs" color="text.tertiary">
-          {{ progressLabel || '0' }}
-        </CText>
-        <CText fontSize="xs" color="text.tertiary">
-          {{ progressMax }}
-        </CText>
-      </CFlex>
-    </CBox>
-  </CBox>
+    </NText>
+
+    <!-- Progress bar (optional) - custom implementation using divs to keep glassmorphism -->
+    <div v-if="progress !== undefined" class="metric-card__progress">
+      <div class="metric-card__progress-track">
+        <div
+          class="metric-card__progress-fill"
+          :style="{ width: `${(progress / progressMax) * 100}%`, background: progressGradient }"
+        />
+      </div>
+      <div class="metric-card__progress-labels">
+        <NText depth="3" style="font-size: 12px;">{{ progressLabel || '0' }}</NText>
+        <NText depth="3" style="font-size: 12px;">{{ progressMax }}</NText>
+      </div>
+    </div>
+  </NCard>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import {
-  CBox,
-  CFlex,
-  CText,
-  CIcon,
-  CProgress,
-} from '@chakra-ui/vue-next'
+import { NCard, NFlex, NText, NIcon } from 'naive-ui'
 import AnimatedNumber from './AnimatedNumber.vue'
 
 /**
@@ -170,17 +136,17 @@ const emit = defineEmits<MetricCardEmits>()
  * Computed Properties
  */
 const glassClass = computed(() => {
-  return props.glass ? 'chakra-glass' : ''
+  return props.glass ? 'naive-glass' : ''
 })
 
 const trendColor = computed(() => {
-  if (props.trend === undefined) return 'text.secondary'
-  return props.trend >= 0 ? 'accent.green' : 'accent.red'
+  if (props.trend === undefined) return '#94a3b8' // slate-400
+  return props.trend >= 0 ? '#10b981' : '#ef4444' // emerald-500 : red-500
 })
 
 const trendIcon = computed(() => {
   if (props.trend === undefined) return ''
-  return props.trend >= 0 ? 'trending-up' : 'trending-down'
+  return props.trend >= 0 ? 'TrendingUp' : 'TrendingDown'
 })
 
 const progressGradient = computed(() => {
@@ -197,14 +163,6 @@ const handleClick = () => {
   emit('click')
 }
 
-/**
- * Hover styles
- */
-const hover = {
-  transform: 'translateY(-4px)',
-  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.2)',
-  borderColor: 'rgba(99, 102, 241, 0.4)',
-}
 </script>
 
 <style scoped>
@@ -261,6 +219,49 @@ const hover = {
   .metric-card {
     padding: 1rem;
   }
+}
+.metric-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.metric-card__value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.metric-card__progress {
+  margin-top: 16px;
+}
+
+.metric-card__progress-track {
+  position: relative;
+  height: 8px;
+  background: rgba(71, 85, 105, 0.3);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.metric-card__progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.metric-card__progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
 }
 </style>
 
