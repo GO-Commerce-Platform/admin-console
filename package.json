@@ -53,13 +53,12 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@chakra-ui/vue-next": "^1.0.0-alpha.16",
-    "@chakra-ui/vue-system": "^1.0.0-alpha.13",
-    "@emotion/css": "^11.13.5",
+    "@vicons/tabler": "^0.13.0",
     "@vueuse/core": "^13.9.0",
     "axios": "^1.11.0",
     "date-fns": "^4.1.0",
     "keycloak-js": "^26.2.0",
+    "naive-ui": "^2.43.1",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "vue": "^3.5.18",
