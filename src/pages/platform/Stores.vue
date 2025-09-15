@@ -24,7 +24,7 @@
             size="md"
             left-icon="plus"
             @click="openCreateStoreModal"
-            :disabled="loading.creating"
+          :disabled="loading.value.creating"
           >
             Create Store
           </CButton>
@@ -34,7 +34,7 @@
 
     <!-- Statistics Cards -->
     <div
-      v-if="statistics"
+      v-if="statistics.value"
       class="statistics-section"
     >
       <CSimpleGrid
@@ -43,32 +43,28 @@
         :min-child-width="'250px'"
       >
         <MetricCard
-          label="Total Stores"
-          :value="statistics.totalStores"
-          :growth="null"
+          title="Total Stores"
+          :value="statistics.value.totalStores"
+          :trend="null"
           icon="building-storefront"
-          color="blue"
         />
         <MetricCard
-          label="Active Stores"
-          :value="statistics.activeStores"
-          :growth="null"
+          title="Active Stores"
+          :value="statistics.value.activeStores"
+          :trend="null"
           icon="check-circle"
-          color="green"
         />
         <MetricCard
-          label="New This Month"
-          :value="statistics.newStoresThisMonth"
-          :growth="null"
+          title="New This Month"
+          :value="statistics.value.newStoresThisMonth"
+          :trend="null"
           icon="trending-up"
-          color="purple"
         />
         <MetricCard
-          label="Total Revenue"
-          :value="formatCurrency(statistics.totalRevenue)"
-          :growth="statistics.revenueGrowth"
+          title="Total Revenue"
+          :value="formatCurrency(statistics.value.totalRevenue)"
+          :trend="statistics.value.revenueGrowth"
           icon="currency-dollar"
-          color="emerald"
         />
       </CSimpleGrid>
     </div>
@@ -104,40 +100,40 @@
             />
           </CInputGroup>
 
-          <CSelect
-            v-model="selectedStatus"
-            placeholder="All Status"
-            size="md"
-            max-width="150px"
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="suspended">Suspended</option>
-            <option value="pending">Pending</option>
-          </CSelect>
+          <CBox max-width="150px">
+            <select
+              v-model="selectedStatus"
+              class="chakra-select"
+            >
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
+              <option value="pending">Pending</option>
+            </select>
+          </CBox>
 
-          <CSelect
-            v-model="selectedCategory"
-            placeholder="All Categories"
-            size="md"
-            max-width="150px"
-          >
-            <option value="">All Categories</option>
-            <option value="fashion">Fashion</option>
-            <option value="electronics">Electronics</option>
-            <option value="food_beverage">Food & Beverage</option>
-            <option value="beauty">Beauty</option>
-            <option value="home_garden">Home & Garden</option>
-            <option value="sports">Sports</option>
-            <option value="books">Books</option>
-            <option value="generic">Generic</option>
-          </CSelect>
+          <CBox max-width="150px">
+            <select
+              v-model="selectedCategory"
+              class="chakra-select"
+            >
+              <option value="">All Categories</option>
+              <option value="fashion">Fashion</option>
+              <option value="electronics">Electronics</option>
+              <option value="food_beverage">Food & Beverage</option>
+              <option value="beauty">Beauty</option>
+              <option value="home_garden">Home & Garden</option>
+              <option value="sports">Sports</option>
+              <option value="books">Books</option>
+              <option value="generic">Generic</option>
+            </select>
+          </CBox>
         </CStack>
 
         <!-- Bulk Actions -->
         <CStack
-          v-if="hasSelectedStores"
+          v-if="hasSelectedStores.value"
           direction="row"
           spacing="2"
           :align="'center'"
@@ -146,55 +142,43 @@
             font-size="sm"
             color="gray.600"
           >
-            {{ selectedStores.length }} selected
+            {{ selectedStores.value.length }} selected
           </CText>
-          <CMenu>
-            <CMenuButton
-              as="template"
+          <CStack direction="row" spacing="2">
+            <CButton
+              variant="outline"
+              size="sm"
+              @click="handleBulkOperation('activate')"
             >
-              <CButton
-                variant="outline"
-                size="sm"
-                right-icon="chevron-down"
-              >
-                Bulk Actions
-              </CButton>
-            </CMenuButton>
-            <CMenuList>
-              <CMenuItem @click="handleBulkOperation('activate')">
-                <CIcon
-                  name="check-circle"
-                  mr="2"
-                />
-                Activate
-              </CMenuItem>
-              <CMenuItem @click="handleBulkOperation('deactivate')">
-                <CIcon
-                  name="x-circle"
-                  mr="2"
-                />
-                Deactivate
-              </CMenuItem>
-              <CMenuItem @click="handleBulkOperation('suspend')">
-                <CIcon
-                  name="pause"
-                  mr="2"
-                />
-                Suspend
-              </CMenuItem>
-              <CMenuDivider />
-              <CMenuItem
-                @click="handleBulkOperation('delete')"
-                color="red.500"
-              >
-                <CIcon
-                  name="trash"
-                  mr="2"
-                />
-                Delete
-              </CMenuItem>
-            </CMenuList>
-          </CMenu>
+              <CIcon name="check-circle" mr="2" />
+              Activate
+            </CButton>
+            <CButton
+              variant="outline"
+              size="sm"
+              @click="handleBulkOperation('deactivate')"
+            >
+              <CIcon name="x-circle" mr="2" />
+              Deactivate
+            </CButton>
+            <CButton
+              variant="outline"
+              size="sm"
+              @click="handleBulkOperation('suspend')"
+            >
+              <CIcon name="pause" mr="2" />
+              Suspend
+            </CButton>
+            <CButton
+              variant="outline"
+              size="sm"
+              color-scheme="red"
+              @click="handleBulkOperation('delete')"
+            >
+              <CIcon name="trash" mr="2" />
+              Delete
+            </CButton>
+          </CStack>
         </CStack>
       </CStack>
     </div>
@@ -310,8 +294,8 @@
                 >
                   <CText>Store Name</CText>
                   <CIcon
-                    v-if="filters.sortBy === 'name'"
-                    :name="filters.sortOrder === 'asc' ? 'chevron-up' : 'chevron-down'"
+                    v-if="filters.value.sortBy === 'name'"
+                    :name="filters.value.sortOrder === 'asc' ? 'chevron-up' : 'chevron-down'"
                     size="sm"
                   />
                 </CStack>
@@ -325,8 +309,8 @@
                 >
                   <CText>Status</CText>
                   <CIcon
-                    v-if="filters.sortBy === 'status'"
-                    :name="filters.sortOrder === 'asc' ? 'chevron-up' : 'chevron-down'"
+                    v-if="filters.value.sortBy === 'status'"
+                    :name="filters.value.sortOrder === 'asc' ? 'chevron-up' : 'chevron-down'"
                     size="sm"
                   />
                 </CStack>
@@ -340,8 +324,8 @@
                 >
                   <CText>Created</CText>
                   <CIcon
-                    v-if="filters.sortBy === 'createdAt'"
-                    :name="filters.sortOrder === 'asc' ? 'chevron-up' : 'chevron-down'"
+                    v-if="filters.value.sortBy === 'createdAt'"
+                    :name="filters.value.sortOrder === 'asc' ? 'chevron-up' : 'chevron-down'"
                     size="sm"
                   />
                 </CStack>
@@ -351,12 +335,12 @@
           </CThead>
           <CTbody>
             <CTr
-              v-for="store in stores"
+              v-for="store in stores.value"
               :key="store.id"
             >
               <CTd>
                 <CCheckbox
-                  :is-checked="selectedStoreIds.has(store.id)"
+                  :is-checked="selectedStoreIds.value.has(store.id)"
                   @change="toggleStoreSelection(store.id)"
                 />
               </CTd>
@@ -479,7 +463,7 @@
 
         <!-- Pagination -->
         <div
-          v-if="stores.length > 0"
+          v-if="stores.value.length > 0"
           class="pagination-section"
         >
           <CBox
@@ -498,9 +482,9 @@
                 font-size="sm"
                 color="gray.600"
               >
-                Showing {{ (pagination.page - 1) * pagination.size + 1 }} to 
-                {{ Math.min(pagination.page * pagination.size, pagination.total) }} 
-                of {{ pagination.total }} results
+                Showing {{ (pagination.value.page - 1) * pagination.value.size + 1 }} to 
+                {{ Math.min(pagination.value.page * pagination.value.size, pagination.value.total) }} 
+                of {{ pagination.value.total }} results
               </CText>
               
               <CStack
@@ -511,8 +495,8 @@
                 <CButton
                   size="sm"
                   variant="outline"
-                  :disabled="!pagination.hasPrev"
-                  @click="goToPage(pagination.page - 1)"
+                  :disabled="!pagination.value.hasPrev"
+                  @click="goToPage(pagination.value.page - 1)"
                 >
                   Previous
                 </CButton>
@@ -525,8 +509,8 @@
                     v-for="page in visiblePages"
                     :key="page"
                     size="sm"
-                    :variant="page === pagination.page ? 'solid' : 'ghost'"
-                    :color-scheme="page === pagination.page ? 'blue' : 'gray'"
+                    :variant="page === pagination.value.page ? 'solid' : 'ghost'"
+                    :color-scheme="page === pagination.value.page ? 'blue' : 'gray'"
                     @click="goToPage(page)"
                   >
                     {{ page }}
@@ -536,8 +520,8 @@
                 <CButton
                   size="sm"
                   variant="outline"
-                  :disabled="!pagination.hasNext"
-                  @click="goToPage(pagination.page + 1)"
+                  :disabled="!pagination.value.hasNext"
+                  @click="goToPage(pagination.value.page + 1)"
                 >
                   Next
                 </CButton>
@@ -584,7 +568,7 @@
             </CButton>
             <CButton
               color-scheme="red"
-              :is-loading="loading.deleting"
+              :is-loading="loading.value.deleting"
               @click="handleDeleteStore"
               ml="3"
             >
@@ -600,10 +584,31 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { 
+  CButton,
+  CBox,
+  CStack,
+  CText,
+  CIcon,
+  CSimpleGrid,
+  CInputGroup,
+  CInputLeftElement,
+  CInput,
+  CCheckbox,
+  CBadge,
+  CLink,
+  CIconButton,
+  CAlertDialog,
+  CAlertDialogOverlay,
+  CAlertDialogContent,
+  CAlertDialogHeader,
+  CAlertDialogBody,
+  CAlertDialogFooter
+} from '@chakra-ui/vue-next'
 import { useStoresStore } from '@/stores/stores'
 import { useAuth } from '@/composables/useAuth'
 import { useDebounce } from '@/composables/useDebounce'
-import { MetricCard } from '@/components/molecules'
+import MetricCard from '@/components/molecules/MetricCard.vue'
 import CreateStoreModal from '@/components/organisms/CreateStoreModal.vue'
 import EditStoreModal from '@/components/organisms/EditStoreModal.vue'
 import type { StoreDto, StoreStatus, StoreTemplateCategory } from '@/types/store'
@@ -613,18 +618,16 @@ const router = useRouter()
 const storesStore = useStoresStore()
 const { hasRole, isPlatformAdmin } = useAuth()
 
-// Store state
-const {
-  stores,
-  statistics,
-  pagination,
-  filters,
-  loading,
-  errors,
-  selectedStoreIds,
-  hasSelectedStores,
-  selectedStores,
-} = storesStore.state.value
+// Store state - access store properties directly instead of destructuring
+const stores = computed(() => storesStore.stores)
+const statistics = computed(() => storesStore.statistics)
+const pagination = computed(() => storesStore.state.pagination)
+const filters = computed(() => storesStore.state.filters)
+const loading = computed(() => storesStore.state.loading)
+const errors = computed(() => storesStore.state.errors)
+const selectedStoreIds = computed(() => storesStore.state.selectedStoreIds)
+const hasSelectedStores = computed(() => storesStore.hasSelectedStores)
+const selectedStores = computed(() => storesStore.selectedStores)
 
 // Local state
 const searchTerm = ref('')
@@ -644,17 +647,17 @@ const cancelDeleteRef = ref<HTMLElement | null>(null)
 
 // Computed
 const isAllSelected = computed(() => 
-  stores.length > 0 && stores.every(store => selectedStoreIds.has(store.id))
+  stores.value.length > 0 && stores.value.every(store => selectedStoreIds.value.has(store.id))
 )
 
 const isPartiallySelected = computed(() => 
-  selectedStoreIds.size > 0 && !isAllSelected.value
+  selectedStoreIds.value.size > 0 && !isAllSelected.value
 )
 
 const visiblePages = computed(() => {
   const pages = []
-  const total = pagination.totalPages
-  const current = pagination.page
+  const total = pagination.value.totalPages
+  const current = pagination.value.page
   const delta = 2
 
   for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
@@ -692,8 +695,8 @@ const applyFilters = () => {
 }
 
 const handleSort = (field: string) => {
-  const currentField = filters.sortBy
-  const currentOrder = filters.sortOrder
+  const currentField = filters.value.sortBy
+  const currentOrder = filters.value.sortOrder
   
   let newOrder: 'asc' | 'desc' = 'asc'
   if (field === currentField && currentOrder === 'asc') {

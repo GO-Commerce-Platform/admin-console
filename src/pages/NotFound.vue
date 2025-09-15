@@ -6,9 +6,8 @@
       <p class="not-found-description">
         The page you're looking for doesn't exist or has been moved.
       </p>
-      <router-link to="/" class="not-found-button">
-        ← Go Home
-      </router-link>
+      <router-link to="/"
+class="not-found-button"> ← Go Home </router-link>
     </div>
   </div>
 </template>

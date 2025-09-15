@@ -14,10 +14,10 @@
 </template>
 
 <script setup lang="ts">
-/**
- * ChevronRightIcon - Simple chevron right icon
- * Related GitHub Issue: #3 - Layout, Navigation & Routing System
- */
+  /**
+   * ChevronRightIcon - Simple chevron right icon
+   * Related GitHub Issue: #3 - Layout, Navigation & Routing System
+   */
 </script>
 
 <!-- Copilot: This file may have been generated or refactored by GitHub Copilot. -->

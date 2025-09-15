@@ -55,7 +55,8 @@ color="red.500" />
           </p>
 
           <div class="logout-actions">
-            <CButton color-scheme="red" size="lg" @click="retryLogout" :is-loading="isLoggingOut">
+            <CButton color-scheme="red" size="lg"
+@click="retryLogout" :is-loading="isLoggingOut">
               <CIcon name="repeat"
 mr="2" />
               Try Again

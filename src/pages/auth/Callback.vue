@@ -1,7 +1,7 @@
 <template>
   <div class="callback-container">
     <div class="callback-content">
-      <div class="spinner"></div>
+      <div class="spinner" />
       <h2 class="callback-title">Processing Authentication</h2>
       <p class="callback-description" v-if="!error">
         {{ status }}
@@ -9,9 +9,7 @@
       <div v-if="error" class="error-content">
         <h3>Authentication Error</h3>
         <p>{{ error }}</p>
-        <router-link to="/login" class="retry-button">
-          Try Again
-        </router-link>
+        <router-link to="/login" class="retry-button"> Try Again </router-link>
       </div>
     </div>
   </div>
@@ -49,9 +47,9 @@
         throw new Error('Missing authorization code or state parameter')
       }
 
-      logger.info('Processing OAuth2 callback', { 
-        hasCode: !!code, 
-        hasState: !!state 
+      logger.info('Processing OAuth2 callback', {
+        hasCode: !!code,
+        hasState: !!state,
       })
 
       // Parse state to determine callback context
@@ -71,17 +69,20 @@
 
       if (result) {
         status.value = 'Authentication successful! Redirecting...'
-        
+
         // If this was an iframe callback, notify parent window
         if (stateData.mode === 'iframe') {
           try {
             // Send success message to parent window (iframe context)
-            window.parent.postMessage({
-              type: 'KEYCLOAK_AUTH_SUCCESS',
-              code,
-              state,
-              timestamp: Date.now()
-            }, window.location.origin)
+            window.parent.postMessage(
+              {
+                type: 'KEYCLOAK_AUTH_SUCCESS',
+                code,
+                state,
+                timestamp: Date.now(),
+              },
+              window.location.origin
+            )
           } catch (err) {
             logger.debug('Failed to send message to parent window:', err)
           }
@@ -95,7 +96,6 @@
       } else {
         throw new Error('Authentication failed')
       }
-
     } catch (err: any) {
       logger.error('OAuth2 callback processing failed:', err)
       error.value = err.message || 'Authentication failed'
@@ -104,11 +104,14 @@
       try {
         const stateData = route.query.state ? JSON.parse(atob(route.query.state as string)) : {}
         if (stateData.mode === 'iframe') {
-          window.parent.postMessage({
-            type: 'KEYCLOAK_AUTH_ERROR',
-            error: error.value,
-            timestamp: Date.now()
-          }, window.location.origin)
+          window.parent.postMessage(
+            {
+              type: 'KEYCLOAK_AUTH_ERROR',
+              error: error.value,
+              timestamp: Date.now(),
+            },
+            window.location.origin
+          )
         }
       } catch (parseErr) {
         logger.debug('Failed to notify parent window of error:', parseErr)
@@ -153,8 +156,12 @@
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   .callback-title {

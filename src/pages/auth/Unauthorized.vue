@@ -93,13 +93,15 @@ mb="2">Available Stores:</CText>
         <div class="unauthorized-actions">
           <!-- Primary Actions -->
           <div class="primary-actions">
-            <CButton v-if="canGoBack" size="lg" color-scheme="blue" @click="goBack">
+            <CButton v-if="canGoBack" size="lg"
+color-scheme="blue" @click="goBack">
               <CIcon name="arrow-back"
 mr="2" />
               Go Back
             </CButton>
 
-            <CButton v-else size="lg" color-scheme="blue" @click="goToDashboard">
+            <CButton v-else size="lg"
+color-scheme="blue" @click="goToDashboard">
               <CIcon name="home"
 mr="2" />
               Go to Dashboard
@@ -108,7 +110,8 @@ mr="2" />
 
           <!-- Secondary Actions -->
           <div class="secondary-actions">
-            <CButton v-if="!isAuthenticated" variant="outline" size="lg" @click="goToLogin">
+            <CButton v-if="!isAuthenticated" variant="outline"
+size="lg" @click="goToLogin">
               <CIcon name="lock"
 mr="2" />
               Sign In

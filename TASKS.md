@@ -213,13 +213,37 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 - [x] 1.3 Core Infrastructure (Chakra UI, HTTP client, Pinia stores complete)
 - [x] Vite Configuration Setup (Build system ready)
 
+**🚨 CRITICAL STATUS - DEVELOPMENT PAUSED:**
+- ❌ **BLOCKED**: Store Management page implementation halted
+- ❌ **ROOT CAUSE**: Chakra UI Vue Next @1.0.0-alpha.16 missing critical components
+- ❌ **ERRORS**: CMenu, CTable, CSelect components not exported
+- ❌ **IMPACT**: Cannot complete Store Management interface
+
+**🎯 IMMEDIATE PRIORITY - BEFORE ALL OTHER DEVELOPMENT:**
+- [ ] **CRITICAL**: Migrate from Chakra UI Vue Next → Naive UI
+- [ ] **CRITICAL**: Fix Store Management page component imports
+- [ ] **CRITICAL**: Test complete UI framework migration
+
+**🗓️ CREATED GITHUB ISSUES FOR TRACKING:**
+- **Issue #22**: UI Migration Assessment ✅ COMPLETED
+- **Issue #23**: Remove Chakra UI Dependencies ⏳ PENDING
+- **Issue #24**: Install and Configure Naive UI ⏳ PENDING  
+- **Issue #25**: Migrate Component Usage ⏳ PENDING
+- **Issue #26**: Test and Validate Migration ⏳ PENDING
+
+**📝 DOCUMENTATION CREATED:**
+- ✅ `MIGRATION.md` - Complete migration guide
+- ✅ `TASKS.md` - Updated with migration priorities
+- ✅ Component mapping and rollback procedures
+- ✅ Post-migration testing checklist
+
 **📅 CURRENT STATUS:**
 - [x] ComponentShowcase Feature ✅ COMPLETED (Dark purple theme with glassmorphism)
 - [x] 1.5 Basic Layout & Navigation ✅ COMPLETED
-- [ ] 2.2 Store Management  
+- [ ] 2.2 Store Management **❌ BLOCKED BY UI FRAMEWORK**
 - [ ] 3.3 Platform Dashboard (moved to Phase 3)
 
-**📊 PHASE 1 PROGRESS: 98% Complete** ✅ AUTHENTICATION SYSTEM + COMPONENT SHOWCASE COMPLETE
+**📊 PHASE 1 PROGRESS: 95% Complete** ⚠️ **PAUSED DUE TO UI FRAMEWORK ISSUES**
 
 **✅ RECENT COMPLETIONS:**
 - ✅ ComponentShowcase with immersive dark purple theme
@@ -244,6 +268,120 @@ This file contains a detailed task checklist for implementing the GO Commerce Ad
 - ✅ Production-ready authentication system
 - ✅ Comprehensive error handling
 - ✅ TypeScript type safety throughout
+
+---
+
+## 🚨 CRITICAL PRIORITY: UI Framework Migration
+
+**ISSUE CONTEXT**: Chakra UI Vue Next alpha version causing development blockers
+**PRIORITY**: Complete before any other development work
+**TIMELINE**: Immediate - blocks all Store Management development
+
+### UI.1 Chakra UI Assessment & Migration Planning **→ GitHub Issue: #22 🚨 CRITICAL**
+
+- [ ] **Analyze current Chakra UI usage across codebase**
+  - ✅ Identified affected files: main.ts, Stores.vue, MetricCard.vue, theme/
+  - ✅ Documented missing components: CMenu, CTable, CSelect
+  - ✅ Confirmed component resolution failures
+  - ✅ Documented current import patterns
+
+- [ ] **Research and select replacement UI framework**
+  - ✅ Evaluated Naive UI (Trust Score: 7.2, 3045+ examples)
+  - ✅ Evaluated TDesign Vue Next (Trust Score: 9.0, 867 examples)
+  - ✅ **DECISION**: Naive UI selected for Vue 3 native design
+  - ✅ Created component mapping documentation
+
+- [ ] **Create migration plan and timeline**
+  - ✅ Created MIGRATION.md documentation
+  - ✅ Identified migration phases and dependencies
+  - ✅ Documented rollback procedures
+  - ✅ Created testing checklist for post-migration
+
+### UI.2 Remove Chakra UI Dependencies **→ GitHub Issue: #23 🚨 CRITICAL**
+
+- [ ] **Uninstall Chakra UI packages**
+  ```bash
+  npm uninstall @chakra-ui/vue-next @chakra-ui/vue-system @emotion/css
+  ```
+
+- [ ] **Remove Chakra UI configuration from main.ts**
+  - Remove ChakraUIVuePlugin import and usage
+  - Remove extendTheme import
+  - Clean up plugin configuration
+
+- [ ] **Remove Chakra UI imports from components**
+  - Update MetricCard.vue component imports
+  - Remove Chakra imports from any other affected components
+  - Clean up unused import statements
+
+### UI.3 Install and Configure Naive UI **→ GitHub Issue: #24 🚨 CRITICAL**
+
+- [ ] **Install Naive UI package**
+  ```bash
+  npm install -D naive-ui
+  ```
+
+- [ ] **Configure Naive UI in main.ts**
+  - Add Naive UI plugin configuration
+  - Set up dark theme configuration
+  - Configure global component registration
+  - Test basic app startup
+
+- [ ] **Create Naive UI theme configuration**
+  - Migrate existing glassmorphism theme to Naive UI
+  - Configure dark purple color scheme
+  - Maintain design system consistency
+  - Test theme application
+
+### UI.4 Migrate Component Usage **→ GitHub Issue: #25 🚨 CRITICAL**
+
+- [ ] **Update Stores.vue component**
+  - Replace all Chakra UI component imports with Naive UI equivalents
+  - Update component usage syntax (CButton → NButton, etc.)
+  - Migrate CTable to NDataTable with proper configuration
+  - Replace CMenu with NDropdown component
+  - Update CSelect to NSelect
+  - Test all component functionality
+
+- [ ] **Update MetricCard.vue component**
+  - Replace Chakra UI imports with Naive UI equivalents
+  - Update component template syntax
+  - Maintain glassmorphism styling
+  - Test metric card rendering
+
+- [ ] **Update any other affected components**
+  - Scan codebase for remaining Chakra UI usage
+  - Update component imports and usage
+  - Test component functionality
+  - Verify styling consistency
+
+### UI.5 Test and Validate Migration **→ GitHub Issue: #26 🚨 CRITICAL**
+
+- [ ] **Verify application startup**
+  - Test development server starts without errors
+  - Verify no component resolution warnings
+  - Check browser console for errors
+  - Confirm basic navigation works
+
+- [ ] **Test Store Management page**
+  - Verify page renders completely
+  - Test all UI components display correctly
+  - Validate table functionality
+  - Test form inputs and dropdowns
+  - Confirm CRUD operations work
+
+- [ ] **Validate theme and styling**
+  - Ensure dark theme applies correctly
+  - Test glassmorphism effects
+  - Verify responsive design
+  - Check accessibility compliance
+  - Test on different screen sizes
+
+- [ ] **Complete integration testing**
+  - Test authentication flow with new UI
+  - Verify store data loading and display
+  - Test error handling and loading states
+  - Confirm user interactions work correctly
 
 ---
 

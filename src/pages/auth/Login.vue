@@ -16,7 +16,7 @@
 
         <!-- Loading State -->
         <div v-if="loading" class="loading-state">
-          <div class="spinner"></div>
+          <div class="spinner" />
           <p class="loading-text">{{ loadingMessage }}</p>
         </div>
 
@@ -27,17 +27,10 @@
             <h4>Authentication Error</h4>
             <p>{{ error }}</p>
             <div class="error-actions">
-              <button 
-                @click="handleRetry" 
-                class="retry-button"
-              >
-                Retry
-              </button>
-              <button 
-                v-if="useIframe"
-                @click="fallbackToRedirect" 
-                class="fallback-button"
-              >
+              <button @click="handleRetry"
+class="retry-button">Retry</button>
+              <button v-if="useIframe"
+@click="fallbackToRedirect" class="fallback-button">
                 Use Standard Login
               </button>
             </div>
@@ -48,16 +41,13 @@
         <div v-else-if="useIframe && !authCompleted" class="iframe-container">
           <div class="iframe-header">
             <p class="iframe-description">Sign in with your credentials</p>
-            <button 
-              @click="toggleLoginMode" 
-              class="toggle-button"
-              title="Switch to standard login"
-            >
+            <button @click="toggleLoginMode"
+class="toggle-button" title="Switch to standard login">
               ⇄
             </button>
           </div>
           <div class="iframe-wrapper">
-            <iframe 
+            <iframe
               ref="loginIframe"
               :src="iframeUrl"
               width="100%"
@@ -68,9 +58,9 @@
               title="Keycloak Login"
               sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
               class="login-iframe"
-            ></iframe>
+            />
             <div v-if="iframeLoading" class="iframe-loading">
-              <div class="spinner small"></div>
+              <div class="spinner small" />
               <p>Loading login form...</p>
             </div>
           </div>
@@ -80,7 +70,7 @@
         <div v-else-if="!useIframe && !authCompleted" class="login-form">
           <button
             class="login-button"
-            :class="{ 'loading': isLoginLoading }"
+            :class="{ loading: isLoginLoading }"
             :disabled="isLoginLoading"
             @click="handleLogin"
           >
@@ -88,14 +78,10 @@
             <span v-if="isLoginLoading">Redirecting to login...</span>
             <span v-else>Sign In with Keycloak</span>
           </button>
-          
+
           <div class="login-options">
-            <button 
-              @click="toggleLoginMode" 
-              class="option-button"
-            >
-              Try embedded login
-            </button>
+            <button @click="toggleLoginMode"
+class="option-button">Try embedded login</button>
           </div>
 
           <!-- Help Text -->
@@ -106,24 +92,18 @@
 
         <!-- Authentication Success -->
         <div v-else-if="authCompleted" class="success-state">
-          <div class="spinner success"></div>
+          <div class="spinner success" />
           <p class="success-text">Authentication successful! Redirecting...</p>
-          
+
           <!-- Manual redirect button as fallback -->
-          <button 
-            class="manual-redirect-button"
-            @click="manualRedirect"
-          >
-            Go to Dashboard
-          </button>
+          <button class="manual-redirect-button"
+@click="manualRedirect">Go to Dashboard</button>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="login-footer" v-if="!useIframe">
-        <p class="footer-text">
-          © {{ currentYear }} GO Commerce Platform. All rights reserved.
-        </p>
+        <p class="footer-text">© {{ currentYear }} GO Commerce Platform. All rights reserved.</p>
       </div>
     </div>
 
@@ -158,7 +138,7 @@
   const loadingMessage = ref('')
   const isLoginInProgress = ref(false)
   const authCompleted = ref(false)
-  
+
   // Iframe-specific state
   const useIframe = ref(false)
   const iframeUrl = ref('')
@@ -189,14 +169,14 @@
     const currentOrigin = window.location.origin
     const state = btoa(JSON.stringify({ mode: 'iframe', timestamp: Date.now() }))
     const nonce = btoa(Math.random().toString(36))
-    
+
     // Generate PKCE code verifier and challenge
     const codeVerifier = generateCodeVerifier()
     const codeChallenge = await generateCodeChallenge(codeVerifier)
-    
+
     // Store code verifier for later use in token exchange
     sessionStorage.setItem('pkce_code_verifier', codeVerifier)
-    
+
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: `${currentOrigin}/auth/iframe-callback`,
@@ -206,7 +186,7 @@
       nonce,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
-      kc_idp_hint: 'keycloak'
+      kc_idp_hint: 'keycloak',
     })
 
     return `${baseUrl}/realms/${realm}/protocol/openid-connect/auth?${params.toString()}`
@@ -250,12 +230,11 @@
 
       // Generate iframe URL with PKCE
       iframeUrl.value = await generateIframeLoginUrl()
-      
+
       logger.info('Initializing iframe login', { iframeUrl: iframeUrl.value })
-      
+
       // Start polling for authentication completion
       startAuthPolling()
-      
     } catch (err: any) {
       logger.error('Failed to initialize iframe login:', err)
       error.value = 'Failed to load login form. Please try again.'
@@ -271,7 +250,7 @@
   function onIframeLoad(): void {
     iframeLoading.value = false
     logger.debug('Iframe loaded successfully')
-    
+
     try {
       // Check if iframe content is accessible (same-origin policy)
       const iframe = loginIframe.value
@@ -322,17 +301,16 @@
 
     const data = event.data
     logger.info('Received iframe message:', data)
-    
+
     if (data.type === 'KEYCLOAK_AUTH_SUCCESS') {
       logger.info('Authentication success message received from iframe')
-      
+
       // Stop polling
       stopPolling()
-      
+
       // Don't redirect here - let the authentication watcher handle it
       // This prevents multiple competing redirects
       logger.info('LOGIN.VUE: Iframe success detected, letting auth watcher handle redirect')
-      
     } else if (data.type === 'KEYCLOAK_AUTH_ERROR') {
       logger.error('Authentication error message received:', data.error)
       handleAuthError(data.error)
@@ -363,12 +341,12 @@
             // Expected cross-origin error, continue polling
           }
         }
-        
-        // Alternative: Check authentication status via API  
+
+        // Alternative: Check authentication status via API
         if (await checkAuthenticationStatus()) {
           clearInterval(pollInterval.value!)
           logger.info('Authentication detected via polling - auth watcher will handle redirect')
-          
+
           // Don't redirect here - let the authentication watcher handle it
           // The auth store will update and trigger the watcher
         }
@@ -426,11 +404,11 @@
     logger.info('Authentication completion detected', {
       redirectUrl: redirectUrl.value,
       currentPath: window.location.pathname,
-      isAuthenticated: isAuthenticated.value
+      isAuthenticated: isAuthenticated.value,
     })
-    
+
     stopPolling()
-    
+
     // Don't redirect here - let the authentication watcher handle it
     // This prevents race conditions and multiple navigation attempts
   }
@@ -451,7 +429,7 @@
   function toggleLoginMode(): void {
     useIframe.value = !useIframe.value
     error.value = null
-    
+
     if (useIframe.value) {
       initializeIframeLogin()
     } else {
@@ -475,7 +453,7 @@
    */
   function handleRetry(): void {
     error.value = null
-    
+
     if (useIframe.value) {
       initializeIframeLogin()
     } else {
@@ -558,46 +536,51 @@
   }
 
   // Watch for authentication changes - SINGLE SOURCE OF REDIRECT
-  watch(isAuthenticated, (newValue, oldValue) => {
-    logger.info('LOGIN.VUE: Authentication state changed', { 
-      oldValue, 
-      newValue,
-      currentPath: window.location.pathname,
-      authCompleted: authCompleted.value,
-      timestamp: Date.now()
-    })
-    
-    // Only redirect if:
-    // 1. User became authenticated (newValue is true)
-    // 2. We haven't already started redirect process
-    // 3. We're still on login page
-    if (newValue && !authCompleted.value && route.name === 'Login') {
-      logger.info('LOGIN.VUE: Starting controlled redirect process')
-      
-      // Set completion state FIRST to prevent multiple redirects
-      authCompleted.value = true
-      loadingMessage.value = 'Authentication successful! Redirecting...'
-      
-      // Stop any polling
-      stopPolling()
-      
-      // Delay slightly to allow UI state to update, then redirect
-      setTimeout(() => {
-        logger.info('LOGIN.VUE: Executing single navigation to dashboard')
-        
-        // Use router.push instead of replace to avoid potential conflicts
-        router.push('/dashboard')
-          .then(() => {
-            logger.info('LOGIN.VUE: Navigation completed successfully')
-          })
-          .catch(err => {
-            logger.error('LOGIN.VUE: Navigation failed, using fallback:', err)
-            // Only use window.location as last resort
-            window.location.href = '/dashboard'
-          })
-      }, 250) // Small delay to prevent race conditions
-    }
-  }, { immediate: false }) // Don't run immediately to avoid initial false triggers
+  watch(
+    isAuthenticated,
+    (newValue, oldValue) => {
+      logger.info('LOGIN.VUE: Authentication state changed', {
+        oldValue,
+        newValue,
+        currentPath: window.location.pathname,
+        authCompleted: authCompleted.value,
+        timestamp: Date.now(),
+      })
+
+      // Only redirect if:
+      // 1. User became authenticated (newValue is true)
+      // 2. We haven't already started redirect process
+      // 3. We're still on login page
+      if (newValue && !authCompleted.value && route.name === 'Login') {
+        logger.info('LOGIN.VUE: Starting controlled redirect process')
+
+        // Set completion state FIRST to prevent multiple redirects
+        authCompleted.value = true
+        loadingMessage.value = 'Authentication successful! Redirecting...'
+
+        // Stop any polling
+        stopPolling()
+
+        // Delay slightly to allow UI state to update, then redirect
+        setTimeout(() => {
+          logger.info('LOGIN.VUE: Executing single navigation to dashboard')
+
+          // Use router.push instead of replace to avoid potential conflicts
+          router
+            .push('/dashboard')
+            .then(() => {
+              logger.info('LOGIN.VUE: Navigation completed successfully')
+            })
+            .catch(err => {
+              logger.error('LOGIN.VUE: Navigation failed, using fallback:', err)
+              // Only use window.location as last resort
+              window.location.href = '/dashboard'
+            })
+        }, 250) // Small delay to prevent race conditions
+      }
+    },
+    { immediate: false }
+  ) // Don't run immediately to avoid initial false triggers
 
   // Watch for auth errors
   watch([hasAuthError, authError], () => {
@@ -611,14 +594,14 @@
     // Small delay to allow auth initialization
     setTimeout(() => {
       checkAuthAndRedirect()
-      
+
       // Try iframe login by default if supported
       if (canUseIframe()) {
         useIframe.value = true
         initializeIframeLogin()
       }
     }, 100)
-    
+
     // Add periodic authentication state monitoring (debug only)
     const monitorInterval = setInterval(() => {
       logger.debug('LOGIN.VUE: Periodic auth state check', {
@@ -626,15 +609,15 @@
         authCompleted: authCompleted.value,
         currentPath: window.location.pathname,
         routeName: route.name,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
-      
+
       // Just monitor - don't redirect. Let the authentication watcher handle it.
       if (isAuthenticated.value && !authCompleted.value && route.name === 'Login') {
         logger.info('LOGIN.VUE: Monitoring detected auth change - watcher should handle redirect')
       }
     }, 3000) // Less frequent monitoring
-    
+
     // Store interval for cleanup
     pollInterval.value = monitorInterval
   })
@@ -664,7 +647,7 @@
       if (window.self !== window.top) {
         return false
       }
-      
+
       // Check for modern browser features
       return !!(window.postMessage && window.addEventListener)
     } catch (err) {
@@ -967,7 +950,8 @@
   }
 
   /* Loading and success states */
-  .loading-state, .success-state {
+  .loading-state,
+  .success-state {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -976,7 +960,8 @@
     text-align: center;
   }
 
-  .loading-text, .success-text {
+  .loading-text,
+  .success-text {
     margin: 1rem 0 0 0;
     color: #718096;
     font-size: 14px;
@@ -1007,8 +992,12 @@
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   /* Error actions */
@@ -1018,7 +1007,8 @@
     margin-top: 0.75rem;
   }
 
-  .retry-button, .fallback-button {
+  .retry-button,
+  .fallback-button {
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 12px;

@@ -1,7 +1,7 @@
 <template>
   <div class="iframe-callback">
     <div class="processing" v-if="!completed && !error">
-      <div class="spinner"></div>
+      <div class="spinner" />
       <p>Processing authentication...</p>
     </div>
     <div class="success" v-else-if="completed && !error">
@@ -46,9 +46,9 @@
         throw new Error('Missing authorization code or state parameter')
       }
 
-      logger.info('Processing iframe OAuth2 callback', { 
-        hasCode: !!code, 
-        hasState: !!state 
+      logger.info('Processing iframe OAuth2 callback', {
+        hasCode: !!code,
+        hasState: !!state,
       })
 
       // Parse state to get context
@@ -64,23 +64,23 @@
 
       if (result) {
         completed.value = true
-        
+
         // Notify parent window of successful authentication
         const message = {
           type: 'KEYCLOAK_AUTH_SUCCESS',
           code,
           state,
           timestamp: Date.now(),
-          success: true
+          success: true,
         }
-        
+
         // Send message to parent window (multiple attempts with different origins)
         const origins = [
           window.location.origin,
           'http://localhost:5173',
-          '*' // Fallback, but less secure
+          '*', // Fallback, but less secure
         ]
-        
+
         for (const origin of origins) {
           try {
             window.parent.postMessage(message, origin)
@@ -101,11 +101,9 @@
             }
           }
         }
-
       } else {
         throw new Error('Authentication failed')
       }
-
     } catch (err: any) {
       logger.error('Iframe OAuth2 callback processing failed:', err)
       error.value = err.message || 'Authentication failed'
@@ -115,14 +113,10 @@
         type: 'KEYCLOAK_AUTH_ERROR',
         error: error.value,
         timestamp: Date.now(),
-        success: false
+        success: false,
       }
 
-      const origins = [
-        window.location.origin,
-        'http://localhost:5173',
-        '*'
-      ]
+      const origins = [window.location.origin, 'http://localhost:5173', '*']
 
       for (const origin of origins) {
         try {
@@ -153,11 +147,16 @@
     justify-content: center;
     min-height: 100vh;
     padding: 1rem;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
     background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
   }
 
-  .processing, .success, .error {
+  .processing,
+  .success,
+  .error {
     text-align: center;
     padding: 2rem;
     border-radius: 8px;
@@ -178,8 +177,12 @@
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   .checkmark {
@@ -236,7 +239,9 @@
       padding: 0.5rem;
     }
 
-    .processing, .success, .error {
+    .processing,
+    .success,
+    .error {
       padding: 1.5rem;
     }
   }

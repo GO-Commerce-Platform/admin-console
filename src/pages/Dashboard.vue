@@ -89,7 +89,7 @@
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .status-card.success {
@@ -120,7 +120,7 @@
     border-radius: 8px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .stat-card h4 {
@@ -188,7 +188,7 @@
     .stats-grid {
       grid-template-columns: 1fr;
     }
-    
+
     .actions-grid {
       grid-template-columns: 1fr;
     }
