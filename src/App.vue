@@ -1,21 +1,24 @@
 <template>
-  <div id="app">
-    <!-- Initialize authentication and then show appropriate content -->
-    <div v-if="authInitialized" class="app-content">
-      <router-view />
+  <NaiveUIProvider>
+    <div id="app">
+      <!-- Initialize authentication and then show appropriate content -->
+      <div v-if="authInitialized" class="app-content">
+        <router-view />
+      </div>
+      
+      <!-- Loading state during authentication initialization -->
+      <div v-else class="app-loading">
+        <div class="app-loading__spinner"></div>
+        <p>Initializing application...</p>
+      </div>
     </div>
-    
-    <!-- Loading state during authentication initialization -->
-    <div v-else class="app-loading">
-      <div class="app-loading__spinner"></div>
-      <p>Initializing application...</p>
-    </div>
-  </div>
+  </NaiveUIProvider>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
+import NaiveUIProvider from '@/components/providers/NaiveUIProvider.vue'
 
 /**
  * Main Application Component

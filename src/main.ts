@@ -9,9 +9,9 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 
-// Chakra UI Vue Next configuration
-import ChakraUIVuePlugin, { chakra, extendTheme } from '@chakra-ui/vue-next'
-import { theme } from '@/theme'
+// Naive UI configuration
+import { create, NConfigProvider } from 'naive-ui'
+import { naiveTheme, themeOverrides } from '@/theme/naive'
 
 // Router configuration
 import router from '@/router'
@@ -66,11 +66,13 @@ async function initializeApp(): Promise<void> {
     // Setup router guards - temporarily disabled for debugging
     // setupRouterGuards(router)
 
-    // Setup Chakra UI Vue
-    app.use(ChakraUIVuePlugin, {
-      extendTheme: theme,
-      resetCSS: true,
+    // Setup Naive UI with custom theme
+    const naive = create({
+      components: [],
+      theme: naiveTheme,
+      themeOverrides: themeOverrides,
     })
+    app.use(naive)
 
     // Global error handler with proper logging
     app.config.errorHandler = (error: any, instance: any, info: string) => {
