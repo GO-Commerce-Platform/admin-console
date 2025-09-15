@@ -1,11 +1,12 @@
 <template>
   <div class="unauthorized-container">
-    <div class="unauthorized-card">
+    <NCard class="unauthorized-card">
       <!-- Header -->
       <div class="unauthorized-header">
         <div class="error-icon">
-          <CIcon name="warning-2" size="4rem"
-color="red.500" />
+          <NIcon size="64" color="#f87171">
+            <ExclamationTriangle />
+          </NIcon>
         </div>
         <h1 class="error-title">Access Denied</h1>
       </div>
@@ -21,71 +22,60 @@ color="red.500" />
         <!-- Context Information -->
         <div v-if="showContext" class="context-info">
           <!-- Role Requirements -->
-          <CAlert v-if="requiredRoles && requiredRoles.length > 0" status="info"
-variant="subtle">
-            <CAlertIcon />
-            <CAlertTitle>Required Roles</CAlertTitle>
-            <CAlertDescription>
-              This page requires one of the following roles:
-              <CTag
+          <NAlert v-if="requiredRoles && requiredRoles.length > 0" type="info" style="margin-bottom: 16px;">
+            <template #header>Required Roles</template>
+            This page requires one of the following roles:
+            <NFlex style="margin-top: 8px;">
+              <NTag
                 v-for="role in requiredRoles"
                 :key="role"
-                size="sm"
-                color-scheme="blue"
-                variant="subtle"
-                ml="1"
+                type="info"
+                size="small"
+                style="margin-right: 4px;"
               >
                 {{ formatRoleName(role) }}
-              </CTag>
-            </CAlertDescription>
-          </CAlert>
+              </NTag>
+            </NFlex>
+          </NAlert>
 
           <!-- Current Roles -->
-          <CAlert v-if="currentRoles && currentRoles.length > 0" status="warning"
-variant="subtle">
-            <CAlertIcon />
-            <CAlertTitle>Your Current Roles</CAlertTitle>
-            <CAlertDescription>
-              You currently have the following roles:
-              <CTag
+          <NAlert v-if="currentRoles && currentRoles.length > 0" type="warning" style="margin-bottom: 16px;">
+            <template #header>Your Current Roles</template>
+            You currently have the following roles:
+            <NFlex style="margin-top: 8px;">
+              <NTag
                 v-for="role in currentRoles"
                 :key="role"
-                size="sm"
-                color-scheme="orange"
-                variant="subtle"
-                ml="1"
+                type="warning"
+                size="small"
+                style="margin-right: 4px;"
               >
                 {{ formatRoleName(role) }}
-              </CTag>
-            </CAlertDescription>
-          </CAlert>
+              </NTag>
+            </NFlex>
+          </NAlert>
 
           <!-- Store Information -->
-          <CAlert v-if="storeId" status="error"
-variant="subtle">
-            <CAlertIcon />
-            <CAlertTitle>Store Access Required</CAlertTitle>
-            <CAlertDescription>
-              Access to store <CCode>{{ storeId }}</CCode> is required for this page.
-            </CAlertDescription>
-          </CAlert>
+          <NAlert v-if="storeId" type="error" style="margin-bottom: 16px;">
+            <template #header>Store Access Required</template>
+            Access to store <code>{{ storeId }}</code> is required for this page.
+          </NAlert>
 
           <!-- Available Stores -->
           <div v-if="availableStores && availableStores.length > 0" class="store-selection">
-            <CText font-weight="semibold"
-mb="2">Available Stores:</CText>
-            <div class="store-list">
-              <CButton
+            <NText strong style="margin-bottom: 8px; display: block;">Available Stores:</NText>
+            <NFlex>
+              <NButton
                 v-for="store in availableStores"
                 :key="store.id"
-                size="sm"
-                variant="outline"
-                color-scheme="blue"
+                size="small"
+                quaternary
+                type="info"
                 @click="selectStore(store.id)"
               >
                 {{ store.name }}
-              </CButton>
-            </div>
+              </NButton>
+            </NFlex>
           </div>
         </div>
 
@@ -93,56 +83,59 @@ mb="2">Available Stores:</CText>
         <div class="unauthorized-actions">
           <!-- Primary Actions -->
           <div class="primary-actions">
-            <CButton v-if="canGoBack" size="lg" color-scheme="blue" @click="goBack">
-              <CIcon name="arrow-back"
-mr="2" />
+            <NButton v-if="canGoBack" size="large" type="primary" @click="goBack">
+              <template #icon>
+                <NIcon><ArrowLeft /></NIcon>
+              </template>
               Go Back
-            </CButton>
+            </NButton>
 
-            <CButton v-else size="lg" color-scheme="blue" @click="goToDashboard">
-              <CIcon name="home"
-mr="2" />
+            <NButton v-else size="large" type="primary" @click="goToDashboard">
+              <template #icon>
+                <NIcon><Home /></NIcon>
+              </template>
               Go to Dashboard
-            </CButton>
+            </NButton>
           </div>
 
           <!-- Secondary Actions -->
           <div class="secondary-actions">
-            <CButton v-if="!isAuthenticated" variant="outline" size="lg" @click="goToLogin">
-              <CIcon name="lock"
-mr="2" />
+            <NButton v-if="!isAuthenticated" size="large" quaternary @click="goToLogin">
+              <template #icon>
+                <NIcon><Lock /></NIcon>
+              </template>
               Sign In
-            </CButton>
+            </NButton>
 
-            <CButton
+            <NButton
               v-if="availableStores && availableStores.length > 1"
-              variant="outline"
-              size="lg"
+              size="large"
+              quaternary
               @click="goToStoreSelection"
             >
-              <CIcon name="building-store"
-mr="2" />
+              <template #icon>
+                <NIcon><BuildingStorefront /></NIcon>
+              </template>
               Select Store
-            </CButton>
+            </NButton>
 
-            <CButton variant="ghost" size="lg"
-@click="contactSupport">
-              <CIcon name="question"
-mr="2" />
+            <NButton size="large" quaternary @click="contactSupport">
+              <template #icon>
+                <NIcon><QuestionMark /></NIcon>
+              </template>
               Contact Support
-            </CButton>
+            </NButton>
           </div>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="unauthorized-footer">
-        <CText font-size="sm"
-color="gray.600" text-align="center">
+        <NText depth="3" style="text-align: center;">
           If you believe this is an error, please contact your administrator.
-        </CText>
+        </NText>
       </div>
-    </div>
+    </NCard>
   </div>
 </template>
 
@@ -150,16 +143,22 @@ color="gray.600" text-align="center">
   import { ref, computed, onMounted } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import {
-    CButton,
-    CAlert,
-    CAlertIcon,
-    CAlertTitle,
-    CAlertDescription,
-    CText,
-    CIcon,
-    CTag,
-    CCode,
-  } from '@chakra-ui/vue-next'
+    NButton,
+    NAlert,
+    NText,
+    NIcon,
+    NTag,
+    NCard,
+    NFlex,
+  } from 'naive-ui'
+  import {
+    ExclamationTriangle,
+    ArrowLeft,
+    Home,
+    Lock,
+    BuildingStorefront,
+    QuestionMark,
+  } from '@vicons/tabler'
   import { useAuth } from '@/composables/useAuth'
   import type { RoleName } from '@/types/auth'
   import { logger } from '@/utils/logger'
