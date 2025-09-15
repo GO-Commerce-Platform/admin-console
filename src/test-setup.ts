@@ -7,19 +7,17 @@ import { expect, afterEach, beforeEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/vue'
 import '@testing-library/jest-dom'
 import { config } from '@vue/test-utils'
-import ChakraUIVuePlugin from '@chakra-ui/vue-next'
-import { theme } from '@/theme'
+import { create } from 'naive-ui'
+import { naiveTheme, themeOverrides } from '@/theme/naive'
 
-// Configure Vue Test Utils to use Chakra UI
-config.global.plugins = [
-  [
-    ChakraUIVuePlugin,
-    {
-      extendTheme: theme,
-      resetCSS: false, // Disable in tests
-    },
-  ],
-]
+// Configure Vue Test Utils to use Naive UI
+const naive = create({
+  components: [],
+  theme: naiveTheme,
+  themeOverrides: themeOverrides,
+})
+
+config.global.plugins = [naive]
 
 // Global test setup
 beforeEach(() => {
