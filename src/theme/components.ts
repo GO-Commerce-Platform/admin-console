@@ -1,23 +1,26 @@
 /**
- * Chakra UI Component Style Overrides
- * Dark theme component styles with glassmorphism effects for GO Commerce Administration Console
+ * LEGACY - Component Style Configurations
+ * 
+ * This file contains legacy component style configurations from the Chakra UI migration.
+ * These styles are preserved for reference and potential integration with Naive UI theming.
+ * 
+ * Current UI Framework: Naive UI
+ * Previous UI Framework: Chakra UI (migrated)
  *
+ * Related GitHub Issue: #25 - UI Migration from Chakra UI to Naive UI
  * Related GitHub Issue: #11 - Component Library & Design System
  */
 
-// Remove problematic import for now
-// import { ComponentStyleConfig } from '@chakra-ui/vue-next'
-
-// Define our own type for component styles
-type ComponentStyleConfig = {
+// LEGACY: This type was used for Chakra UI component styling
+type LegacyComponentStyleConfig = {
   baseStyle?: Record<string, any>
   sizes?: Record<string, Record<string, any>>
   variants?: Record<string, Record<string, any>>
   defaultProps?: Record<string, any>
 }
 
-// Button component styles with glassmorphism
-export const Button: ComponentStyleConfig = {
+// LEGACY - Button component styles with glassmorphism (Chakra UI)
+export const LegacyButton: LegacyComponentStyleConfig = {
   baseStyle: {
     fontWeight: '500',
     borderRadius: '8px',
@@ -113,8 +116,8 @@ export const Button: ComponentStyleConfig = {
   },
 }
 
-// Input component styles
-export const Input: ComponentStyleConfig = {
+// LEGACY - Input component styles (Chakra UI)
+export const LegacyInput: LegacyComponentStyleConfig = {
   baseStyle: {
     field: {
       borderRadius: '6px',
@@ -163,8 +166,8 @@ export const Input: ComponentStyleConfig = {
   },
 }
 
-// Card component styles with glassmorphism
-export const Card: ComponentStyleConfig = {
+// LEGACY - Card component styles with glassmorphism (Chakra UI)
+export const LegacyCard: LegacyComponentStyleConfig = {
   baseStyle: {
     container: {
       bg: 'rgba(30, 41, 59, 0.6)',

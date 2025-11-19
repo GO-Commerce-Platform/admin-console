@@ -1,6 +1,7 @@
 /**
- * Chakra UI Color Theme Configuration
- * Modern dark theme with purple/indigo gradients inspired by template design
+ * Color Theme Configuration
+ * Modern dark theme with purple/indigo gradients for GO Commerce Admin Console
+ * Compatible with Naive UI theming system
  *
  * Related GitHub Issue: #11 - Component Library & Design System
  */

@@ -109,7 +109,7 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'stores',
             name: 'PlatformStores',
-            component: () => import('@/pages/platform/Stores.vue'),
+            component: () => import('@/pages/platform/StoresMigrated.vue'),
             meta: {
               requiresAuth: true,
               roles: ['platform-admin'],

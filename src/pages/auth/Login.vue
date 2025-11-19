@@ -876,17 +876,17 @@
     }
   }
 
-  /* Loading animation */
-  .login-form :deep(.chakra-button[data-loading]) {
+  /* Loading animation - Updated for Naive UI */
+  .login-form :deep(.n-button[data-loading]) {
     position: relative;
   }
 
-  .login-form :deep(.chakra-button[data-loading] .chakra-spinner) {
+  .login-form :deep(.n-button[data-loading] .n-base-loading) {
     margin-right: 0.5rem;
   }
 
-  /* Focus styles */
-  .login-form :deep(.chakra-button:focus) {
+  /* Focus styles - Updated for Naive UI */
+  .login-form :deep(.n-button:focus) {
     box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
   }
 

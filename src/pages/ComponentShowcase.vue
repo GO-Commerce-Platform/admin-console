@@ -170,7 +170,7 @@
       </div>
       
       <p class="footer-text">
-        Component Library & Design System • Built with Vue 3 + TypeScript + Chakra UI
+        Component Library & Design System • Built with Vue 3 + TypeScript + Naive UI
       </p>
     </div>
   </div>

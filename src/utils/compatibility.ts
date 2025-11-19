@@ -5,8 +5,9 @@
  * from the current versions of dependencies but are expected by other packages.
  */
 
-// Re-export from @chakra-ui/styled-system with correct name mapping
-export { isStylePropFn as isStyleProp } from '@chakra-ui/styled-system'
+// REMOVED: Chakra UI styled-system dependency during UI migration
+// Previously re-exported: isStylePropFn as isStyleProp from @chakra-ui/styled-system
+// This export has been removed as part of the migration to Naive UI
 
 /**
  * Check if a value is a function
